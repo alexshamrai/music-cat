@@ -4,8 +4,8 @@
   "stats": {
     "totalGenres": 7,
     "totalArtists": 176,
-    "totalAlbums": 2842,
-    "totalTracks": 31022
+    "totalAlbums": 2830,
+    "totalTracks": 30876
   },
   "warnings": [
     "Skipped non-mp3 file: Art, Progressive/Genesis/Albums/(1969) Genesis - From Genesis To Revelation (320 kbps)/(1969) Genesis - From Genesis To Revelation.jpg",
@@ -4223,7 +4223,7 @@
               ]
             },
             {
-              "title": "Live In London",
+              "title": "Live In London #1",
               "year": 1977,
               "songs": [
                 "01 Eleventh Earl Of Mar.mp3",
@@ -4346,7 +4346,7 @@
               ]
             },
             {
-              "title": "Live In London",
+              "title": "Live In London #2",
               "year": 1980,
               "songs": [
                 "01 Dancing With The Moonlit Knight - Carpet Crawlers.mp3",
@@ -5285,7 +5285,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Windowpane (Disc 1)",
               "year": null,
               "songs": [
                 "01. Windowpane.mp3",
@@ -5300,7 +5300,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "When (Disc 1)",
               "year": null,
               "songs": [
                 "01. When.mp3",
@@ -5312,7 +5312,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "The Leper Affinity (live) (Disc 1)",
               "year": null,
               "songs": [
                 "01. Opeth - The Leper Affinity (live).mp3",
@@ -5326,7 +5326,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Master's Apprentice (Disc 2)",
               "year": null,
               "songs": [
                 "01. Master's Apprentice.mp3",
@@ -5337,7 +5337,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Windowpane (Disc 2)",
               "year": null,
               "songs": [
                 "01.Windowpane.mp3",
@@ -5346,7 +5346,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Forest Of October (Disc 2)",
               "year": null,
               "songs": [
                 "01. Forest Of October.mp3",
@@ -5356,7 +5356,7 @@
               ]
             },
             {
-              "title": "CD 3",
+              "title": "Wreath (Disc 3)",
               "year": null,
               "songs": [
                 "01. Wreath.mp3",
@@ -6093,7 +6093,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Mother And Child Intro (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Mother And Child Intro.mp3",
@@ -6108,7 +6108,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Harmony Korine (Disc 1)",
               "year": null,
               "songs": [
                 "01 Harmony Korine.mp3",
@@ -6124,7 +6124,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Arriving Somewhere But Not Here (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Arriving Somewhere But Not Here.mp3",
@@ -6136,7 +6136,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Port Rubicon (Disc 2)",
               "year": null,
               "songs": [
                 "01 Port Rubicon.mp3",
@@ -6173,7 +6173,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "The Sky Moves Sideways (Phase1) (Disc 1)",
               "year": null,
               "songs": [
                 "a01 - The Sky Moves Sideways (Phase1).mp3",
@@ -6184,7 +6184,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "The Sky Moves Sideways (Alternate Version) (Disc 2)",
               "year": null,
               "songs": [
                 "b01 - The Sky Moves Sideways (Alternate Version).mp3",
@@ -7135,7 +7135,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "[Yes] Something's Coming (Disc 1)",
               "year": null,
               "songs": [
                 "(01) [Yes] Something's Coming.mp3",
@@ -7154,7 +7154,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "[Yes] Roundabout (Disc 2)",
               "year": null,
               "songs": [
                 "(01) [Yes] Roundabout.mp3",
@@ -7166,7 +7166,7 @@
               ]
             },
             {
-              "title": "CD 3",
+              "title": "[Yes] Soon (Disc 3)",
               "year": null,
               "songs": [
                 "(01) [Yes] Soon.mp3",
@@ -7188,7 +7188,7 @@
               ]
             },
             {
-              "title": "CD 4",
+              "title": "[Yes] Make it Easy (Disc 4)",
               "year": null,
               "songs": [
                 "(01) [Yes] Make it Easy.mp3",
@@ -8640,7 +8640,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Someday Baby (Disc 1)",
               "year": null,
               "songs": [
                 "01 Someday Baby.mp3",
@@ -8661,7 +8661,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "Mississippi Bollweevil (Disc 2)",
               "year": null,
               "songs": [
                 "01 Mississippi Bollweevil.mp3",
@@ -9914,7 +9914,7 @@
               ]
             },
             {
-              "title": "cd1",
+              "title": "Jin Go La Ba (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Jin Go La Ba.mp3",
@@ -9939,7 +9939,7 @@
               ]
             },
             {
-              "title": "cd1",
+              "title": "Jin-Go-Lo-Ba (Disc 1)",
               "year": null,
               "songs": [
                 "01. Jin-Go-Lo-Ba.mp3",
@@ -9958,7 +9958,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Going Home (live) (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Going Home (live).mp3",
@@ -9978,7 +9978,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Bacalao Con Pan (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Bacalao Con Pan.mp3",
@@ -9991,7 +9991,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Peraza (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Peraza.mp3",
@@ -10005,7 +10005,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Waiting (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Waiting.mp3",
@@ -10023,7 +10023,7 @@
               ]
             },
             {
-              "title": "cd1",
+              "title": "Dawn  Go Within (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Dawn  Go Within.mp3",
@@ -10039,7 +10039,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Evil Ways (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Evil Ways.mp3",
@@ -10057,7 +10057,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "(Da Le) Yaleo (Disc 1)",
               "year": null,
               "songs": [
                 "01. (Da Le) Yaleo.mp3",
@@ -10095,7 +10095,7 @@
               ]
             },
             {
-              "title": "cd2",
+              "title": "Santana  Revelations (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Santana  Revelations.mp3",
@@ -10121,7 +10121,7 @@
               ]
             },
             {
-              "title": "cd2",
+              "title": "Love, Devotion & Surrender (Disc 2)",
               "year": null,
               "songs": [
                 "01. Love, Devotion & Surrender.mp3",
@@ -10140,7 +10140,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Mantra (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Mantra.mp3",
@@ -10154,7 +10154,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Love Is You (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Love Is You.mp3",
@@ -10165,7 +10165,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Blues for Salvador (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Blues for Salvador.mp3",
@@ -10179,7 +10179,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Fried Neckbones (Original David Rubinson Produc... (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Fried Neckbones (Original David Rubinson Produced Album Session).mp3",
@@ -10198,7 +10198,7 @@
               ]
             },
             {
-              "title": "cd2",
+              "title": "She's Not There (Disc 2)",
               "year": null,
               "songs": [
                 "01 - She's Not There.mp3",
@@ -10210,7 +10210,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "I Love You Much Too Much (Disc 2)",
               "year": null,
               "songs": [
                 "01 - I Love You Much Too Much.mp3",
@@ -10227,7 +10227,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Bacaloa Con Pan (Disc 2)",
               "year": null,
               "songs": [
                 "01. Bacaloa Con Pan.mp3",
@@ -10261,7 +10261,7 @@
               ]
             },
             {
-              "title": "cd3",
+              "title": "All Ever Wanted (Disc 3)",
               "year": null,
               "songs": [
                 "01. All Ever Wanted.mp3",
@@ -10280,7 +10280,7 @@
               ]
             },
             {
-              "title": "CD3",
+              "title": "All I Ever Wanted (Disc 3)",
               "year": null,
               "songs": [
                 "01 - All I Ever Wanted.mp3",
@@ -10297,7 +10297,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "Jingo (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Jingo.mp3",
@@ -10309,7 +10309,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "Soul Sacrifice (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Soul Sacrifice.mp3",
@@ -11194,7 +11194,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Hello, Hooray (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Hello, Hooray.mp3",
@@ -11210,7 +11210,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Don't Blow Your Mind (Disc 1)",
               "year": null,
               "songs": [
                 "01 - The Spiders - Don't Blow Your Mind.mp3",
@@ -11237,7 +11237,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Hello, Hooray (Live, 1973) (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Hello, Hooray (Live, 1973).mp3",
@@ -11257,7 +11257,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Hello Hooray (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Hello Hooray.mp3",
@@ -11283,7 +11283,7 @@
               ]
             },
             {
-              "title": "CD3",
+              "title": "It's Hot Tonight (Disc 3)",
               "year": null,
               "songs": [
                 "01 - It's Hot Tonight.mp3",
@@ -11311,7 +11311,7 @@
               ]
             },
             {
-              "title": "CD4",
+              "title": "He's Back (Demo) (Previously Unreleased) (Disc 4)",
               "year": null,
               "songs": [
                 "01 - He's Back (Demo) (Previously Unreleased).mp3",
@@ -11536,7 +11536,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Revolutions Of The Machine (Intro) (Disc 1)",
               "year": null,
               "songs": [
                 "01. Revolutions Of The Machine (Intro).mp3",
@@ -11552,7 +11552,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Cold (Disc 2)",
               "year": null,
               "songs": [
                 "01. Cold.mp3",
@@ -11610,7 +11610,7 @@
           "name": "Black Sabbath",
           "albums": [
             {
-              "title": "Black Sabbath",
+              "title": "Black Sabbath #1",
               "year": 1970,
               "songs": [
                 "01-Black Sabbath.mp3",
@@ -11848,7 +11848,7 @@
               ]
             },
             {
-              "title": "Black Sabbath",
+              "title": "Black Sabbath #2",
               "year": null,
               "songs": [
                 "Sabb6905.mp3",
@@ -12924,7 +12924,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Women [Remastered] (Disc 1)",
               "year": null,
               "songs": [
                 "01. Women [Remastered].mp3",
@@ -12946,7 +12946,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Let's Get Rocked (Disc 1)",
               "year": null,
               "songs": [
                 "01. Let's Get Rocked.mp3",
@@ -12962,7 +12962,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Rock! Rock (Till You Drop) (Disc 1)",
               "year": null,
               "songs": [
                 "01. Rock! Rock (Till You Drop).mp3",
@@ -12978,7 +12978,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Pour Some Sugar On Me (Disc 1)",
               "year": null,
               "songs": [
                 "01. Pour Some Sugar On Me.mp3",
@@ -13001,30 +13001,7 @@
               ]
             },
             {
-              "title": "CD1",
-              "year": null,
-              "songs": [
-                "01. Pour Some Sugar On Me.mp3",
-                "02. Photograph.mp3",
-                "03. Love Bites.mp3",
-                "04. Let's Get Rocked.mp3",
-                "05. Two Steps Behind.mp3",
-                "06. Animal.mp3",
-                "07. Heaven Is.mp3",
-                "08. Foolin.mp3",
-                "09. Rocket.mp3",
-                "10. When Love & Hate Collide.mp3",
-                "11. Armageddon It.mp3",
-                "12. Have You Ever Needed Someone So Bad.mp3",
-                "13. Rock Of Ages.mp3",
-                "14. Hysteria.mp3",
-                "15. Miss You In A Heartbeat.mp3",
-                "16. Bringin On The Heartbreak.mp3",
-                "17. Switch 625.mp3"
-              ]
-            },
-            {
-              "title": "CD2",
+              "title": "Elected [Live In Tilburg, Holland June 1987] (Disc 2)",
               "year": null,
               "songs": [
                 "01. Elected [Live In Tilburg, Holland June 1987].mp3",
@@ -13041,7 +13018,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Hysteria (Disc 2)",
               "year": null,
               "songs": [
                 "01. Hysteria.mp3",
@@ -13059,7 +13036,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Rock! Rock! (Till You Drop) (Disc 2)",
               "year": null,
               "songs": [
                 "01. Rock! Rock! (Till You Drop).mp3",
@@ -13080,7 +13057,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Rock Rock (Till You Drop) (Disc 2)",
               "year": null,
               "songs": [
                 "01. Rock Rock (Till You Drop).mp3",
@@ -13103,7 +13080,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Rock Rock (Disc 2)",
               "year": null,
               "songs": [
                 "01. Rock Rock.mp3",
@@ -13699,7 +13676,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Decadence Dance (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Extreme - Decadence Dance.MP3",
@@ -13714,7 +13691,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "More Than Words (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Extreme - More Than Words.MP3",
@@ -14616,7 +14593,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Valiant Denial (Disc 1)",
               "year": null,
               "songs": [
                 "01-Valiant Denial.mp3",
@@ -14629,20 +14606,7 @@
               ]
             },
             {
-              "title": "Cd 1",
-              "year": null,
-              "songs": [
-                "01-Crave.mp3",
-                "02-First Underground Nuclear Kitchen.mp3",
-                "03-Never Say Never.mp3",
-                "04-Oil And Water.mp3",
-                "05-Mistreated.mp3",
-                "06-You Got Soul.mp3",
-                "07-We Shall Be Free.mp3"
-              ]
-            },
-            {
-              "title": "Cd 1",
+              "title": "Way Back To The Bone (Disc 1)",
               "year": null,
               "songs": [
                 "01-Way Back To The Bone.mp3",
@@ -14658,7 +14622,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "The Valiant Denial (Disc 1)",
               "year": null,
               "songs": [
                 "01-The Valiant Denial.mp3",
@@ -14672,7 +14636,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Afterburner [Instrumental #1] (Disc 1)",
               "year": null,
               "songs": [
                 "01-Afterburner [Instrumental #1].mp3",
@@ -14688,7 +14652,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Crave (Disc 1)",
               "year": null,
               "songs": [
                 "01-Crave.mp3",
@@ -14702,7 +14666,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Intro (Disc 1) #1",
               "year": null,
               "songs": [
                 "01-Intro.mp3",
@@ -14719,7 +14683,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Real World (Disc 1)",
               "year": null,
               "songs": [
                 "01-Real World.mp3",
@@ -14742,7 +14706,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Band Introduction (Disc 1)",
               "year": null,
               "songs": [
                 "01-Band Introduction.mp3",
@@ -14758,7 +14722,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Black Cloud (Disc 1)",
               "year": null,
               "songs": [
                 "01-Black Cloud.mp3",
@@ -14774,7 +14738,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Stormbringer (Disc 1) #1",
               "year": null,
               "songs": [
                 "01-Stormbringer.mp3",
@@ -14790,7 +14754,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Stormbringer (Disc 1) #2",
               "year": null,
               "songs": [
                 "01-Stormbringer.mp3",
@@ -14802,7 +14766,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Stormbringer (Disc 1) #3",
               "year": null,
               "songs": [
                 "01-Stormbringer.mp3",
@@ -14815,7 +14779,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Stormbringer (Disc 1) #4",
               "year": null,
               "songs": [
                 "01-Stormbringer.mp3",
@@ -14829,7 +14793,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Intro (Disc 1) #2",
               "year": null,
               "songs": [
                 "01-Intro.mp3",
@@ -14844,22 +14808,7 @@
               ]
             },
             {
-              "title": "Cd 1",
-              "year": null,
-              "songs": [
-                "01-Devil's Road.mp3",
-                "02-Can't Stop Rock 'n Roll.mp3",
-                "03-Death Alley Driver.mp3",
-                "04-I Surrender.mp3",
-                "05-Stormbringer.mp3",
-                "06-Challenge Them All.mp3",
-                "07-Dark Days.mp3",
-                "08-Mistreated.mp3",
-                "09-No Stranger To Love.mp3"
-              ]
-            },
-            {
-              "title": "Cd 1",
+              "title": "Burn (Live) (Disc 1)",
               "year": null,
               "songs": [
                 "01-Burn (Live).mp3",
@@ -14875,7 +14824,7 @@
               ]
             },
             {
-              "title": "Cd 1",
+              "title": "Can't Stop The Flood (Disc 1)",
               "year": null,
               "songs": [
                 "01-Can't Stop The Flood.mp3",
@@ -14887,7 +14836,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "Getting Tighter (Disc 2)",
               "year": null,
               "songs": [
                 "01-Getting Tighter.mp3",
@@ -14899,7 +14848,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "Don't Let Me Bleed (Disc 2)",
               "year": null,
               "songs": [
                 "01-Don't Let Me Bleed.mp3",
@@ -14910,7 +14859,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "You Keep On Movin' (Disc 2)",
               "year": null,
               "songs": [
                 "01-You Keep On Movin'.mp3",
@@ -14925,7 +14874,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "In My Blood (Disc 2)",
               "year": null,
               "songs": [
                 "01-In My Blood.mp3",
@@ -14939,7 +14888,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "Tarkus-American Matador (Disc 2)",
               "year": null,
               "songs": [
                 "01-Tarkus-American Matador.mp3",
@@ -14948,18 +14897,7 @@
               ]
             },
             {
-              "title": "Cd 2",
-              "year": null,
-              "songs": [
-                "01-Band Introduction.mp3",
-                "02-Love Communion.mp3",
-                "03-Steppin' On.mp3",
-                "04-Soul Mover.mp3",
-                "05-Burn.mp3"
-              ]
-            },
-            {
-              "title": "Cd 2",
+              "title": "Mistreated (Disc 2)",
               "year": null,
               "songs": [
                 "01-Mistreated.mp3",
@@ -14969,7 +14907,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "Bed Of Roses (Disc 2)",
               "year": null,
               "songs": [
                 "01-Bed Of Roses.mp3",
@@ -14990,7 +14928,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "This Time Around (Disc 2)",
               "year": null,
               "songs": [
                 "01-This Time Around.mp3",
@@ -15003,7 +14941,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "Q&A pt.2 (Disc 2)",
               "year": null,
               "songs": [
                 "01-Q&A pt.2.mp3",
@@ -15015,7 +14953,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "Gettin' Tighter (Disc 2) #1",
               "year": null,
               "songs": [
                 "01-Gettin' Tighter.mp3",
@@ -15024,7 +14962,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "Gettin' Tighter (Disc 2) #2",
               "year": null,
               "songs": [
                 "01-Gettin' Tighter.mp3",
@@ -15035,7 +14973,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "Love Communion (Disc 2)",
               "year": null,
               "songs": [
                 "01-Love Communion.mp3",
@@ -15048,7 +14986,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "Glenn Hughes Speech (Disc 2)",
               "year": null,
               "songs": [
                 "01-Glenn Hughes Speech.mp3",
@@ -15059,19 +14997,7 @@
               ]
             },
             {
-              "title": "Cd 2",
-              "year": null,
-              "songs": [
-                "01-Can't Stop The Flood.mp3",
-                "02-King Of Dreams.mp3",
-                "03-Better Man.mp3",
-                "04-Ride The Storm.mp3",
-                "05-Spotlight Kid.mp3",
-                "06-Highway Star [Encore].mp3"
-              ]
-            },
-            {
-              "title": "Cd 2",
+              "title": "Can't Stop The Flood (Disc 2)",
               "year": null,
               "songs": [
                 "01-Can't Stop The Flood.mp3",
@@ -15085,7 +15011,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "Death Of Me (Disc 2)",
               "year": null,
               "songs": [
                 "01-Death Of Me.mp3",
@@ -15101,7 +15027,7 @@
               ]
             },
             {
-              "title": "Cd 2",
+              "title": "Coast To Coast (Disc 2)",
               "year": null,
               "songs": [
                 "01-Coast To Coast.mp3",
@@ -15615,7 +15541,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Hang Me Out To Dry (Disc 1)",
               "year": null,
               "songs": [
                 "01. Hang Me Out To Dry .mp3",
@@ -15636,7 +15562,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Gut Reaction (Disc 1)",
               "year": null,
               "songs": [
                 "01. Gut Reaction.mp3",
@@ -15654,7 +15580,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Clear Air Turbulence (Disc 1)",
               "year": null,
               "songs": [
                 "01. Clear Air Turbulence .mp3",
@@ -15664,7 +15590,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Clear Air Turbulence (Disc 2)",
               "year": null,
               "songs": [
                 "01. Clear Air Turbulence .mp3",
@@ -15686,7 +15612,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Scarabus (Disc 2)",
               "year": null,
               "songs": [
                 "01. Scarabus.mp3",
@@ -15704,7 +15630,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Twin Exhausted (Disc 2)",
               "year": null,
               "songs": [
                 "01. Twin Exhausted .mp3",
@@ -15721,7 +15647,7 @@
           "name": "Jimi Hendrix",
           "albums": [
             {
-              "title": "CD1",
+              "title": "Purple Haze (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Purple Haze.mp3",
@@ -15751,7 +15677,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Stone Free (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Stone Free.mp3",
@@ -16786,7 +16712,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Deuce (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Deuce.mp3",
@@ -16801,7 +16727,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Detroit Rock City (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Detroit Rock City.mp3",
@@ -16817,7 +16743,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Strutter '78 (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Kiss - Strutter '78.mp3",
@@ -16833,7 +16759,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "01 - deuce (Disc 1)",
               "year": null,
               "songs": [
                 "Kiss - 01 - deuce.mp3",
@@ -16850,7 +16776,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Watchin' You (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Watchin' You.mp3",
@@ -16863,7 +16789,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "I Stole Your Love (Disc 2)",
               "year": null,
               "songs": [
                 "01 - I Stole Your Love.mp3",
@@ -16879,7 +16805,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Deuce (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Kiss - Deuce.mp3",
@@ -16895,7 +16821,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "01 - detroit rock city (Disc 2)",
               "year": null,
               "songs": [
                 "Kiss - 01 - detroit rock city.mp3",
@@ -17039,7 +16965,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "War Paint (Disc 1)",
               "year": null,
               "songs": [
                 "01 - War Paint.mp3",
@@ -17058,7 +16984,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "What Is (Disc 2)",
               "year": null,
               "songs": [
                 "01 - What Is.mp3",
@@ -18795,7 +18721,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Kill the King (Disc 1)",
               "year": null,
               "songs": [
                 "01 Kill the King.mp3",
@@ -18806,7 +18732,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Tune Up (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Tune Up.mp3",
@@ -18819,7 +18745,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Man on the Silver Mountain (Disc 2)",
               "year": null,
               "songs": [
                 "01 Man on the Silver Mountain.mp3",
@@ -18828,7 +18754,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Elgar Pomp And Circumstance (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Elgar Pomp And Circumstance.mp3",
@@ -19548,7 +19474,7 @@
           "name": "Stillwater",
           "albums": [
             {
-              "title": "Stillwater",
+              "title": "Stillwater #1",
               "year": 1977,
               "songs": [
                 "01 - Rock - N- Roll Loser.mp3",
@@ -19594,7 +19520,7 @@
               ]
             },
             {
-              "title": "Stillwater",
+              "title": "Stillwater #2",
               "year": null,
               "songs": [
                 "01 - Fever Dog.mp3",
@@ -19645,7 +19571,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "Under The Sky (Disc 1)",
               "year": null,
               "songs": [
                 "01. The Answer - Under The Sky.mp3",
@@ -19662,7 +19588,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "Demon Eyes (Disc 1)",
               "year": null,
               "songs": [
                 "01. The Answer - Demon Eyes.mp3",
@@ -19679,7 +19605,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "Waste Your Tears (Disc 1)",
               "year": null,
               "songs": [
                 "01. The Answer - Waste Your Tears.mp3",
@@ -19697,7 +19623,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "Keep Believin' (Disc 2)",
               "year": null,
               "songs": [
                 "01. The Answer - Keep Believin'.mp3",
@@ -20339,7 +20265,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Eruption (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Eruption.mp3",
@@ -20364,7 +20290,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Poundcake (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Poundcake.mp3",
@@ -20383,7 +20309,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Panama (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Panama.mp3",
@@ -20406,7 +20332,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Right Now (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Right Now.mp3",
@@ -21159,7 +21085,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Come On (Disc 1)",
               "year": null,
               "songs": [
                 "01.Come On.mp3",
@@ -21174,7 +21100,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Slip Of The Tongue (Disc 1)",
               "year": null,
               "songs": [
                 "01.Slip Of The Tongue.mp3",
@@ -21190,7 +21116,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Come On (Disc 2)",
               "year": null,
               "songs": [
                 "01.Come On.mp3",
@@ -21202,7 +21128,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Fool For Your Loving (Disc 2) #1",
               "year": null,
               "songs": [
                 "01.Fool For Your Loving.mp3",
@@ -21215,7 +21141,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Bad Boys (Disc 1)",
               "year": null,
               "songs": [
                 "01.Bad Boys.mp3",
@@ -21234,7 +21160,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Fool For Your Loving (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Fool For Your Loving.mp3",
@@ -21258,7 +21184,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Walkin' In The Shadow Of The Blues (Disc 1)",
               "year": null,
               "songs": [
                 "01.Walkin' In The Shadow Of The Blues.mp3",
@@ -21281,7 +21207,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Intro (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Intro.mp3",
@@ -21296,7 +21222,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Stormbringer (Disc 2)",
               "year": null,
               "songs": [
                 "01.Burn - Stormbringer.mp3",
@@ -21313,7 +21239,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Into The Light (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Into The Light.mp3",
@@ -21337,7 +21263,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Fool For Your Loving (Disc 2) #2",
               "year": null,
               "songs": [
                 "01.Fool For Your Loving.mp3",
@@ -21361,7 +21287,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Crying In The Rain (Drum Solo) (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Crying In The Rain (Drum Solo).mp3",
@@ -21378,7 +21304,7 @@
               ]
             },
             {
-              "title": "CD3",
+              "title": "Slow An' Easy (Disc 3)",
               "year": null,
               "songs": [
                 "01.Slow An' Easy.mp3",
@@ -22610,14 +22536,14 @@
               ]
             },
             {
-              "title": "Al Di Meola",
+              "title": "Al Di Meola #1",
               "year": null,
               "songs": [
                 "al_dimeola-saffire_soleil.mp3"
               ]
             },
             {
-              "title": "Al Di Meola",
+              "title": "Al Di Meola #2",
               "year": null,
               "songs": [
                 "01 Flight Over Rio.mp3",
@@ -25038,40 +24964,7 @@
               ]
             },
             {
-              "title": "CD 1",
-              "year": null,
-              "songs": [
-                "01. How High The Moon.mp3",
-                "02. Serenade's Suite.mp3",
-                "03. Playland At The Beach.mp3",
-                "04. Prisoner's Song.mp3",
-                "05. Schizophrenic Scherzo.mp3",
-                "06. Rondo.mp3",
-                "07. I Hear A Rhapsody.mp3",
-                "08. You Go To My Head.mp3",
-                "09. Laura.mp3",
-                "10. Closing Theme.mp3",
-                "11. Love Walked In.mp3",
-                "12. Ipca.mp3",
-                "13. What Is This Thing Called Love.mp3",
-                "14. The Way You Look Tonight.mp3",
-                "15. September In The Rain.mp3",
-                "16. Prelude.mp3",
-                "17. Fugue On Bop Themes.mp3",
-                "18. Let's Fall In Love.mp3",
-                "19. Blue Moon.mp3",
-                "20. Tea For Two.mp3",
-                "21. Indiana.mp3",
-                "22. Laura (1950).mp3",
-                "23. You Stepped Out Of A Dream.mp3",
-                "24. Lullaby In Rhythm.mp3",
-                "25. Singing In The Rain.mp3",
-                "26. I'll Remember April.mp3",
-                "27. Body And Soul.mp3"
-              ]
-            },
-            {
-              "title": "CD 1",
+              "title": "St. Louis Blues (Disc 1)",
               "year": null,
               "songs": [
                 "01. St. Louis Blues.mp3",
@@ -25083,7 +24976,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Out Of Nowhere (Disc 1)",
               "year": null,
               "songs": [
                 "01. Out Of Nowhere.mp3",
@@ -25094,7 +24987,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Le Souk (Disc 1)",
               "year": null,
               "songs": [
                 "01. Le Souk.mp3",
@@ -25111,7 +25004,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Indiana (Disc 1)",
               "year": null,
               "songs": [
                 "01. Indiana.mp3",
@@ -25131,7 +25024,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Let's Fall In Love (Disc 1)",
               "year": null,
               "songs": [
                 "01. Let's Fall In Love.mp3",
@@ -25153,7 +25046,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "How High The Moon (Disc 1)",
               "year": null,
               "songs": [
                 "01. How High The Moon.mp3",
@@ -25187,7 +25080,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Yesterdays (Disc 1)",
               "year": null,
               "songs": [
                 "01. Yesterdays.mp3",
@@ -25203,7 +25096,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Allegro (Disc 1)",
               "year": null,
               "songs": [
                 "01. Concerto For Two Pianos & Orchestra - Allegro.mp3",
@@ -25235,7 +25128,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Let's Fall In Love (Disc 2)",
               "year": null,
               "songs": [
                 "01. Let's Fall In Love.mp3",
@@ -25266,7 +25159,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Eleven Four (Disc 2)",
               "year": null,
               "songs": [
                 "01. Eleven Four.mp3",
@@ -25278,7 +25171,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "The Duke (Disc 2)",
               "year": null,
               "songs": [
                 "01. The Duke.mp3",
@@ -25292,7 +25185,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Take Five (Disc 2) #1",
               "year": null,
               "songs": [
                 "01. Take Five.mp3",
@@ -25315,7 +25208,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Take Five (Disc 2) #2",
               "year": null,
               "songs": [
                 "01. Take Five.mp3",
@@ -25338,7 +25231,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "The Way You Look Tonight (Disc 2) #1",
               "year": null,
               "songs": [
                 "01. The Way You Look Tonight.mp3",
@@ -25353,7 +25246,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "The Way You Look Tonight (Disc 2) #2",
               "year": null,
               "songs": [
                 "01. The Way You Look Tonight.mp3",
@@ -25386,7 +25279,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Cherokee (Disc 2)",
               "year": null,
               "songs": [
                 "01. Cherokee.mp3",
@@ -25402,7 +25295,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "St. Louis Blues (Disc 2)",
               "year": null,
               "songs": [
                 "01. St. Louis Blues.mp3",
@@ -25430,7 +25323,7 @@
               ]
             },
             {
-              "title": "CD 3",
+              "title": "Audrey (Disc 3)",
               "year": null,
               "songs": [
                 "01. Audrey.mp3",
@@ -25448,7 +25341,7 @@
               ]
             },
             {
-              "title": "CD 3",
+              "title": "All The Things You Are (Disc 3)",
               "year": null,
               "songs": [
                 "01. All The Things You Are.mp3",
@@ -25468,7 +25361,7 @@
               ]
             },
             {
-              "title": "CD 4",
+              "title": "Tritonis (Disc 4)",
               "year": null,
               "songs": [
                 "01. Tritonis.mp3",
@@ -25480,7 +25373,7 @@
               ]
             },
             {
-              "title": "CD 4",
+              "title": "The Way You Look Tonight (Disc 4)",
               "year": null,
               "songs": [
                 "01. The Way You Look Tonight.mp3",
@@ -26624,7 +26517,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Dizzy's Business (Disc 1)",
               "year": null,
               "songs": [
                 "01. Dizzy's Business.mp3",
@@ -26649,7 +26542,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Basie) (Disc 1)",
               "year": null,
               "songs": [
                 "01. Good Bait (Dameron - Basie).mp3",
@@ -26706,7 +26599,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Birks' Works (Disc 2)",
               "year": null,
               "songs": [
                 "01. Birks' Works.mp3",
@@ -26735,7 +26628,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Godchild  (Wallington) (Disc 2)",
               "year": null,
               "songs": [
                 "01. Godchild  (Wallington).mp3",
@@ -26846,7 +26739,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Manteca (Disc 1)",
               "year": null,
               "songs": [
                 "01. Manteca.mp3",
@@ -26874,7 +26767,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Good Bait (Disc 2)",
               "year": null,
               "songs": [
                 "01. Good Bait.mp3",
@@ -27078,7 +26971,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "It Don't Mean A Thing If It Ain't Got That Swing (Disc 1)",
               "year": null,
               "songs": [
                 "01. It Don't Mean A Thing If It Ain't Got That Swing.mp3",
@@ -27109,7 +27002,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Ebony Rhapsody II (Disc 2)",
               "year": null,
               "songs": [
                 "01. Ebony Rhapsody II.mp3",
@@ -27140,7 +27033,7 @@
               ]
             },
             {
-              "title": "CD 3",
+              "title": "The New Birmingham Breakdown (Disc 3)",
               "year": null,
               "songs": [
                 "01. The New Birmingham Breakdown.mp3",
@@ -27688,29 +27581,6 @@
                 "12_Rock It.mp3",
                 "13_When Love Goes Wrong.mp3",
                 "14_Bahia.mp3"
-              ]
-            },
-            {
-              "title": "The Promise",
-              "year": 2009,
-              "songs": [
-                "01_All In The Way.mp3",
-                "02_Betcha'.mp3",
-                "03_Wiggle.mp3",
-                "04_Why.mp3",
-                "05_Wonderland.mp3",
-                "06_Where Do We Go From Here_.mp3",
-                "07_Freedom.mp3",
-                "08_Hold Me.mp3",
-                "09_Never.mp3",
-                "10_Prelude.mp3",
-                "11_All About Love.mp3",
-                "12_Suppose You Like Me.mp3",
-                "13_The Promise.mp3",
-                "14_She Waits.mp3",
-                "15_The Promise (Continued).mp3",
-                "16_Let Me Love You.mp3",
-                "17_Dirty.mp3"
               ]
             },
             {
@@ -28550,7 +28420,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Opening (Disc 1)",
               "year": null,
               "songs": [
                 "01. Opening.mp3",
@@ -28564,7 +28434,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Maiden Voyage (Disc 1)",
               "year": null,
               "songs": [
                 "01. Maiden Voyage.mp3",
@@ -28575,7 +28445,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Maulana (Disc 1)",
               "year": null,
               "songs": [
                 "01. Maulana.mp3",
@@ -28586,7 +28456,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Watermelon Man (Disc 1)",
               "year": null,
               "songs": [
                 "01. Watermelon Man.mp3",
@@ -28602,7 +28472,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Wandering Spirit Song (Disc 2)",
               "year": null,
               "songs": [
                 "01. Wandering Spirit Song.mp3",
@@ -28612,7 +28482,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Opening (Disc 2)",
               "year": null,
               "songs": [
                 "01. Opening.mp3",
@@ -28628,7 +28498,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "One Finger Snap (Disc 2)",
               "year": null,
               "songs": [
                 "01. One Finger Snap.mp3",
@@ -28640,7 +28510,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Wittch Fire (Disc 2)",
               "year": null,
               "songs": [
                 "01. Wittch Fire.mp3",
@@ -28657,7 +28527,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Butterfly (Disc 2)",
               "year": null,
               "songs": [
                 "01. Butterfly.mp3",
@@ -28673,7 +28543,7 @@
               ]
             },
             {
-              "title": "CD3",
+              "title": "Riot (Disc 3)",
               "year": null,
               "songs": [
                 "01. Riot.mp3",
@@ -29622,7 +29492,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "When You Gonna Learn (Disc 1)",
               "year": null,
               "songs": [
                 "01 - When You Gonna Learn.mp3",
@@ -29638,7 +29508,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "When You Gonna Learn (Cante Hondo Mix) (Disc 2)",
               "year": null,
               "songs": [
                 "01 - When You Gonna Learn (Cante Hondo Mix).mp3",
@@ -29875,7 +29745,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Mahlzeit (Disc 1)",
               "year": null,
               "songs": [
                 "(01) Jazzkantine - Mahlzeit.mp3",
@@ -29897,7 +29767,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "1, 2, 3, 4 (Disc 2)",
               "year": null,
               "songs": [
                 "(01) Jazzkantine - 1, 2, 3, 4.mp3",
@@ -32208,7 +32078,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "So What (Disc 1)",
               "year": null,
               "songs": [
                 "01 - So What.mp3",
@@ -32224,7 +32094,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Summertime (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Summertime.mp3",
@@ -32240,7 +32110,7 @@
               ]
             },
             {
-              "title": "CD3",
+              "title": "Love For Sale (Disc 3)",
               "year": null,
               "songs": [
                 "01 - Love For Sale.mp3",
@@ -32261,7 +32131,7 @@
           "name": "Oscar Peterson",
           "albums": [
             {
-              "title": "CD 1",
+              "title": "Tenderly (Disc 1)",
               "year": null,
               "songs": [
                 "01. Tenderly.mp3",
@@ -32287,7 +32157,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Should I (Disc 2)",
               "year": null,
               "songs": [
                 "01. Should I.mp3",
@@ -33722,7 +33592,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "A Night in Tunisia (Disc 1)",
               "year": null,
               "songs": [
                 "01 - A Night in Tunisia.mp3",
@@ -33737,7 +33607,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Medley (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Medley.mp3",
@@ -33749,7 +33619,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "What Is This Thing Called Love (Disc 2)",
               "year": null,
               "songs": [
                 "01 - What Is This Thing Called Love.mp3",
@@ -33764,7 +33634,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Four (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Four.mp3",
@@ -34703,7 +34573,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Welcome (#1) (Disc 1)",
               "year": null,
               "songs": [
                 "01. Welcome (#1).mp3",
@@ -34719,7 +34589,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Welcome (#2) (Disc 2)",
               "year": null,
               "songs": [
                 "01. Welcome (#2).mp3",
@@ -34734,7 +34604,7 @@
               ]
             },
             {
-              "title": "CD3",
+              "title": "Welcome (#3) (Disc 3)",
               "year": null,
               "songs": [
                 "01. Welcome (#3).mp3",
@@ -34752,7 +34622,7 @@
               ]
             },
             {
-              "title": "CD4",
+              "title": "Welcome (#4) (Disc 4)",
               "year": null,
               "songs": [
                 "01. Welcome (#4).mp3",
@@ -34768,7 +34638,7 @@
               ]
             },
             {
-              "title": "CD5",
+              "title": "Welcome (#5) (Disc 5)",
               "year": null,
               "songs": [
                 "01. Welcome (#5).mp3",
@@ -34785,7 +34655,7 @@
               ]
             },
             {
-              "title": "CD6",
+              "title": "Welcome (Disc 6)",
               "year": null,
               "songs": [
                 "01. Welcome.mp3",
@@ -34797,7 +34667,7 @@
               ]
             },
             {
-              "title": "CD7",
+              "title": "Welcome (Disc 7)",
               "year": null,
               "songs": [
                 "01. Welcome.mp3",
@@ -35045,7 +34915,7 @@
           "name": "Aerosmith",
           "albums": [
             {
-              "title": "Aerosmith",
+              "title": "Aerosmith #1",
               "year": 1973,
               "songs": [
                 "01_Make_It.mp3",
@@ -35326,7 +35196,7 @@
               ]
             },
             {
-              "title": "Aerosmith",
+              "title": "Aerosmith #2",
               "year": null,
               "songs": [
                 "Aerosmith - Girls Of Summer.mp3"
@@ -35843,7 +35713,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "A Time For Heroes (With Meatloaf) (Disc 1)",
               "year": null,
               "songs": [
                 "01 A Time For Heroes (With Meatloaf).mp3",
@@ -35867,7 +35737,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Otro Lugar (''Another World'' sung in Spanish b... (Disc 2)",
               "year": null,
               "songs": [
                 "01 Otro Lugar (''Another World'' sung in Spanish by Brian).mp3",
@@ -36881,7 +36751,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Bridge Burning (Disc 1)",
               "year": null,
               "songs": [
                 "01. Bridge Burning.mp3",
@@ -36898,7 +36768,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Rope (Deadmaus5 Mix) (Disc 2)",
               "year": null,
               "songs": [
                 "01. Rope (Deadmaus5 Mix).mp3",
@@ -37354,7 +37224,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Jacqueline (Disc 1)",
               "year": null,
               "songs": [
                 "01. Jacqueline.mp3",
@@ -37371,7 +37241,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Right Action (Disc 1)",
               "year": null,
               "songs": [
                 "01. Right Action.mp3",
@@ -37405,7 +37275,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Bullet (Disc 2)",
               "year": null,
               "songs": [
                 "01. Bullet.mp3",
@@ -38450,21 +38320,6 @@
                 "07 - Always On The Run.mp3",
                 "08 - My Precious Love.mp3",
                 "09 - Hey Joe.mp3"
-              ]
-            },
-            {
-              "title": "Unplugged",
-              "year": 1994,
-              "songs": [
-                "01-Are You Gonna Go My Way.mp3",
-                "02-Belive.mp3",
-                "03-Rosemary.mp3",
-                "04-Just Be a Woman.mp3",
-                "05-Let Love Rule.mp3",
-                "06-Sister.mp3",
-                "07-Always On The Run.mp3",
-                "08-My Precious Love.mp3",
-                "09-Hey Joe (Bonus Track).mp3"
               ]
             },
             {
@@ -39886,7 +39741,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Fuckin' In the Bushes (Disc 1)",
               "year": null,
               "songs": [
                 "01-Fuckin' In the Bushes.mp3",
@@ -39902,7 +39757,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Wonderwall (Disc 2)",
               "year": null,
               "songs": [
                 "01-Wonderwall.mp3",
@@ -40124,7 +39979,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Say (All I Need) (Disc 1)",
               "year": null,
               "songs": [
                 "01. Say (All I Need).mp3",
@@ -40143,24 +39998,7 @@
               ]
             },
             {
-              "title": "CD1",
-              "year": null,
-              "songs": [
-                "01. Made For You.mp3",
-                "02. All The Right Moves.mp3",
-                "03. Secrets.mp3",
-                "04. Everybody Loves Me.mp3",
-                "05. Missing Persons 1&2.mp3",
-                "06. Good Life.mp3",
-                "07. All This Time.mp3",
-                "08. Fear.mp3",
-                "09. Waking Up.mp3",
-                "10. Marchin On.mp3",
-                "11. Lullaby.mp3"
-              ]
-            },
-            {
-              "title": "CD1",
+              "title": "Made For You (Disc 1)",
               "year": null,
               "songs": [
                 "01. Made For You.mp3",
@@ -40179,7 +40017,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Apologize (Live @ The Orange Lounge) (Disc 2)",
               "year": null,
               "songs": [
                 "01. Apologize (Live @ The Orange Lounge).mp3",
@@ -40190,22 +40028,12 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Passenger (Disc 2)",
               "year": null,
               "songs": [
                 "01. Passenger.mp3",
                 "02. It's A Shame.mp3",
                 "03. Trap Door.mp3",
-                "04. Sucker Punch.mp3"
-              ]
-            },
-            {
-              "title": "CD2",
-              "year": null,
-              "songs": [
-                "01. Passenger.mp3",
-                "02. It's A Shame.mp3",
-                "03. Trap Door (Album Version).mp3",
                 "04. Sucker Punch.mp3"
               ]
             }
@@ -42034,7 +41862,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "My Brave Face (Disc 1)",
               "year": null,
               "songs": [
                 "01 - My Brave Face.mp3",
@@ -42053,7 +41881,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Showtime (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Showtime.mp3",
@@ -42078,7 +41906,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Movement I War 1 (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Movement I War 1.mp3",
@@ -42108,7 +41936,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Band On The Run (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Band On The Run.mp3",
@@ -42124,7 +41952,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Hello Goodbye (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Hello Goodbye.mp3",
@@ -42148,7 +41976,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Dance Tonight (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Dance Tonight.mp3",
@@ -42167,7 +41995,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Reception (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Reception.mp3",
@@ -42194,7 +42022,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Message (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Message.mp3",
@@ -42209,7 +42037,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Things We Said Today (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Things We Said Today.mp3",
@@ -42233,7 +42061,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Wedding (Disc 2)",
               "year": null,
               "songs": [
                 "01 - V - Wedding.mp3",
@@ -42265,7 +42093,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Paul Mccartney; Band On The Run (Nicely Toasted... (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Paul Mccartney; Band On The Run (Nicely Toasted Mix).mp3",
@@ -42292,7 +42120,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Eleanor Rigby (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Eleanor Rigby.mp3",
@@ -42315,7 +42143,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Let Me Roll It (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Let Me Roll It.mp3",
@@ -42335,7 +42163,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Introduction (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Introduction.mp3",
@@ -42349,7 +42177,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Bridge Over Troubled Water (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Bridge Over Troubled Water.mp3",
@@ -42365,7 +42193,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Drive My Car (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Drive My Car.mp3",
@@ -42388,7 +42216,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Twenty Flight Rock (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Twenty Flight Rock.mp3",
@@ -42410,7 +42238,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Band On The Run (Rehearsal, 1974) (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Band On The Run (Rehearsal, 1974).mp3",
@@ -42425,7 +42253,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Front Parlour (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Front Parlour.mp3",
@@ -42441,7 +42269,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Introduction (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Introduction.mp3",
@@ -42462,7 +42290,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Driving Rain (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Driving Rain.mp3",
@@ -42491,7 +42319,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Back In The Ussr (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Back In The Ussr.mp3",
@@ -42513,7 +42341,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Rainclouds1 (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Rainclouds1.mp3",
@@ -42533,7 +42361,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Helen Wheels (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Helen Wheels.mp3",
@@ -42547,7 +42375,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Darkroom (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Darkroom.mp3",
@@ -42561,7 +42389,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "Jet (Disc 1)",
               "year": null,
               "songs": [
                 "01. Jet.mp3",
@@ -42584,7 +42412,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "Band On The Run (Disc 2)",
               "year": null,
               "songs": [
                 "01. Band On The Run.mp3",
@@ -43830,7 +43658,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "15 Step (Disc 1)",
               "year": null,
               "songs": [
                 "01. 15 Step.mp3",
@@ -43846,7 +43674,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Just (Disc 1) #1",
               "year": null,
               "songs": [
                 "01. Just.mp3",
@@ -43868,7 +43696,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Fake Plastic Trees (Disc 1)",
               "year": null,
               "songs": [
                 "01. Fake Plastic Trees.mp3",
@@ -43877,7 +43705,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "High & Dry (Disc 1)",
               "year": null,
               "songs": [
                 "01. High & Dry.mp3",
@@ -43887,7 +43715,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Just (Disc 1) #2",
               "year": null,
               "songs": [
                 "01. Just.mp3",
@@ -43896,7 +43724,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Street Spirit (Fade Out) (Disc 1)",
               "year": null,
               "songs": [
                 "01. Street Spirit (Fade Out).mp3",
@@ -43905,7 +43733,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Karma Police (Disc 1)",
               "year": null,
               "songs": [
                 "01. Karma Police.mp3",
@@ -43914,7 +43742,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Paranoid Android (Disc 1)",
               "year": null,
               "songs": [
                 "01. Paranoid Android.mp3",
@@ -43923,7 +43751,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "No Surprises (Disc 1)",
               "year": null,
               "songs": [
                 "01. No Surprises.mp3",
@@ -43932,7 +43760,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Knives Out (Disc 1)",
               "year": null,
               "songs": [
                 "01. Knives Out.mp3",
@@ -43941,7 +43769,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Pyramid Song (Disc 1)",
               "year": null,
               "songs": [
                 "01. Pyramid Song.mp3",
@@ -43951,7 +43779,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "2+2=5 (Disc 1)",
               "year": null,
               "songs": [
                 "01. 2+2=5.mp3",
@@ -43960,7 +43788,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Go To Sleep (Disc 1)",
               "year": null,
               "songs": [
                 "01. Go To Sleep.mp3",
@@ -43969,7 +43797,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "MK1 (Disc 2)",
               "year": null,
               "songs": [
                 "01. MK1.mp3",
@@ -43983,7 +43811,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Airbag (Disc 2)",
               "year": null,
               "songs": [
                 "01. Airbag.mp3",
@@ -44002,7 +43830,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Fake Plastic Trees (Disc 2)",
               "year": null,
               "songs": [
                 "01. Fake Plastic Trees.mp3",
@@ -44012,7 +43840,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Planet Telex (Disc 2)",
               "year": null,
               "songs": [
                 "01. Planet Telex.mp3",
@@ -44022,7 +43850,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Just (Disc 2)",
               "year": null,
               "songs": [
                 "01. Just.mp3",
@@ -44032,7 +43860,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Street Spirit (Fade Out) (Disc 2)",
               "year": null,
               "songs": [
                 "01. Street Spirit (Fade Out).mp3",
@@ -44041,7 +43869,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Karma Police (Disc 2)",
               "year": null,
               "songs": [
                 "01. Karma Police.mp3",
@@ -44050,7 +43878,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Paranoid Android (Disc 2)",
               "year": null,
               "songs": [
                 "01. Paranoid Android.mp3",
@@ -44059,7 +43887,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "No Surprises (Disc 2)",
               "year": null,
               "songs": [
                 "01. No Surprises.mp3",
@@ -44068,7 +43896,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Knives Out (Disc 2)",
               "year": null,
               "songs": [
                 "01. Knives Out.mp3",
@@ -44077,7 +43905,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Pyramid Song (Disc 2)",
               "year": null,
               "songs": [
                 "01. Pyramid Song.mp3",
@@ -44086,7 +43914,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "2+2=5 (Disc 2)",
               "year": null,
               "songs": [
                 "01. 2+2=5.mp3",
@@ -44095,7 +43923,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Go To Sleep (Disc 2)",
               "year": null,
               "songs": [
                 "01. Go To Sleep.mp3",
@@ -44104,7 +43932,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "You (Disc 1)",
               "year": null,
               "songs": [
                 "01. You.mp3",
@@ -44122,7 +43950,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "Planet Telex (Disc 1)",
               "year": null,
               "songs": [
                 "01. Planet Telex.mp3",
@@ -44140,7 +43968,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "Airbag (Disc 1)",
               "year": null,
               "songs": [
                 "01. Airbag.mp3",
@@ -44158,7 +43986,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "Everything In Its Right Place (Disc 1)",
               "year": null,
               "songs": [
                 "01. Everything In Its Right Place.mp3",
@@ -44174,7 +44002,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "Packt Like Sardines In A Crushd Tin Box (Disc 1)",
               "year": null,
               "songs": [
                 "01. Packt Like Sardines In A Crushd Tin Box.mp3",
@@ -44191,7 +44019,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "2 + 2 = 5. (The Lukewarm.) (Disc 1)",
               "year": null,
               "songs": [
                 "01. 2 + 2 = 5. (The Lukewarm.).mp3",
@@ -44211,7 +44039,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "Prove Yourself [Demo] (Disc 2)",
               "year": null,
               "songs": [
                 "01. Prove Yourself [Demo].mp3",
@@ -44239,7 +44067,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "The Trickster (Disc 2)",
               "year": null,
               "songs": [
                 "01. The Trickster.mp3",
@@ -44266,7 +44094,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "Polyethylene (Parts 1 & 2) (Disc 2)",
               "year": null,
               "songs": [
                 "01. Polyethylene (Parts 1 & 2).mp3",
@@ -44287,7 +44115,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "Everything In Its Right Place (BBC Radio One 11... (Disc 2)",
               "year": null,
               "songs": [
                 "01. Everything In Its Right Place (BBC Radio One 11-15-09).mp3",
@@ -44306,7 +44134,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "The Amazing Sounds Of Orgy (Disc 2)",
               "year": null,
               "songs": [
                 "01. The Amazing Sounds Of Orgy.mp3",
@@ -44327,7 +44155,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "Paperbag Writer (Disc 2)",
               "year": null,
               "songs": [
                 "01. Paperbag Writer.mp3",
@@ -44663,7 +44491,7 @@
           "name": "Robbie Williams",
           "albums": [
             {
-              "title": "CD1",
+              "title": "Shame (Disc 1)",
               "year": null,
               "songs": [
                 "01. Robbie Williams And Gary Barlow - Shame.mp3",
@@ -44688,7 +44516,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "I Will Talk And Hollywood Will Listen (Disc 2)",
               "year": null,
               "songs": [
                 "01. Robbie Williams - I Will Talk And Hollywood Will Listen.mp3",
@@ -44714,7 +44542,7 @@
               ]
             },
             {
-              "title": "CD3",
+              "title": "Often (Disc 3)",
               "year": null,
               "songs": [
                 "01. Robbie Williams - Often.mp3",
@@ -44830,26 +44658,6 @@
                 "12-some_hope.mp3",
                 "13-if_i_could_fly.mp3",
                 "14-its_only_life.mp3"
-              ]
-            },
-            {
-              "title": "Snapshot",
-              "year": 2002,
-              "songs": [
-                "(01) MyTurn.mp3",
-                "(02) Burn Me Up Slowly.mp3",
-                "(03) Beyond Emily.mp3",
-                "(04) Queen Of England.mp3",
-                "(05) No Place To Go.mp3",
-                "(06) The Bargain Basement.mp3",
-                "(07) What You Don't Say.mp3",
-                "(08) Nothing Else.mp3",
-                "(09) Could Have Ben Me.mp3",
-                "(10) The More I Find.mp3",
-                "(11) When It Comes To You.mp3",
-                "(12) Some Hope.mp3",
-                "(13) If I Could Fly.mp3",
-                "(14) It's Only Life.mp3"
               ]
             }
           ]
@@ -47263,7 +47071,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "Pictures Of Matchstick Men (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Pictures Of Matchstick Men.mp3",
@@ -47290,32 +47098,6 @@
               ]
             },
             {
-              "title": "Disc 1",
-              "year": null,
-              "songs": [
-                "01 - Pictures Of Matchstick Men.mp3",
-                "02 - Ice In The Sun.mp3",
-                "03 - Down The Dustpipe.mp3",
-                "04 - In My Chair.mp3",
-                "05 - Paper Plane.mp3",
-                "06 - Mean Girl.mp3",
-                "07 - Caroline.mp3",
-                "08 - Break The Rules.mp3",
-                "09 - Down Down.mp3",
-                "10 - Roll Over Lay Down (Live).mp3",
-                "11 - Rain.mp3",
-                "12 - Mystery Song.mp3",
-                "13 - Wild Side Of Life.mp3",
-                "14 - Rockin' All Over The World.mp3",
-                "15 - Again And Again.mp3",
-                "16 - Whatever You Want.mp3",
-                "17 - Living On An Island.mp3",
-                "18 - What You're Proposing.mp3",
-                "19 - Lies.mp3",
-                "20 - Don't Drive My Car.mp3"
-              ]
-            },
-            {
               "title": "Disc 1of1",
               "year": null,
               "songs": [
@@ -47329,7 +47111,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "Rock 'N' Roll (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Rock 'N' Roll.mp3",
@@ -47355,7 +47137,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "Something 'Bout You Baby I Like (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Something 'Bout You Baby I Like.mp3",
@@ -47948,7 +47730,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "Umbrella (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Umbrella.mp3",
@@ -47966,7 +47748,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "No One (Disc 2)",
               "year": null,
               "songs": [
                 "01 - No One.mp3",
@@ -48434,7 +48216,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Fall Out (Disc 1) #1",
               "year": null,
               "songs": [
                 "01 - Fall Out.mp3",
@@ -48461,7 +48243,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Fall Out (Disc 1) #2",
               "year": null,
               "songs": [
                 "01 - Fall Out.mp3",
@@ -48481,7 +48263,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Next To You (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Next To You.mp3",
@@ -48502,7 +48284,7 @@
               ]
             },
             {
-              "title": "CD1",
+              "title": "Message In A Bottle (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Message In A Bottle.mp3",
@@ -48518,7 +48300,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Walking On The Moon (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Walking On The Moon.mp3",
@@ -48545,7 +48327,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "De Do Do Do, De Da Da Da (Disc 2) #1",
               "year": null,
               "songs": [
                 "01 - De Do Do Do, De Da Da Da.mp3",
@@ -48565,7 +48347,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "Synchronicity I (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Synchronicity I.mp3",
@@ -48586,7 +48368,7 @@
               ]
             },
             {
-              "title": "CD2",
+              "title": "De Do Do Do, De Da Da Da (Disc 2) #2",
               "year": null,
               "songs": [
                 "01 - De Do Do Do, De Da Da Da.mp3",
@@ -48601,7 +48383,7 @@
               ]
             },
             {
-              "title": "CD3",
+              "title": "A Sermon (Disc 3)",
               "year": null,
               "songs": [
                 "01 - A Sermon.mp3",
@@ -48625,7 +48407,7 @@
               ]
             },
             {
-              "title": "CD4",
+              "title": "Synchronicity I (Disc 4)",
               "year": null,
               "songs": [
                 "01 - Synchronicity I.mp3",
@@ -49576,7 +49358,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Dandelion (Disc 1)",
               "year": null,
               "songs": [
                 "The Rolling Stones - Dandelion.mp3",
@@ -49594,7 +49376,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "19th Nervous Breakdown (Disc 1)",
               "year": null,
               "songs": [
                 "The Rolling Stones - 19th Nervous Breakdown.mp3",
@@ -49620,7 +49402,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "2000 Light Years From Home (Disc 2)",
               "year": null,
               "songs": [
                 "The Rolling Stones - 2000 Light Years From Home.mp3",
@@ -49639,7 +49421,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Angie (Disc 2)",
               "year": null,
               "songs": [
                 "The Rolling Stones - Angie.mp3",
@@ -51245,7 +51027,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Избавление (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Избавление.mp3",
@@ -51262,7 +51044,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Вступление (Disc 1) #1",
               "year": null,
               "songs": [
                 "01 - Вступление.mp3",
@@ -51278,7 +51060,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Первый Шаг (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Первый Шаг.mp3",
@@ -51306,7 +51088,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Вступление (Disc 1) #2",
               "year": null,
               "songs": [
                 "01 - Вступление.mp3",
@@ -51330,7 +51112,7 @@
               ]
             },
             {
-              "title": "CD 1",
+              "title": "Всё Сначала (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Всё Сначала.mp3",
@@ -51355,7 +51137,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Белый день (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Белый день.mp3",
@@ -51374,7 +51156,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "В Никитском ботаническом саду (Disc 2)",
               "year": null,
               "songs": [
                 "01 - В Никитском ботаническом саду.mp3",
@@ -51391,7 +51173,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Старый корабль (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Старый корабль.mp3",
@@ -51419,7 +51201,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Шанхай-блюз (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Шанхай-блюз.mp3",
@@ -51443,7 +51225,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Шанхай Блюз (Disc 2)",
               "year": null,
               "songs": [
                 "01 - Шанхай Блюз.mp3",
@@ -52207,7 +51989,7 @@
           "name": "Jesus Christ Superstar",
           "albums": [
             {
-              "title": "CD 1",
+              "title": "Andrew_Lloyd_Webber_-_01_-_Overture (Disc 1)",
               "year": null,
               "songs": [
                 "Andrew_Lloyd_Webber_-_01_-_Overture.mp3",
@@ -52227,7 +52009,7 @@
               ]
             },
             {
-              "title": "CD 2",
+              "title": "Andrew_Lloyd_Webber_-_01_-_The_Last_Supper (Disc 2)",
               "year": null,
               "songs": [
                 "Andrew_Lloyd_Webber_-_01_-_The_Last_Supper.mp3",
@@ -52488,7 +52270,7 @@
               ]
             },
             {
-              "title": "Cd1",
+              "title": "Overture (Disc 1)",
               "year": null,
               "songs": [
                 "01 - Overture.mp3",
@@ -52506,7 +52288,7 @@
               ]
             },
             {
-              "title": "Cd2",
+              "title": "The Last Supper (Disc 2)",
               "year": null,
               "songs": [
                 "01 - The Last Supper.mp3",
@@ -52523,7 +52305,7 @@
               ]
             },
             {
-              "title": "Disc 1",
+              "title": "The Overture (Disc 1)",
               "year": null,
               "songs": [
                 "01-The Overture.mp3",
@@ -52541,7 +52323,7 @@
               ]
             },
             {
-              "title": "Disc 2",
+              "title": "The Moments of Happiness (Disc 2)",
               "year": null,
               "songs": [
                 "01-The Moments of Happiness.mp3",

@@ -2,42 +2,40 @@ package io.github.alexshamrai.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
-@Table(name = "song")
+@Table(name = "tag")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Song {
+public class TagEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
+    @Column(nullable = false, unique = true, length = 100)
+    private String name;
 
-    @Column(name = "track_number", nullable = false)
-    private int trackNumber;
-
-    @Column(name = "disc_number")
+    @ManyToMany(mappedBy = "tags")
     @Builder.Default
-    private int discNumber = 1;
+    private Set<ArtistEntity> artists = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "album_id", nullable = false)
-    private Album album;
+    @ManyToMany(mappedBy = "tags")
+    @Builder.Default
+    private Set<AlbumEntity> albums = new HashSet<>();
 
 }

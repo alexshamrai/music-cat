@@ -16,7 +16,7 @@ spring:
     enabled: true
 
 music-library:
-  catalog-path: ../catalog/catalog.json
+  catalog-path: ../catalog.json
 
 server:
   port: 8080
