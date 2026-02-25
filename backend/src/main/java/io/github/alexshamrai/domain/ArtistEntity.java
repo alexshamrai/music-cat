@@ -29,7 +29,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Artist {
+public class ArtistEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,7 +58,7 @@ public class Artist {
 
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<Album> albums = new ArrayList<>();
+    private List<AlbumEntity> albums = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -67,7 +67,7 @@ public class Artist {
         inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     @Builder.Default
-    private Set<Tag> tags = new HashSet<>();
+    private Set<TagEntity> tags = new HashSet<>();
 
     @PreUpdate
     public void preUpdate() {

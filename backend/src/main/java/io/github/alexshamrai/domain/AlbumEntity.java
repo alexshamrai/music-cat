@@ -31,7 +31,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Album {
+public class AlbumEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +51,7 @@ public class Album {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id", nullable = false)
-    private Artist artist;
+    private ArtistEntity artist;
 
     @Column(name = "created_at")
     @Builder.Default
@@ -63,7 +63,7 @@ public class Album {
 
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<Song> songs = new ArrayList<>();
+    private List<SongEntity> songs = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -72,7 +72,7 @@ public class Album {
         inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     @Builder.Default
-    private Set<Tag> tags = new HashSet<>();
+    private Set<TagEntity> tags = new HashSet<>();
 
     @PreUpdate
     public void preUpdate() {
