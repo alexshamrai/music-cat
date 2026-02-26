@@ -7,9 +7,9 @@ After each task, verify the "Done when" criteria before moving to the next.
 
 ---
 
-## Task 0 — Scan Music Folder (Prerequisite)
+## Task 0 — Scan Music Folder (Prerequisite) ✅ COMPLETED
 
-> **Done when:** `catalog/catalog.json` exists with valid data, you've reviewed a sample.
+> **Done when:** `catalog.json` exists with valid data, you've reviewed a sample.
 
 ```
 I need you to scan my music folder and produce a catalog.json file. But first, INVESTIGATE the actual folder structure before writing any code.
@@ -55,7 +55,7 @@ After investigating, write a Python script `music_scanner.py` that:
 5. Only collects .mp3 files as songs
 6. Logs warnings for anything that doesn't fit the expected pattern (e.g. unexpected files, missing levels)
 
-Output file: `catalog/catalog.json` in the project root.
+Output file: `catalog.json` in the project root.
 
 Expected JSON structure:
 {
@@ -115,7 +115,7 @@ Do NOT proceed to Step 2 until you've shown me the Step 1 investigation results 
 
 ---
 
-## Task 1 — Project Skeleton & Entities
+## Task 1 — Project Skeleton & Entities ✅ COMPLETED
 
 > **Done when:** `./gradlew bootRun` starts, H2 console at `/h2-console` shows all tables (artist, album, song, tag, artist_tags, album_tags).
 
@@ -129,7 +129,7 @@ Create this directory layout:
 music-library/
 ├── backend/
 ├── frontend/
-├── catalog/           (catalog.json already exists here from scanning step)
+├── catalog.json       (already exists at project root from scanning step)
 ├── config/
 ├── build.gradle.kts   (root)
 ├── settings.gradle.kts
@@ -143,16 +143,17 @@ music-library/
 
 `build.gradle.kts` (root): minimal, just declares the project.
 
-## 3. Backend Module (Spring Boot 3.x, Java 17+)
+## 3. Backend Module (Spring Boot 4.0.2, Java 25)
 
 Initialize `backend/build.gradle.kts` with these dependencies:
 - spring-boot-starter-web
 - spring-boot-starter-data-jpa
 - spring-boot-starter-validation
 - h2 (runtimeOnly)
-- flywaydb (flyway-core)
-- springdoc-openapi-starter-webmvc-ui (version 2.3.0+)
-- lombok (compileOnly + annotationProcessor)
+- spring-boot-h2console (Spring Boot 4.0 modularization)
+- spring-boot-starter-flyway (Spring Boot 4.0 modularization)
+- springdoc-openapi-starter-webmvc-ui (version 3.0.1)
+- lombok 1.18.42 (compileOnly + annotationProcessor)
 - spring-boot-starter-test (testImplementation)
 
 ## 4. Application Configuration
@@ -177,7 +178,7 @@ spring:
     enabled: true
 
 music-library:
-  catalog-path: ../catalog/catalog.json
+  catalog-path: ../catalog.json
 
 server:
   port: 8080
@@ -230,38 +231,38 @@ Add indexes on: artist.genre, artist.name, album.artist_id, album.grade, song.al
 
 ## 6. JPA Entities
 
-Create entities in `com.musiclib.domain` package:
+Create entities in `io.github.alexshamrai.domain` package:
 
-**Artist.java**: Maps to artist table. Has:
+**ArtistEntity.java**: Maps to artist table. Has:
 - @OneToMany(mappedBy = "artist", cascade = ALL, orphanRemoval = true) List<Album> albums
 - @ManyToMany with Tag via artist_tags join table
 - @PreUpdate method to set updatedAt
 
-**Album.java**: Maps to album table. Has:
-- @ManyToOne(fetch = LAZY) Artist artist
-- @OneToMany(mappedBy = "album", cascade = ALL, orphanRemoval = true) List<Song> songs
+**AlbumEntity.java**: Maps to album table. Has:
+- @ManyToOne(fetch = LAZY) ArtistEntity artist
+- @OneToMany(mappedBy = "album", cascade = ALL, orphanRemoval = true) List<SongEntity> songs
 - @ManyToMany with Tag via album_tags join table
 - @PreUpdate method to set updatedAt
 
-**Song.java**: Maps to song table. Has:
-- @ManyToOne(fetch = LAZY) Album album
+**SongEntity.java**: Maps to song table. Has:
+- @ManyToOne(fetch = LAZY) AlbumEntity album
 
-**Tag.java**: Maps to tag table. Has:
+**TagEntity.java**: Maps to tag table. Has:
 - @ManyToMany(mappedBy) for both artists and albums
 
 Use Lombok (@Data, @NoArgsConstructor, @AllArgsConstructor, @Builder) on all entities.
 
 ## 7. Repositories
 
-Create in `com.musiclib.repository`:
-- ArtistRepository extends JpaRepository<Artist, Long>, JpaSpecificationExecutor<Artist>
-- AlbumRepository extends JpaRepository<Album, Long>, JpaSpecificationExecutor<Album>
-- SongRepository extends JpaRepository<Song, Long>
-- TagRepository extends JpaRepository<Tag, Long> with findByName(String name) and findByNameIn(Collection<String> names)
+Create in `io.github.alexshamrai.repository`:
+- ArtistRepository extends JpaRepository<ArtistEntity, Long>, JpaSpecificationExecutor<ArtistEntity>
+- AlbumRepository extends JpaRepository<AlbumEntity, Long>, JpaSpecificationExecutor<AlbumEntity>
+- SongRepository extends JpaRepository<SongEntity, Long>
+- TagRepository extends JpaRepository<TagEntity, Long> with findByName(String name) and findByNameIn(Collection<String> names)
 
 ## 8. Main Application Class
 
-Create `MusicLibraryApplication.java` with @SpringBootApplication in `com.musiclib`.
+Create `MusicLibraryApplication.java` with @SpringBootApplication in `io.github.alexshamrai`.
 
 ## 9. Verification
 
@@ -274,7 +275,7 @@ After creating everything, run the application and confirm:
 
 ---
 
-## Task 2 — Catalog Import
+## Task 2 — Catalog Import ✅ COMPLETED
 
 > **Done when:** App starts, auto-imports `catalog.json`, artists/albums/songs visible in H2 console.
 
@@ -285,18 +286,20 @@ The project skeleton with entities and repositories already exists in the backen
 
 ## 1. DTOs for catalog.json
 
-Create in `com.musiclib.dto.catalog` package:
+Create in `io.github.alexshamrai.dto.catalog` package (implemented as Java records):
 
-**CatalogJsonDto**: scannedAt (String), rootPath (String), stats (StatsDto), warnings (List<String>), catalog (List<GenreEntryDto>)
-**GenreEntryDto**: genre (String), artists (List<ArtistEntryDto>)
-**ArtistEntryDto**: name (String), albums (List<AlbumEntryDto>)
-**AlbumEntryDto**: title (String), year (Integer, nullable), songs (List<String>)
+**Catalog**: scannedAt (String), rootPath (String), stats (Stats), warnings (List<String>), catalog (List<Genre>)
+**Genre**: genre (String), artists (List<Artist>)
+**Artist**: name (String), albums (List<Album>)
+**Album**: title (String), year (Integer, nullable), songs (List<String>)
+**Stats**: totalGenres, totalArtists, totalAlbums, totalTracks (all int)
+**ImportResult**: artistCount, albumCount, songCount (all int)
 
-Use Jackson annotations. All classes should be simple POJOs with Lombok @Data.
+Use @JsonIgnoreProperties(ignoreUnknown = true) on records.
 
 ## 2. CatalogImportService
 
-Create `com.musiclib.service.CatalogImportService`:
+Create `io.github.alexshamrai.service.CatalogImportService`:
 
 Method: `ImportResult importFromJson(Path catalogFile)`
 
@@ -326,7 +329,7 @@ Use @Transactional on the import method.
 
 ## 3. CatalogAutoImporter
 
-Create `com.musiclib.startup.CatalogAutoImporter`:
+Create `io.github.alexshamrai.startup.CatalogAutoImporter`:
 
 - Listens for ApplicationReadyEvent
 - Checks if the database is empty (artistRepository.count() == 0)
@@ -337,7 +340,7 @@ Create `com.musiclib.startup.CatalogAutoImporter`:
 
 ## 4. Manual Import Endpoint
 
-Create `com.musiclib.controller.CatalogController`:
+Create `io.github.alexshamrai.controller.CatalogController`:
 
 POST /api/catalog/import
 - Accepts multipart file upload of catalog.json
@@ -366,7 +369,7 @@ Implement the Artist CRUD REST API for the Music Library app. Entities, reposito
 
 ## 1. DTOs
 
-Create in `com.musiclib.dto`:
+Create in `io.github.alexshamrai.dto`:
 
 **ArtistDto** (response): id, name, genre, subgenre, isFavorite, tags (List<String>), albumCount (int)
 **ArtistCreateDto** (request for POST): name (required), genre (required), subgenre (optional)
@@ -376,7 +379,7 @@ Use Lombok @Data. Add Jakarta validation: @NotBlank on required fields.
 
 ## 2. ArtistService
 
-Create `com.musiclib.service.ArtistService`:
+Create `io.github.alexshamrai.service.ArtistService`:
 
 - List<ArtistDto> findAll(String genre, String subgenre, Boolean favorite, String tag) — apply filters if non-null
 - ArtistDto findById(Long id) — throw NotFoundException if not found
@@ -390,7 +393,7 @@ Map entities to DTOs. albumCount = artist.getAlbums().size().
 
 ## 3. ArtistController
 
-Create `com.musiclib.controller.ArtistController` with @RestController @RequestMapping("/api/artists"):
+Create `io.github.alexshamrai.controller.ArtistController` with @RestController @RequestMapping("/api/artists"):
 
 GET    /api/artists              — list all, optional query params: genre, subgenre, favorite, tag
 GET    /api/artists/{id}         — get by id
@@ -408,7 +411,7 @@ All endpoints return ArtistDto (or void for delete). Use ResponseEntity with pro
 
 ## 4. Exception Handling
 
-Create `com.musiclib.exception` package:
+Create `io.github.alexshamrai.exception` package:
 - NotFoundException extends RuntimeException
 - GlobalExceptionHandler with @ControllerAdvice:
   - Handle NotFoundException → 404 with message
@@ -444,7 +447,7 @@ Implement the Album CRUD REST API for the Music Library app. Artist API is alrea
 
 ## 1. DTOs
 
-Create in `com.musiclib.dto`:
+Create in `io.github.alexshamrai.dto`:
 
 **SongDto** (response): id, title, trackNumber, discNumber
 **AlbumDto** (response): id, title, year, grade, isFavorite, artist (object with id, name, genre), tags (List<String>), songs (List<SongDto> ordered by discNumber then trackNumber)
@@ -455,7 +458,7 @@ Create in `com.musiclib.dto`:
 
 ## 2. AlbumService
 
-Create `com.musiclib.service.AlbumService`:
+Create `io.github.alexshamrai.service.AlbumService`:
 
 - List<AlbumSummaryDto> findAll(AlbumFilterParams filters) — see filter params below
 - AlbumDto findById(Long id) — full detail with songs, throw NotFoundException
@@ -468,14 +471,14 @@ Create `com.musiclib.service.AlbumService`:
 
 ## 3. AlbumFilterParams
 
-Create `com.musiclib.dto.AlbumFilterParams`:
+Create `io.github.alexshamrai.dto.AlbumFilterParams`:
 Fields (all optional): genre (String), subgenre (String), artistId (Long), artistName (String), tag (List<String>), minGrade (Integer), maxGrade (Integer), favorite (Boolean), unrated (Boolean)
 
 Bind from query parameters. If unrated=true, filter where grade IS NULL.
 
 ## 4. AlbumController
 
-Create `com.musiclib.controller.AlbumController` with @RestController @RequestMapping("/api/albums"):
+Create `io.github.alexshamrai.controller.AlbumController` with @RestController @RequestMapping("/api/albums"):
 
 GET    /api/albums               — list all with filters as query params
 GET    /api/albums/{id}          — detail with songs
@@ -488,7 +491,7 @@ PUT    /api/albums/{id}/tags     — set tags, @RequestBody List<String>
 
 ## 5. Tag Endpoints
 
-Create `com.musiclib.controller.TagController` with @RequestMapping("/api/tags"):
+Create `io.github.alexshamrai.controller.TagController` with @RequestMapping("/api/tags"):
 
 GET    /api/tags                 — list all tags
 POST   /api/tags                 — create tag, body: { "name": "chill" }
@@ -522,9 +525,9 @@ Implement Browse and Random Album endpoints for the Music Library app. All CRUD 
 
 ## 1. JPA Specifications
 
-Create `com.musiclib.specification.AlbumSpecs`:
+Create `io.github.alexshamrai.specification.AlbumSpecs`:
 
-Static methods that return Specification<Album>:
+Static methods that return Specification<AlbumEntity>:
 - artistGenreEquals(String genre) — join to artist, where artist.genre = genre
 - artistSubgenreEquals(String subgenre)
 - byArtist(Long artistId) — where album.artist.id = artistId
@@ -542,7 +545,7 @@ If findAll in AlbumService is not already using these Specifications, refactor i
 
 ## 2. BrowseController
 
-Create `com.musiclib.controller.BrowseController` with @RequestMapping("/api/browse"):
+Create `io.github.alexshamrai.controller.BrowseController` with @RequestMapping("/api/browse"):
 
 **GET /api/browse/genres**
 Returns list of: { genre, artistCount, albumCount }
@@ -580,10 +583,10 @@ Returns:
 
 ## 3. RandomPickService
 
-Create `com.musiclib.service.RandomPickService`:
+Create `io.github.alexshamrai.service.RandomPickService`:
 
 **randomAlbum(AlbumFilterParams filters):**
-1. Build Specification<Album> from filters (reuse AlbumSpecs)
+1. Build Specification<AlbumEntity> from filters (reuse AlbumSpecs)
 2. Count matching albums
 3. If 0, throw NoMatchException("No albums match the given filters")
 4. Generate random offset (0 to count-1)
@@ -598,7 +601,7 @@ Create `com.musiclib.service.RandomPickService`:
 
 ## 4. RandomController
 
-Create `com.musiclib.controller.RandomController` with @RequestMapping("/api/random"):
+Create `io.github.alexshamrai.controller.RandomController` with @RequestMapping("/api/random"):
 
 **GET /api/random/album**
 Query params: same as AlbumFilterParams (genre, minGrade, tag, favorite, etc.)
@@ -611,7 +614,7 @@ Returns: List<AlbumDto>
 
 ## 5. NoMatchException
 
-Create `com.musiclib.exception.NoMatchException` and handle in GlobalExceptionHandler → 404.
+Create `io.github.alexshamrai.exception.NoMatchException` and handle in GlobalExceptionHandler → 404.
 
 ## 6. Verification
 
@@ -959,7 +962,7 @@ music-library:
 
 ## 3. GoogleSheetsConfig
 
-Create `com.musiclib.config.GoogleSheetsConfig`:
+Create `io.github.alexshamrai.config.GoogleSheetsConfig`:
 - @Configuration, @ConditionalOnProperty(name = "music-library.gdrive.enabled", havingValue = "true")
 - Read credentials from the configured path
 - Build GoogleCredentials with Sheets scope
@@ -967,7 +970,7 @@ Create `com.musiclib.config.GoogleSheetsConfig`:
 
 ## 4. GoogleSheetsBackupService
 
-Create `com.musiclib.service.GoogleSheetsBackupService`:
+Create `io.github.alexshamrai.service.GoogleSheetsBackupService`:
 - @ConditionalOnProperty same as config
 
 **backup() method:**
@@ -1035,7 +1038,7 @@ albums.csv columns: id, title, artistName, genre, year, grade, isFavorite, tags,
 
 ## 2. SPA Routing Support
 
-Create `com.musiclib.config.WebConfig`:
+Create `io.github.alexshamrai.config.WebConfig`:
 - Forward all non-API, non-static paths to index.html so React Router works
 - Paths starting with /api/ should NOT be forwarded
 - Static resources (.js, .css, .html, images) should NOT be forwarded

@@ -8,28 +8,39 @@ Personal music catalog app for browsing, rating, tagging, and randomly picking a
 
 ## Current State
 
-The project is in early stages. Completed so far:
-- `music_scanner.py` — One-time Python scanner that produced `catalog.json` from the filesystem (prerequisite, already run)
-- `catalog.json` — Scanned library (~176 artists, ~2842 albums, ~31K tracks across 7 genres)
+Tasks 0–2 from `task-list.md` are complete. Next up: Task 3 (Artist CRUD API).
+
+**Done:**
+- `music_scanner.py` — One-time Python scanner that produced `catalog.json` (prerequisite, already run)
+- `catalog.json` — Scanned library (~176 artists, ~2830 albums, ~31K tracks across 7 genres) at project root
 - `plan.md` — Full architecture and design document
 - `task-list.md` — Sequential implementation tasks (Tasks 0-10)
+- **Backend skeleton** — Spring Boot app with Gradle build, Flyway migration, H2 database, application.yml
+- **Domain entities** — ArtistEntity, AlbumEntity, SongEntity, TagEntity with JPA mappings
+- **Repositories** — ArtistRepository, AlbumRepository, SongRepository, TagRepository
+- **Catalog import** — CatalogImportService (JSON → DB), CatalogAutoImporter (auto-imports on first startup if DB empty), POST /api/catalog/import endpoint
+- **Catalog DTOs** — Java records in `dto.catalog` package: Catalog, Genre, Artist, Album, Stats, ImportResult
 
-The backend (Spring Boot) and frontend (React) have **not been built yet**. Follow `task-list.md` sequentially when implementing.
+**Not started:**
+- Frontend (React) — `frontend/` directory is empty
+- REST APIs for artists, albums, browse, random, tags
+- Google Sheets backup, export endpoints
+- Exception handling, JPA Specifications
 
-## Architecture (Planned)
+## Architecture
 
 Monorepo with two modules that build into a single deployable JAR:
 
-- **backend/** — Java 17+, Spring Boot 3.x, Spring Data JPA, H2 (file-persisted), Flyway migrations, SpringDoc OpenAPI
-- **frontend/** — React 19, TypeScript, Vite 6, TanStack Query v5, React Router 7, Tailwind CSS 4, Lucide icons
-- **catalog/** — `catalog.json` scanner output (one-time initial seed)
+- **backend/** — Java 25, Spring Boot 4.0.2, Spring Data JPA, H2 (file-persisted), Flyway migrations, SpringDoc OpenAPI 3.0.1
+- **frontend/** — React 19, TypeScript, Vite 6, TanStack Query v5, React Router 7, Tailwind CSS 4, Lucide icons (not started)
+- **catalog.json** — Scanner output at project root (one-time initial seed)
 - **config/** — Google Sheets service account credentials
 
 Data flow: Google Sheets ↔ App (read/write persistent store) ↔ H2 DB (runtime cache) ↔ REST API ↔ React UI
 
 Initial seed: `catalog.json` → imported into H2 on first boot → synced to Google Sheets
 
-## Key Commands (Once Built)
+## Key Commands
 
 ```bash
 # Development (two terminals)
@@ -68,17 +79,24 @@ All endpoints under `/api/`:
 
 `music_scanner.py` is a one-time script that was run against an external drive to produce `catalog.json`. It is not part of the running application. The external drive is no longer needed.
 
-## Backend Packages (Planned)
+## Backend Packages
 
 Base package: `io.github.alexshamrai`
-- `domain/` — JPA entities (Artist, Album, Song, Tag)
+
+**Implemented:**
+- `domain/` — JPA entities: ArtistEntity, AlbumEntity, SongEntity, TagEntity
 - `repository/` — Spring Data JPA repos with JpaSpecificationExecutor
-- `specification/` — AlbumSpecs/ArtistSpecs for dynamic query filters
-- `service/` — Business logic (CRUD, import, export, random pick, Google Sheets read/write)
-- `controller/` — REST controllers
-- `dto/` — Request/response DTOs + catalog.json mapping DTOs
-- `exception/` — NotFoundException, NoMatchException, GlobalExceptionHandler
+- `service/` — CatalogImportService (catalog.json → DB)
+- `controller/` — CatalogController (POST /api/catalog/import)
+- `dto/catalog/` — Java records mapping catalog.json: Catalog, Genre, Artist, Album, Stats, ImportResult
 - `startup/` — CatalogAutoImporter (imports on first run if DB empty)
+
+**Planned (not yet created):**
+- `specification/` — AlbumSpecs/ArtistSpecs for dynamic query filters
+- `service/` — ArtistService, AlbumService, TagService, RandomPickService, CatalogExportService, GoogleSheetsBackupService
+- `controller/` — ArtistController, AlbumController, TagController, BrowseController, RandomController
+- `dto/` — Request/response DTOs (ArtistDto, AlbumDto, etc.)
+- `exception/` — NotFoundException, NoMatchException, GlobalExceptionHandler
 - `config/` — WebConfig (SPA routing), GoogleSheetsConfig
 
 ## Important Conventions
