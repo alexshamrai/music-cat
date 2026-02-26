@@ -182,14 +182,14 @@ No direct FK from Song to Artist. You always reach the artist through `song.albu
 
 | Layer | Technology | Rationale |
 |---|---|---|
-| Language | Java 17+ | User preference, LTS |
-| Framework | Spring Boot 3.x | REST, JPA, embedded server, battle-tested |
+| Language | Java 25 (via sdkman) | Latest features |
+| Framework | Spring Boot 4.0.2 | REST, JPA, embedded server, battle-tested |
 | ORM | Spring Data JPA + Hibernate | Repository pattern, JPA Specifications for dynamic queries |
 | Database | H2 (file-persisted mode) | Embedded, zero-config, single file, full SQL |
 | Schema mgmt | Flyway | Versioned migrations, repeatable |
-| Build (back) | Gradle (Kotlin DSL) | Modern, flexible, orchestrates full-stack build |
+| Build (back) | Gradle 9.0 (Kotlin DSL) | Modern, flexible, orchestrates full-stack build |
 | Validation | Jakarta Validation (`@Valid`) | `@Min(1) @Max(5)` for grade, etc. |
-| API docs | SpringDoc OpenAPI 2.x | Auto-generated Swagger UI at `/swagger-ui` |
+| API docs | SpringDoc OpenAPI 3.0.1 | Auto-generated Swagger UI at `/swagger-ui` |
 | JSON | Jackson (built into Spring Boot) | Parsing catalog.json + DTO serialization |
 | Google integration | Google API Client for Java + Sheets API | CSV backup to Google Drive/Sheets |
 | Scheduling | Spring `@Scheduled` | Periodic auto-backup |
@@ -479,7 +479,7 @@ public class GoogleSheetsBackupService {
 
 ```yaml
 music-library:
-  catalog-path: ./catalog/catalog.json
+  catalog-path: ../catalog.json
 
   gdrive:
     enabled: true
@@ -510,7 +510,7 @@ Single repository, two modules — frontend builds into backend's static resourc
 music-library/
 │
 ├── backend/
-│   ├── src/main/java/com/musiclib/
+│   ├── src/main/java/io/github/alexshamrai/
 │   │   ├── MusicLibraryApplication.java
 │   │   │
 │   │   ├── config/
@@ -519,10 +519,10 @@ music-library/
 │   │   │   └── WebConfig.java                    # SPA routing: forward non-API to index.html
 │   │   │
 │   │   ├── domain/
-│   │   │   ├── Artist.java                       # @Entity
-│   │   │   ├── Album.java                        # @Entity
-│   │   │   ├── Song.java                         # @Entity
-│   │   │   └── Tag.java                          # @Entity
+│   │   │   ├── ArtistEntity.java                 # @Entity
+│   │   │   ├── AlbumEntity.java                  # @Entity
+│   │   │   ├── SongEntity.java                   # @Entity
+│   │   │   └── TagEntity.java                    # @Entity
 │   │   │
 │   │   ├── repository/
 │   │   │   ├── ArtistRepository.java             # JpaSpecificationExecutor
@@ -555,7 +555,9 @@ music-library/
 │   │   │   ├── ArtistDto.java / ArtistCreateDto.java
 │   │   │   ├── AlbumDto.java / AlbumCreateDto.java
 │   │   │   ├── AlbumFilterParams.java            # Query param binding
-│   │   │   ├── CatalogJsonDto.java               # Maps catalog.json structure
+│   │   │   ├── catalog/                          # Java records mapping catalog.json
+│   │   │   │   ├── Catalog.java, Genre.java, Artist.java, Album.java
+│   │   │   │   ├── Stats.java, ImportResult.java
 │   │   │   ├── BrowseGenreDto.java
 │   │   │   ├── StatsDto.java
 │   │   │   └── BackupResultDto.java
@@ -615,8 +617,7 @@ music-library/
 │   ├── vite.config.ts                            # Proxy /api → localhost:8080 in dev
 │   └── tailwind.config.js
 │
-├── catalog/
-│   └── catalog.json                              # Scanner output (prerequisite)
+├── catalog.json                                  # Scanner output (prerequisite, at project root)
 ├── config/
 │   └── google-credentials.json                   # Service account key
 ├── data/                                         # H2 file (auto-created)
@@ -773,21 +774,22 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
-    // Database
+    // Database (Spring Boot 4.0 modularization)
     runtimeOnly("com.h2database:h2")
-    implementation("org.flywaydb:flyway-core")
+    implementation("org.springframework.boot:spring-boot-h2console")
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
 
     // API docs
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
 
-    // Google Sheets
-    implementation("com.google.api-client:google-api-client:2.2.0")
-    implementation("com.google.apis:google-api-services-sheets:v4-rev20231023-2.0.0")
-    implementation("com.google.auth:google-auth-library-oauth2-http:1.20.0")
+    // Google Sheets (to be added in Task 9)
+    // implementation("com.google.api-client:google-api-client:2.2.0")
+    // implementation("com.google.apis:google-api-services-sheets:v4-rev20231023-2.0.0")
+    // implementation("com.google.auth:google-auth-library-oauth2-http:1.20.0")
 
     // Utilities
-    compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
+    compileOnly("org.projectlombok:lombok:1.18.42")
+    annotationProcessor("org.projectlombok:lombok:1.18.42")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -846,26 +848,26 @@ External Drive      catalog.json         H2 Database            Google Sheets
 
 ## 11. Implementation Plan
 
-### Phase 0 — Prerequisite: Scan (Day 0)
+### Phase 0 — Prerequisite: Scan (Day 0) ✅
 - [x] Claude scans external drive
 - [x] Produces catalog.json
-- [ ] User validates output, stores catalog.json with project
+- [x] User validates output, stores catalog.json with project
 
-### Phase 1 — Project Skeleton (Day 1)
-- [ ] Initialize Spring Boot project (start.spring.io)
-- [ ] Configure build.gradle.kts with all dependencies
-- [ ] Set up application.yml (H2, Flyway, app properties)
-- [ ] Write Flyway migration `V1__init_schema.sql` (artist, album, song, tag, join tables)
-- [ ] Create JPA entities: Artist, Album, Song, Tag (with join tables)
-- [ ] Create repositories (extend JpaRepository + JpaSpecificationExecutor)
-- [ ] Verify: app starts, H2 console shows tables
+### Phase 1 — Project Skeleton (Day 1) ✅
+- [x] Initialize Spring Boot 4.0.2 project with Gradle 9.0
+- [x] Configure build.gradle.kts with all dependencies (Java 25, Lombok 1.18.42)
+- [x] Set up application.yml (H2, Flyway, app properties)
+- [x] Write Flyway migration `V1__init_schema.sql` (artist, album, song, tag, join tables)
+- [x] Create JPA entities: ArtistEntity, AlbumEntity, SongEntity, TagEntity (with join tables)
+- [x] Create repositories (extend JpaRepository + JpaSpecificationExecutor)
+- [x] Verify: app starts, H2 console shows tables
 
-### Phase 2 — Catalog Import (Day 2)
-- [ ] Create DTOs mapping catalog.json structure (CatalogJsonDto, GenreEntry, etc.)
-- [ ] Implement CatalogImportService (JSON → DB upsert)
-- [ ] Implement CatalogAutoImporter (imports on first startup if DB empty)
-- [ ] POST /api/catalog/import endpoint (manual re-import)
-- [ ] Verify: start app → catalog.json auto-loaded → data visible in H2 console
+### Phase 2 — Catalog Import (Day 2) ✅
+- [x] Create DTOs mapping catalog.json structure (Java records: Catalog, Genre, Artist, Album, Stats, ImportResult)
+- [x] Implement CatalogImportService (JSON → DB upsert)
+- [x] Implement CatalogAutoImporter (imports on first startup if DB empty)
+- [x] POST /api/catalog/import endpoint (manual re-import)
+- [x] Verify: start app → catalog.json auto-loaded → data visible in H2 console
 
 ### Phase 3 — CRUD API (Day 3-4)
 - [ ] DTO layer: ArtistDto, AlbumDto, create/update variants
