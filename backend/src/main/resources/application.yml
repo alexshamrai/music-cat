@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:file:./data/music-library;AUTO_SERVER=TRUE
+    url: jdbc:h2:file:./data/music-cat;AUTO_SERVER=TRUE
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -15,7 +15,7 @@ spring:
   flyway:
     enabled: true
 
-music-library:
+music-cat:
   catalog-path: ../catalog.json
 
 server:

@@ -126,7 +126,7 @@ Set up the monorepo for a Music Library application with a Java Spring Boot back
 
 Create this directory layout:
 
-music-library/
+music-cat/
 ├── backend/
 ├── frontend/
 ├── catalog.json       (already exists at project root from scanning step)
@@ -138,7 +138,7 @@ music-library/
 ## 2. Root Gradle Setup
 
 `settings.gradle.kts`:
-- rootProject.name = "music-library"
+- rootProject.name = "music-cat"
 - include("backend")
 
 `build.gradle.kts` (root): minimal, just declares the project.
@@ -162,7 +162,7 @@ Create `backend/src/main/resources/application.yml`:
 
 spring:
   datasource:
-    url: jdbc:h2:file:./data/music-library;AUTO_SERVER=TRUE
+    url: jdbc:h2:file:./data/music-cat;AUTO_SERVER=TRUE
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -177,7 +177,7 @@ spring:
   flyway:
     enabled: true
 
-music-library:
+music-cat:
   catalog-path: ../catalog.json
 
 server:
@@ -333,7 +333,7 @@ Create `io.github.alexshamrai.startup.CatalogAutoImporter`:
 
 - Listens for ApplicationReadyEvent
 - Checks if the database is empty (artistRepository.count() == 0)
-- If empty, reads the catalog file from the path configured in application.yml (music-library.catalog-path)
+- If empty, reads the catalog file from the path configured in application.yml (music-cat.catalog-path)
 - Calls CatalogImportService.importFromJson()
 - Logs the result: "Imported X artists, Y albums, Z songs"
 - If catalog file doesn't exist, logs a warning and skips
@@ -350,7 +350,7 @@ POST /api/catalog/import
 ## 5. Verification
 
 After implementing:
-1. Delete the H2 data file if it exists (./data/music-library.mv.db)
+1. Delete the H2 data file if it exists (./data/music-cat.mv.db)
 2. Start the app — it should auto-import from catalog.json
 3. Show me the log output with import counts
 4. Query H2 console: count of artists, albums, songs
@@ -953,7 +953,7 @@ Add to backend/build.gradle.kts:
 
 Add to application.yml:
 
-music-library:
+music-cat:
   gdrive:
     enabled: false                    # disabled by default, enable when credentials exist
     credentials-path: ../config/google-credentials.json
@@ -963,7 +963,7 @@ music-library:
 ## 3. GoogleSheetsConfig
 
 Create `io.github.alexshamrai.config.GoogleSheetsConfig`:
-- @Configuration, @ConditionalOnProperty(name = "music-library.gdrive.enabled", havingValue = "true")
+- @Configuration, @ConditionalOnProperty(name = "music-cat.gdrive.enabled", havingValue = "true")
 - Read credentials from the configured path
 - Build GoogleCredentials with Sheets scope
 - Create and expose a Sheets service bean
@@ -990,7 +990,7 @@ Create `io.github.alexshamrai.service.GoogleSheetsBackupService`:
 
 ## 5. Scheduled Backup
 
-Add @Scheduled(cron = "${music-library.gdrive.backup-cron}") on a scheduledBackup() method that calls backup() and logs the result.
+Add @Scheduled(cron = "${music-cat.gdrive.backup-cron}") on a scheduledBackup() method that calls backup() and logs the result.
 
 ## 6. Endpoint
 
@@ -1014,7 +1014,7 @@ Show me the code and confirm it compiles.
 
 ## Task 10 — Export, Build Integration & Polish
 
-> **Done when:** `./gradlew bootJar` produces a single JAR. `java -jar music-library.jar` serves both API and React UI on port 8080.
+> **Done when:** `./gradlew bootJar` produces a single JAR. `java -jar music-cat.jar` serves both API and React UI on port 8080.
 
 ```
 Final task: add export endpoints, integrate the frontend build into the Gradle build, add SPA routing support, and verify the full production build.
@@ -1026,12 +1026,12 @@ Add to CatalogController:
 **GET /api/catalog/export/json**
 - Export the full enriched catalog as JSON
 - Format: same structure as catalog.json but with added fields (grade, isFavorite, tags, subgenre, parsed song titles)
-- Set Content-Disposition header: attachment; filename="music-library-export.json"
+- Set Content-Disposition header: attachment; filename="music-cat-export.json"
 
 **GET /api/catalog/export/csv**
 - Generate two CSV files: artists.csv and albums.csv
 - Zip them together
-- Return as application/zip with Content-Disposition: attachment; filename="music-library-export.zip"
+- Return as application/zip with Content-Disposition: attachment; filename="music-cat-export.zip"
 
 artists.csv columns: id, name, genre, subgenre, isFavorite, tags, albumCount
 albums.csv columns: id, title, artistName, genre, year, grade, isFavorite, tags, songCount
@@ -1073,7 +1073,7 @@ Create a README.md at the project root with:
 
 Run the full production build:
 1. ./gradlew clean bootJar — should complete without errors
-2. java -jar backend/build/libs/music-library-*.jar
+2. java -jar backend/build/libs/music-cat-*.jar
 3. Open http://localhost:8080 — React app loads
 4. Navigate to /browse, /artists, /random — SPA routing works (no 404)
 5. Open http://localhost:8080/swagger-ui — API docs work

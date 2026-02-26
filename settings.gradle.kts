@@ -1,2 +1,2 @@
-rootProject.name = "music-library"
+rootProject.name = "music-cat"
 include("backend")

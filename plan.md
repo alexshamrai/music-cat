@@ -209,7 +209,7 @@ No direct FK from Song to Artist. You always reach the artist through `song.albu
 ```yaml
 spring:
   datasource:
-    url: jdbc:h2:file:./data/music-library;AUTO_SERVER=TRUE
+    url: jdbc:h2:file:./data/music-cat;AUTO_SERVER=TRUE
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -219,7 +219,7 @@ spring:
       path: /h2-console
 ```
 
-- Data stored in `./data/music-library.mv.db`
+- Data stored in `./data/music-cat.mv.db`
 - Survives application restarts
 - `AUTO_SERVER=TRUE` allows external tools to connect while app runs
 - H2 Console at `http://localhost:8080/h2-console` for manual inspection
@@ -427,7 +427,7 @@ public class GoogleSheetsBackupService {
     private final AlbumRepository albumRepo;
     private final Sheets sheetsService;  // Google Sheets API client
 
-    @Value("${music-library.gdrive.spreadsheet-id}")
+    @Value("${music-cat.gdrive.spreadsheet-id}")
     private String spreadsheetId;
 
     public BackupResult backup() {
@@ -468,7 +468,7 @@ public class GoogleSheetsBackupService {
     }
 
     // Can be triggered manually or on schedule
-    @Scheduled(cron = "${music-library.gdrive.backup-cron:0 0 2 * * SUN}")  // weekly
+    @Scheduled(cron = "${music-cat.gdrive.backup-cron:0 0 2 * * SUN}")  // weekly
     public void scheduledBackup() {
         backup();
     }
@@ -478,7 +478,7 @@ public class GoogleSheetsBackupService {
 ### 7.3 Configuration
 
 ```yaml
-music-library:
+music-cat:
   catalog-path: ../catalog.json
 
   gdrive:
@@ -492,7 +492,7 @@ music-library:
 
 ```
 1. Go to console.cloud.google.com
-2. Create project "music-library"
+2. Create project "music-cat"
 3. Enable "Google Sheets API"
 4. Create Service Account → download JSON key → save as ./config/google-credentials.json
 5. Create a Google Spreadsheet, add two sheets: "Artists", "Albums"
@@ -507,7 +507,7 @@ music-library:
 Single repository, two modules — frontend builds into backend's static resources.
 
 ```
-music-library/
+music-cat/
 │
 ├── backend/
 │   ├── src/main/java/io/github/alexshamrai/
@@ -679,7 +679,7 @@ cd frontend && npm run dev
 # 1. Runs `npm install && npm run build` in frontend/
 # 2. Copies frontend/dist/* → backend/src/main/resources/static/
 # 3. Builds the Spring Boot JAR
-# Result: java -jar backend/build/libs/music-library.jar
+# Result: java -jar backend/build/libs/music-cat.jar
 #         serves BOTH API and UI on localhost:8080
 ```
 
@@ -842,7 +842,7 @@ External Drive      catalog.json         H2 Database            Google Sheets
 1. **catalog.json** — immutable original scan, your "factory reset" snapshot
 2. **Google Sheets** — live, human-readable CSV backup with grades/tags/favorites
 3. **JSON export** — full enriched catalog, downloadable anytime
-4. **H2 file** — copyable binary backup (`./data/music-library.mv.db`)
+4. **H2 file** — copyable binary backup (`./data/music-cat.mv.db`)
 
 ---
 

@@ -21,7 +21,7 @@ public class CatalogAutoImporter {
     private final CatalogImportService catalogImportService;
     private final ArtistRepository artistRepository;
 
-    @Value("${music-library.catalog-path}")
+    @Value("${music-cat.catalog-path}")
     private String catalogPath;
 
     @EventListener(ApplicationReadyEvent.class)

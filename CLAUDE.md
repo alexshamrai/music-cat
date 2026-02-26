@@ -52,7 +52,7 @@ cd frontend && npm run dev               # Frontend on :5173 (proxies /api to :8
 
 # Production build (single JAR)
 ./gradlew bootJar
-java -jar backend/build/libs/music-library-*.jar   # Serves both API and UI on :8080
+java -jar backend/build/libs/music-cat-*.jar   # Serves both API and UI on :8080
 ```
 
 ## Domain Model
