@@ -360,7 +360,7 @@ After implementing:
 
 ---
 
-## Task 3 — Artist CRUD API
+## Task 3 — Artist CRUD API ✅ COMPLETED
 
 > **Done when:** All artist endpoints work in Swagger UI — create, read, update, delete, toggle favorite, manage tags.
 
