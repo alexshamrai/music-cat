@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import io.github.alexshamrai.domain.Genre;
+
 import java.util.List;
 
 @Data
@@ -29,6 +31,6 @@ public class AlbumDto {
     public static class ArtistSummaryDto {
         private Long id;
         private String name;
-        private String genre;
+        private Genre genre;
     }
 }

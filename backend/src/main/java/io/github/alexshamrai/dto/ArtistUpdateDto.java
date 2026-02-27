@@ -1,5 +1,6 @@
 package io.github.alexshamrai.dto;
 
+import io.github.alexshamrai.domain.Genre;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,8 +14,7 @@ public class ArtistUpdateDto {
     @Size(min = 1, message = "Name must not be empty")
     private String name;
 
-    @Size(min = 1, message = "Genre must not be empty")
-    private String genre;
+    private Genre genre;
 
     private String subgenre;
 }

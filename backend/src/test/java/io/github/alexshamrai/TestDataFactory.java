@@ -2,6 +2,7 @@ package io.github.alexshamrai;
 
 import io.github.alexshamrai.domain.AlbumEntity;
 import io.github.alexshamrai.domain.ArtistEntity;
+import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.domain.SongEntity;
 import io.github.alexshamrai.domain.TagEntity;
 import io.github.alexshamrai.dto.AlbumCreateDto;
@@ -22,7 +23,7 @@ public final class TestDataFactory {
 
     private TestDataFactory() {}
 
-    public static ArtistEntity artist(String name, String genre) {
+    public static ArtistEntity artist(String name, Genre genre) {
         return ArtistEntity.builder()
                 .name(name)
                 .genre(genre)
@@ -31,7 +32,7 @@ public final class TestDataFactory {
                 .build();
     }
 
-    public static ArtistEntity artistWithId(Long id, String name, String genre) {
+    public static ArtistEntity artistWithId(Long id, String name, Genre genre) {
         return ArtistEntity.builder()
                 .id(id)
                 .name(name)
@@ -41,7 +42,7 @@ public final class TestDataFactory {
                 .build();
     }
 
-    public static ArtistEntity artistWithAlbums(Long id, String name, String genre, List<AlbumEntity> albums) {
+    public static ArtistEntity artistWithAlbums(Long id, String name, Genre genre, List<AlbumEntity> albums) {
         return ArtistEntity.builder()
                 .id(id)
                 .name(name)
@@ -51,7 +52,7 @@ public final class TestDataFactory {
                 .build();
     }
 
-    public static ArtistEntity artistWithTags(Long id, String name, String genre, Set<TagEntity> tags) {
+    public static ArtistEntity artistWithTags(Long id, String name, Genre genre, Set<TagEntity> tags) {
         return ArtistEntity.builder()
                 .id(id)
                 .name(name)
@@ -97,19 +98,19 @@ public final class TestDataFactory {
                 .build();
     }
 
-    public static ArtistCreateDto createDto(String name, String genre) {
+    public static ArtistCreateDto createDto(String name, Genre genre) {
         return new ArtistCreateDto(name, genre, null);
     }
 
-    public static ArtistCreateDto createDto(String name, String genre, String subgenre) {
+    public static ArtistCreateDto createDto(String name, Genre genre, String subgenre) {
         return new ArtistCreateDto(name, genre, subgenre);
     }
 
-    public static ArtistUpdateDto updateDto(String name, String genre, String subgenre) {
+    public static ArtistUpdateDto updateDto(String name, Genre genre, String subgenre) {
         return new ArtistUpdateDto(name, genre, subgenre);
     }
 
-    public static ArtistDto artistDto(Long id, String name, String genre) {
+    public static ArtistDto artistDto(Long id, String name, Genre genre) {
         return ArtistDto.builder()
                 .id(id)
                 .name(name)
@@ -173,7 +174,7 @@ public final class TestDataFactory {
         return new AlbumUpdateDto(title, year);
     }
 
-    public static AlbumSummaryDto albumSummaryDto(Long id, String title, Integer year, String artistName, String genre) {
+    public static AlbumSummaryDto albumSummaryDto(Long id, String title, Integer year, String artistName, Genre genre) {
         return AlbumSummaryDto.builder()
                 .id(id)
                 .title(title)
@@ -186,7 +187,7 @@ public final class TestDataFactory {
                 .build();
     }
 
-    public static AlbumDto albumDto(Long id, String title, Integer year, Long artistId, String artistName, String genre) {
+    public static AlbumDto albumDto(Long id, String title, Integer year, Long artistId, String artistName, Genre genre) {
         return AlbumDto.builder()
                 .id(id)
                 .title(title)

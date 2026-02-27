@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import io.github.alexshamrai.domain.Genre;
+
 import java.util.List;
 
 @Data
@@ -15,7 +17,7 @@ public class ArtistDto {
 
     private Long id;
     private String name;
-    private String genre;
+    private Genre genre;
     private String subgenre;
     private boolean favorite;
     private List<String> tags;

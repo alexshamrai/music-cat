@@ -10,5 +10,5 @@ public record Catalog(
     String rootPath,
     Stats stats,
     List<String> warnings,
-    List<Genre> catalog
+    List<GenreGroup> catalog
 ) {}

@@ -1,5 +1,6 @@
 package io.github.alexshamrai.controller;
 
+import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.dto.ArtistCreateDto;
 import io.github.alexshamrai.dto.ArtistDto;
 import io.github.alexshamrai.dto.ArtistUpdateDto;
@@ -30,7 +31,7 @@ public class ArtistController {
 
     @GetMapping
     public ResponseEntity<List<ArtistDto>> list(
-            @RequestParam(required = false) String genre,
+            @RequestParam(required = false) Genre genre,
             @RequestParam(required = false) String subgenre,
             @RequestParam(required = false) Boolean favorite,
             @RequestParam(required = false) String tag) {

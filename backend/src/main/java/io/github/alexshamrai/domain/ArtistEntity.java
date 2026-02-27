@@ -47,7 +47,7 @@ public class ArtistEntity {
     private String name;
 
     @Column(nullable = false, length = 100)
-    private String genre;
+    private Genre genre;
 
     @Column(length = 100)
     private String subgenre;

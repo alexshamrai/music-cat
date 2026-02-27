@@ -1,8 +1,8 @@
 package io.github.alexshamrai.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.alexshamrai.domain.AlbumEntity;
 import io.github.alexshamrai.domain.ArtistEntity;
+import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.domain.SongEntity;
 import io.github.alexshamrai.repository.AlbumRepository;
 import io.github.alexshamrai.repository.ArtistRepository;
@@ -195,7 +195,7 @@ class CatalogImportServiceTest {
                   "stats": {"totalGenres":1,"totalArtists":1,"totalAlbums":1,"totalTracks":2},
                   "warnings": [],
                   "catalog": [{
-                    "genre": "Rock",
+                    "genre": "Progressive Rock",
                     "artists": [{
                       "name": "TestBand",
                       "albums": [{
@@ -208,8 +208,8 @@ class CatalogImportServiceTest {
                 }
                 """);
 
-        var savedArtist = artistWithId(1L, "TestBand", "Rock");
-        when(artistRepository.findByNameAndGenre("TestBand", "Rock")).thenReturn(Optional.empty());
+        var savedArtist = artistWithId(1L, "TestBand", Genre.PROGRESSIVE_ROCK);
+        when(artistRepository.findByNameAndGenre("TestBand", Genre.PROGRESSIVE_ROCK)).thenReturn(Optional.empty());
         when(artistRepository.save(any(ArtistEntity.class))).thenReturn(savedArtist);
         when(albumRepository.existsByArtistIdAndTitle(anyLong(), anyString())).thenReturn(false);
         when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -235,7 +235,7 @@ class CatalogImportServiceTest {
                   "stats": {"totalGenres":1,"totalArtists":1,"totalAlbums":1,"totalTracks":1},
                   "warnings": [],
                   "catalog": [{
-                    "genre": "Rock",
+                    "genre": "Progressive Rock",
                     "artists": [{
                       "name": "TestBand",
                       "albums": [{
@@ -248,8 +248,8 @@ class CatalogImportServiceTest {
                 }
                 """);
 
-        var savedArtist = artistWithId(1L, "TestBand", "Rock");
-        when(artistRepository.findByNameAndGenre("TestBand", "Rock")).thenReturn(Optional.of(savedArtist));
+        var savedArtist = artistWithId(1L, "TestBand", Genre.PROGRESSIVE_ROCK);
+        when(artistRepository.findByNameAndGenre("TestBand", Genre.PROGRESSIVE_ROCK)).thenReturn(Optional.of(savedArtist));
         when(albumRepository.existsByArtistIdAndTitle(1L, "ExistingAlbum")).thenReturn(true);
 
         ImportResult result = catalogImportService.importFromJson(catalogFile);
@@ -269,7 +269,7 @@ class CatalogImportServiceTest {
                   "stats": {"totalGenres":1,"totalArtists":1,"totalAlbums":1,"totalTracks":1},
                   "warnings": [],
                   "catalog": [{
-                    "genre": "Rock",
+                    "genre": "Progressive Rock",
                     "artists": [{
                       "name": "ExistingBand",
                       "albums": [{
@@ -282,8 +282,8 @@ class CatalogImportServiceTest {
                 }
                 """);
 
-        var existingArtist = artistWithId(42L, "ExistingBand", "Rock");
-        when(artistRepository.findByNameAndGenre("ExistingBand", "Rock")).thenReturn(Optional.of(existingArtist));
+        var existingArtist = artistWithId(42L, "ExistingBand", Genre.PROGRESSIVE_ROCK);
+        when(artistRepository.findByNameAndGenre("ExistingBand", Genre.PROGRESSIVE_ROCK)).thenReturn(Optional.of(existingArtist));
         when(albumRepository.existsByArtistIdAndTitle(42L, "NewAlbum")).thenReturn(false);
         when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));
         when(songRepository.save(any(SongEntity.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -303,7 +303,7 @@ class CatalogImportServiceTest {
                   "stats": {"totalGenres":1,"totalArtists":1,"totalAlbums":1,"totalTracks":1},
                   "warnings": [],
                   "catalog": [{
-                    "genre": "Jazz",
+                    "genre": "Jazz & Funk",
                     "artists": [{
                       "name": "JazzMan",
                       "albums": [{
@@ -316,8 +316,8 @@ class CatalogImportServiceTest {
                 }
                 """);
 
-        var savedArtist = artistWithId(1L, "JazzMan", "Jazz");
-        when(artistRepository.findByNameAndGenre("JazzMan", "Jazz")).thenReturn(Optional.empty());
+        var savedArtist = artistWithId(1L, "JazzMan", Genre.JAZZ_AND_FUNK);
+        when(artistRepository.findByNameAndGenre("JazzMan", Genre.JAZZ_AND_FUNK)).thenReturn(Optional.empty());
         when(artistRepository.save(any(ArtistEntity.class))).thenReturn(savedArtist);
         when(albumRepository.existsByArtistIdAndTitle(anyLong(), anyString())).thenReturn(false);
 
@@ -352,7 +352,7 @@ class CatalogImportServiceTest {
                   "stats": {"totalGenres":1,"totalArtists":1,"totalAlbums":1,"totalTracks":3},
                   "warnings": [],
                   "catalog": [{
-                    "genre": "Rock",
+                    "genre": "Progressive Rock",
                     "artists": [{
                       "name": "Band",
                       "albums": [{
@@ -369,8 +369,8 @@ class CatalogImportServiceTest {
                 }
                 """);
 
-        var savedArtist = artistWithId(1L, "Band", "Rock");
-        when(artistRepository.findByNameAndGenre("Band", "Rock")).thenReturn(Optional.empty());
+        var savedArtist = artistWithId(1L, "Band", Genre.PROGRESSIVE_ROCK);
+        when(artistRepository.findByNameAndGenre("Band", Genre.PROGRESSIVE_ROCK)).thenReturn(Optional.empty());
         when(artistRepository.save(any(ArtistEntity.class))).thenReturn(savedArtist);
         when(albumRepository.existsByArtistIdAndTitle(anyLong(), anyString())).thenReturn(false);
         when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));

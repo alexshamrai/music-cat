@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import io.github.alexshamrai.domain.Genre;
+
 import java.util.List;
 
 @Data
@@ -19,7 +21,7 @@ public class AlbumSummaryDto {
     private Integer grade;
     private boolean favorite;
     private String artistName;
-    private String genre;
+    private Genre genre;
     private List<String> tags;
     private int songCount;
 }

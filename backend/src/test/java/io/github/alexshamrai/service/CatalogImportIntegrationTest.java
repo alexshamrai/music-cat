@@ -1,5 +1,6 @@
 package io.github.alexshamrai.service;
 
+import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.dto.ImportResult;
 import io.github.alexshamrai.repository.AlbumRepository;
 import io.github.alexshamrai.repository.ArtistRepository;
@@ -109,7 +110,7 @@ class CatalogImportIntegrationTest {
         Path catalogPath = getTestCatalogPath();
         catalogImportService.importFromJson(catalogPath);
 
-        var rockArtist = artistRepository.findByNameAndGenre("Test Artist", "Rock");
+        var rockArtist = artistRepository.findByNameAndGenre("Test Artist", Genre.PROGRESSIVE_ROCK);
         assertThat(rockArtist).isPresent();
 
         var albums = albumRepository.findAll().stream()

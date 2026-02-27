@@ -1,6 +1,7 @@
 package io.github.alexshamrai.service;
 
 import io.github.alexshamrai.domain.ArtistEntity;
+import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.domain.TagEntity;
 import io.github.alexshamrai.dto.ArtistCreateDto;
 import io.github.alexshamrai.dto.ArtistDto;
@@ -45,8 +46,8 @@ class ArtistServiceTest {
 
     @Test
     void findAll_noFilters_returnsAllArtists() {
-        var artist1 = artistWithId(1L, "Artist One", "Rock");
-        var artist2 = artistWithId(2L, "Artist Two", "Jazz");
+        var artist1 = artistWithId(1L, "Artist One", Genre.PROGRESSIVE_ROCK);
+        var artist2 = artistWithId(2L, "Artist Two", Genre.JAZZ_AND_FUNK);
         when(artistRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class)))
                 .thenReturn(List.of(artist1, artist2));
 
@@ -72,7 +73,7 @@ class ArtistServiceTest {
         when(artistRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class)))
                 .thenReturn(List.of());
 
-        artistService.findAll("Rock", null, null, null);
+        artistService.findAll(Genre.PROGRESSIVE_ROCK, null, null, null);
 
         verify(artistRepository).findAll(any(org.springframework.data.jpa.domain.Specification.class));
     }
@@ -97,7 +98,7 @@ class ArtistServiceTest {
         var artist = ArtistEntity.builder()
                 .id(1L)
                 .name("Test Artist")
-                .genre("Rock")
+                .genre(Genre.PROGRESSIVE_ROCK)
                 .subgenre("Indie")
                 .isFavorite(true)
                 .tags(tags)
@@ -109,7 +110,7 @@ class ArtistServiceTest {
 
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getName()).isEqualTo("Test Artist");
-        assertThat(result.getGenre()).isEqualTo("Rock");
+        assertThat(result.getGenre()).isEqualTo(Genre.PROGRESSIVE_ROCK);
         assertThat(result.getSubgenre()).isEqualTo("Indie");
         assertThat(result.isFavorite()).isTrue();
         assertThat(result.getTags()).containsExactly("alpha", "zebra"); // sorted
@@ -129,7 +130,7 @@ class ArtistServiceTest {
 
     @Test
     void create_validDto_savesAndReturnsDto() {
-        ArtistCreateDto dto = createDto("New Band", "Rock", "Indie");
+        ArtistCreateDto dto = createDto("New Band", Genre.PROGRESSIVE_ROCK, "Indie");
 
         ArgumentCaptor<ArtistEntity> captor = ArgumentCaptor.forClass(ArtistEntity.class);
         when(artistRepository.save(captor.capture())).thenAnswer(inv -> {
@@ -141,12 +142,12 @@ class ArtistServiceTest {
         ArtistDto result = artistService.create(dto);
 
         assertThat(result.getName()).isEqualTo("New Band");
-        assertThat(result.getGenre()).isEqualTo("Rock");
+        assertThat(result.getGenre()).isEqualTo(Genre.PROGRESSIVE_ROCK);
         assertThat(result.getSubgenre()).isEqualTo("Indie");
 
         ArtistEntity captured = captor.getValue();
         assertThat(captured.getName()).isEqualTo("New Band");
-        assertThat(captured.getGenre()).isEqualTo("Rock");
+        assertThat(captured.getGenre()).isEqualTo(Genre.PROGRESSIVE_ROCK);
         assertThat(captured.getSubgenre()).isEqualTo("Indie");
     }
 
@@ -154,7 +155,7 @@ class ArtistServiceTest {
 
     @Test
     void update_onlyName_updatesOnlyName() {
-        var artist = artistWithId(1L, "Old Name", "Rock");
+        var artist = artistWithId(1L, "Old Name", Genre.PROGRESSIVE_ROCK);
         artist.setSubgenre("Indie");
         when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
         when(artistRepository.save(any(ArtistEntity.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -162,20 +163,20 @@ class ArtistServiceTest {
         ArtistDto result = artistService.update(1L, updateDto("New Name", null, null));
 
         assertThat(result.getName()).isEqualTo("New Name");
-        assertThat(result.getGenre()).isEqualTo("Rock"); // unchanged
+        assertThat(result.getGenre()).isEqualTo(Genre.PROGRESSIVE_ROCK); // unchanged
         assertThat(result.getSubgenre()).isEqualTo("Indie"); // unchanged
     }
 
     @Test
     void update_allFields_updatesAll() {
-        var artist = artistWithId(1L, "Old", "Rock");
+        var artist = artistWithId(1L, "Old", Genre.PROGRESSIVE_ROCK);
         when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
         when(artistRepository.save(any(ArtistEntity.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        ArtistDto result = artistService.update(1L, updateDto("New", "Jazz", "Bebop"));
+        ArtistDto result = artistService.update(1L, updateDto("New", Genre.JAZZ_AND_FUNK, "Bebop"));
 
         assertThat(result.getName()).isEqualTo("New");
-        assertThat(result.getGenre()).isEqualTo("Jazz");
+        assertThat(result.getGenre()).isEqualTo(Genre.JAZZ_AND_FUNK);
         assertThat(result.getSubgenre()).isEqualTo("Bebop");
     }
 
@@ -192,7 +193,7 @@ class ArtistServiceTest {
 
     @Test
     void delete_existingId_deletesSuccessfully() {
-        var artist = artistWithId(1L, "Band", "Rock");
+        var artist = artistWithId(1L, "Band", Genre.PROGRESSIVE_ROCK);
         when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
 
         artistService.delete(1L);
@@ -215,7 +216,7 @@ class ArtistServiceTest {
 
     @Test
     void toggleFavorite_currentlyFalse_setsTrue() {
-        var artist = artistWithId(1L, "Band", "Rock");
+        var artist = artistWithId(1L, "Band", Genre.PROGRESSIVE_ROCK);
         artist.setFavorite(false);
         when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
         when(artistRepository.save(any(ArtistEntity.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -227,7 +228,7 @@ class ArtistServiceTest {
 
     @Test
     void toggleFavorite_currentlyTrue_setsFalse() {
-        var artist = artistWithId(1L, "Band", "Rock");
+        var artist = artistWithId(1L, "Band", Genre.PROGRESSIVE_ROCK);
         artist.setFavorite(true);
         when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
         when(artistRepository.save(any(ArtistEntity.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -249,7 +250,7 @@ class ArtistServiceTest {
 
     @Test
     void setTags_existingTags_assignsWithoutCreating() {
-        var artist = artistWithId(1L, "Band", "Rock");
+        var artist = artistWithId(1L, "Band", Genre.PROGRESSIVE_ROCK);
         var rockTag = tagWithId(10L, "rock");
         var classicTag = tagWithId(11L, "classic");
 
@@ -266,7 +267,7 @@ class ArtistServiceTest {
 
     @Test
     void setTags_newTags_createsAndAssigns() {
-        var artist = artistWithId(1L, "Band", "Rock");
+        var artist = artistWithId(1L, "Band", Genre.PROGRESSIVE_ROCK);
 
         when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
         when(tagRepository.findByName("newtag")).thenReturn(Optional.empty());
@@ -285,7 +286,7 @@ class ArtistServiceTest {
 
     @Test
     void setTags_emptyList_clearsAllTags() {
-        var artist = artistWithTags(1L, "Band", "Rock",
+        var artist = artistWithTags(1L, "Band", Genre.PROGRESSIVE_ROCK,
                 new HashSet<>(Set.of(tagWithId(1L, "old"))));
 
         when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
@@ -308,7 +309,7 @@ class ArtistServiceTest {
 
     @Test
     void toDto_zeroAlbums_albumCountIsZero() {
-        var artist = artistWithId(1L, "Band", "Rock");
+        var artist = artistWithId(1L, "Band", Genre.PROGRESSIVE_ROCK);
         when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
 
         ArtistDto result = artistService.findById(1L);
@@ -318,7 +319,7 @@ class ArtistServiceTest {
 
     @Test
     void toDto_tagsSortedAlphabetically() {
-        var artist = artistWithTags(1L, "Band", "Rock",
+        var artist = artistWithTags(1L, "Band", Genre.PROGRESSIVE_ROCK,
                 new HashSet<>(Set.of(tagWithId(1L, "zebra"), tagWithId(2L, "alpha"), tagWithId(3L, "middle"))));
         when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
 

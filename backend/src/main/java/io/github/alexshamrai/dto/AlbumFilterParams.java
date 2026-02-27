@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import io.github.alexshamrai.domain.Genre;
+
 import java.util.List;
 
 @Data
@@ -13,7 +15,7 @@ import java.util.List;
 @Builder
 public class AlbumFilterParams {
 
-    private String genre;
+    private Genre genre;
     private String subgenre;
     private Long artistId;
     private String artistName;

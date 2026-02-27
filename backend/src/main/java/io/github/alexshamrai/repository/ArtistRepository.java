@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import io.github.alexshamrai.domain.ArtistEntity;
+import io.github.alexshamrai.domain.Genre;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +12,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface ArtistRepository extends JpaRepository<ArtistEntity, Long>, JpaSpecificationExecutor<ArtistEntity> {
 
-    Optional<ArtistEntity> findByNameAndGenre(String name, String genre);
+    Optional<ArtistEntity> findByNameAndGenre(String name, Genre genre);
 
     @Override
     @EntityGraph(attributePaths = {"tags"})

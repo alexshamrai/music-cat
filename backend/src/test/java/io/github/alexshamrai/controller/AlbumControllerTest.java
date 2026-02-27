@@ -1,5 +1,6 @@
 package io.github.alexshamrai.controller;
 
+import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.dto.AlbumDto;
 import io.github.alexshamrai.dto.AlbumSummaryDto;
 import io.github.alexshamrai.dto.SongDto;
@@ -46,8 +47,8 @@ class AlbumControllerTest {
 
     @Test
     void list_noFilters_returns200WithList() throws Exception {
-        var album1 = albumSummaryDto(1L, "Kind of Blue", 1959, "Miles Davis", "Jazz");
-        var album2 = albumSummaryDto(2L, "Dark Side of the Moon", 1973, "Pink Floyd", "Rock");
+        var album1 = albumSummaryDto(1L, "Kind of Blue", 1959, "Miles Davis", Genre.JAZZ_AND_FUNK);
+        var album2 = albumSummaryDto(2L, "Dark Side of the Moon", 1973, "Pink Floyd", Genre.PROGRESSIVE_ROCK);
         when(albumService.findAll(any())).thenReturn(List.of(album1, album2));
 
         mockMvc.perform(get("/api/albums"))
@@ -62,7 +63,7 @@ class AlbumControllerTest {
     void list_withGenreFilter_passes() throws Exception {
         when(albumService.findAll(any())).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/albums").param("genre", "Jazz"))
+        mockMvc.perform(get("/api/albums").param("genre", "Jazz & Funk"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
     }
@@ -72,7 +73,7 @@ class AlbumControllerTest {
         when(albumService.findAll(any())).thenReturn(List.of());
 
         mockMvc.perform(get("/api/albums")
-                        .param("genre", "Jazz")
+                        .param("genre", "Jazz & Funk")
                         .param("minGrade", "3")
                         .param("favorite", "true")
                         .param("tag", "chill"))
@@ -99,7 +100,7 @@ class AlbumControllerTest {
                 .grade(5)
                 .favorite(true)
                 .artist(AlbumDto.ArtistSummaryDto.builder()
-                        .id(1L).name("Miles Davis").genre("Jazz").build())
+                        .id(1L).name("Miles Davis").genre(Genre.JAZZ_AND_FUNK).build())
                 .tags(List.of("classic", "masterpiece"))
                 .songs(List.of(
                         SongDto.builder().id(1L).title("So What").trackNumber(1).discNumber(1).build(),
@@ -116,7 +117,7 @@ class AlbumControllerTest {
                 .andExpect(jsonPath("$.favorite", is(true)))
                 .andExpect(jsonPath("$.artist.id", is(1)))
                 .andExpect(jsonPath("$.artist.name", is("Miles Davis")))
-                .andExpect(jsonPath("$.artist.genre", is("Jazz")))
+                .andExpect(jsonPath("$.artist.genre", is("Jazz & Funk")))
                 .andExpect(jsonPath("$.tags", hasSize(2)))
                 .andExpect(jsonPath("$.songs", hasSize(2)))
                 .andExpect(jsonPath("$.songs[0].title", is("So What")))
@@ -137,7 +138,7 @@ class AlbumControllerTest {
 
     @Test
     void create_validBody_returns201() throws Exception {
-        var created = albumSummaryDto(1L, "New Album", 2020, "Miles Davis", "Jazz");
+        var created = albumSummaryDto(1L, "New Album", 2020, "Miles Davis", Genre.JAZZ_AND_FUNK);
         when(albumService.create(any())).thenReturn(created);
 
         mockMvc.perform(post("/api/albums")
@@ -200,7 +201,7 @@ class AlbumControllerTest {
 
     @Test
     void update_existingId_returns200() throws Exception {
-        var updated = albumSummaryDto(1L, "Updated Title", 1970, "Miles Davis", "Jazz");
+        var updated = albumSummaryDto(1L, "Updated Title", 1970, "Miles Davis", Genre.JAZZ_AND_FUNK);
         when(albumService.update(eq(1L), any())).thenReturn(updated);
 
         mockMvc.perform(put("/api/albums/1")
@@ -258,7 +259,7 @@ class AlbumControllerTest {
 
     @Test
     void setGrade_validGrade_returns200() throws Exception {
-        var graded = albumSummaryDto(1L, "Kind of Blue", 1959, "Miles Davis", "Jazz");
+        var graded = albumSummaryDto(1L, "Kind of Blue", 1959, "Miles Davis", Genre.JAZZ_AND_FUNK);
         graded.setGrade(4);
         when(albumService.setGrade(1L, 4)).thenReturn(graded);
 
@@ -308,7 +309,7 @@ class AlbumControllerTest {
 
     @Test
     void toggleFavorite_existingId_returns200() throws Exception {
-        var toggled = albumSummaryDto(1L, "Kind of Blue", 1959, "Miles Davis", "Jazz");
+        var toggled = albumSummaryDto(1L, "Kind of Blue", 1959, "Miles Davis", Genre.JAZZ_AND_FUNK);
         toggled.setFavorite(true);
         when(albumService.toggleFavorite(1L)).thenReturn(toggled);
 
@@ -330,7 +331,7 @@ class AlbumControllerTest {
 
     @Test
     void setTags_validBody_returns200() throws Exception {
-        var withTags = albumSummaryDto(1L, "Kind of Blue", 1959, "Miles Davis", "Jazz");
+        var withTags = albumSummaryDto(1L, "Kind of Blue", 1959, "Miles Davis", Genre.JAZZ_AND_FUNK);
         withTags.setTags(List.of("chill", "jazz"));
         when(albumService.setTags(eq(1L), any())).thenReturn(withTags);
 
@@ -345,7 +346,7 @@ class AlbumControllerTest {
 
     @Test
     void setTags_emptyList_returns200() throws Exception {
-        var noTags = albumSummaryDto(1L, "Kind of Blue", 1959, "Miles Davis", "Jazz");
+        var noTags = albumSummaryDto(1L, "Kind of Blue", 1959, "Miles Davis", Genre.JAZZ_AND_FUNK);
         when(albumService.setTags(eq(1L), any())).thenReturn(noTags);
 
         mockMvc.perform(put("/api/albums/1/tags")

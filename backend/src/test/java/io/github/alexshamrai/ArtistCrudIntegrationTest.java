@@ -1,5 +1,6 @@
 package io.github.alexshamrai;
 
+import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.dto.ArtistCreateDto;
 import io.github.alexshamrai.dto.ArtistDto;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class ArtistCrudIntegrationTest {
     @Test
     void fullCrudLifecycle() {
         // CREATE
-        var createDto = new ArtistCreateDto("Integration Band", "Rock", "Indie");
+        var createDto = new ArtistCreateDto("Integration Band", Genre.PROGRESSIVE_ROCK, "Indie");
         var createResponse = restTemplate.postForEntity("/api/artists", createDto, ArtistDto.class);
 
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -41,7 +42,7 @@ class ArtistCrudIntegrationTest {
         var getResponse = restTemplate.getForEntity("/api/artists/" + id, ArtistDto.class);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(getResponse.getBody().getName()).isEqualTo("Integration Band");
-        assertThat(getResponse.getBody().getGenre()).isEqualTo("Rock");
+        assertThat(getResponse.getBody().getGenre()).isEqualTo(Genre.PROGRESSIVE_ROCK);
         assertThat(getResponse.getBody().getSubgenre()).isEqualTo("Indie");
 
         // UPDATE
@@ -51,7 +52,7 @@ class ArtistCrudIntegrationTest {
                 ArtistDto.class);
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(updateResponse.getBody().getName()).isEqualTo("Updated Band");
-        assertThat(updateResponse.getBody().getGenre()).isEqualTo("Rock"); // unchanged
+        assertThat(updateResponse.getBody().getGenre()).isEqualTo(Genre.PROGRESSIVE_ROCK); // unchanged
 
         // DELETE
         var deleteResponse = restTemplate.exchange(
@@ -66,7 +67,7 @@ class ArtistCrudIntegrationTest {
     @Test
     void toggleFavorite_roundTrip() {
         // Create artist
-        var createDto = new ArtistCreateDto("Favorite Band", "Jazz", null);
+        var createDto = new ArtistCreateDto("Favorite Band", Genre.JAZZ_AND_FUNK, null);
         var created = restTemplate.postForEntity("/api/artists", createDto, ArtistDto.class);
         Long id = created.getBody().getId();
         assertThat(created.getBody().isFavorite()).isFalse();
@@ -88,7 +89,7 @@ class ArtistCrudIntegrationTest {
     @Test
     void setTags_createsAndAssigns() {
         // Create artist
-        var createDto = new ArtistCreateDto("Tagged Band", "Rock", null);
+        var createDto = new ArtistCreateDto("Tagged Band", Genre.PROGRESSIVE_ROCK, null);
         var created = restTemplate.postForEntity("/api/artists", createDto, ArtistDto.class);
         Long id = created.getBody().getId();
 
@@ -115,16 +116,16 @@ class ArtistCrudIntegrationTest {
     void listWithFilters_returnsFilteredResults() {
         // Create artists in different genres
         var rock = restTemplate.postForEntity("/api/artists",
-                new ArtistCreateDto("Rock Band", "FilterTestRock", null), ArtistDto.class);
+                new ArtistCreateDto("Rock Filter Band", Genre.BLUES, null), ArtistDto.class);
         var jazz = restTemplate.postForEntity("/api/artists",
-                new ArtistCreateDto("Jazz Band", "FilterTestJazz", null), ArtistDto.class);
+                new ArtistCreateDto("Jazz Filter Band", Genre.INSTRUMENTAL_GUITAR, null), ArtistDto.class);
 
         // Filter by genre
         var filtered = restTemplate.exchange(
-                "/api/artists?genre=FilterTestRock", HttpMethod.GET, null,
+                "/api/artists?genre=Blues", HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<ArtistDto>>() {});
-        assertThat(filtered.getBody()).hasSize(1);
-        assertThat(filtered.getBody().get(0).getName()).isEqualTo("Rock Band");
+        assertThat(filtered.getBody()).extracting(ArtistDto::getName).contains("Rock Filter Band");
+        assertThat(filtered.getBody()).extracting(ArtistDto::getName).doesNotContain("Jazz Filter Band");
 
         // Cleanup
         restTemplate.delete("/api/artists/" + rock.getBody().getId());
@@ -134,9 +135,9 @@ class ArtistCrudIntegrationTest {
     @Test
     void listWithFilters_subgenreFilter() {
         var indie = restTemplate.postForEntity("/api/artists",
-                new ArtistCreateDto("Indie Band", "SubgenreTestRock", "Indie"), ArtistDto.class);
+                new ArtistCreateDto("Indie Band", Genre.HARD_ROCK_AND_METAL, "Indie"), ArtistDto.class);
         var prog = restTemplate.postForEntity("/api/artists",
-                new ArtistCreateDto("Prog Band", "SubgenreTestRock", "Progressive"), ArtistDto.class);
+                new ArtistCreateDto("Prog Band", Genre.HARD_ROCK_AND_METAL, "Progressive"), ArtistDto.class);
 
         var filtered = restTemplate.exchange(
                 "/api/artists?subgenre=Indie", HttpMethod.GET, null,
@@ -152,17 +153,16 @@ class ArtistCrudIntegrationTest {
     @Test
     void listWithFilters_favoriteFilter() {
         var artist = restTemplate.postForEntity("/api/artists",
-                new ArtistCreateDto("Fav Test Band", "FavFilterGenre", null), ArtistDto.class);
+                new ArtistCreateDto("Fav Test Band", Genre.BLUES, null), ArtistDto.class);
         Long id = artist.getBody().getId();
 
         // Toggle to favorite
         restTemplate.exchange("/api/artists/" + id + "/favorite", HttpMethod.PATCH, null, ArtistDto.class);
 
         var filtered = restTemplate.exchange(
-                "/api/artists?favorite=true&genre=FavFilterGenre", HttpMethod.GET, null,
+                "/api/artists?favorite=true&genre=Blues", HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<ArtistDto>>() {});
-        assertThat(filtered.getBody()).hasSize(1);
-        assertThat(filtered.getBody().get(0).getName()).isEqualTo("Fav Test Band");
+        assertThat(filtered.getBody()).extracting(ArtistDto::getName).contains("Fav Test Band");
 
         // Cleanup
         restTemplate.delete("/api/artists/" + id);
@@ -171,7 +171,7 @@ class ArtistCrudIntegrationTest {
     @Test
     void listWithFilters_tagFilter() {
         var artist = restTemplate.postForEntity("/api/artists",
-                new ArtistCreateDto("Tag Test Band", "TagFilterGenre", null), ArtistDto.class);
+                new ArtistCreateDto("Tag Test Band", Genre.SOUNDTRACKS_AND_MUSICALS, null), ArtistDto.class);
         Long id = artist.getBody().getId();
 
         // Set tags

@@ -2,6 +2,7 @@ package io.github.alexshamrai.service;
 
 import io.github.alexshamrai.domain.AlbumEntity;
 import io.github.alexshamrai.domain.ArtistEntity;
+import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.domain.SongEntity;
 import io.github.alexshamrai.domain.TagEntity;
 import io.github.alexshamrai.dto.AlbumDto;
@@ -51,7 +52,7 @@ class AlbumServiceTest {
 
     @Test
     void findAll_noFilters_returnsAllAlbums() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album1 = albumWithId(1L, "Kind of Blue", 1959, artist);
         var album2 = albumWithId(2L, "Bitches Brew", 1970, artist);
         when(albumRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class)))
@@ -86,7 +87,7 @@ class AlbumServiceTest {
 
     @Test
     void findAll_summaryIncludesArtistInfo() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithId(1L, "Kind of Blue", 1959, artist);
         when(albumRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class)))
                 .thenReturn(List.of(album));
@@ -94,14 +95,14 @@ class AlbumServiceTest {
         List<AlbumSummaryDto> result = albumService.findAll(new AlbumFilterParams());
 
         assertThat(result.get(0).getArtistName()).isEqualTo("Miles Davis");
-        assertThat(result.get(0).getGenre()).isEqualTo("Jazz");
+        assertThat(result.get(0).getGenre()).isEqualTo(Genre.JAZZ_AND_FUNK);
     }
 
     // ==================== findById tests ====================
 
     @Test
     void findById_existingId_returnsAlbumDtoWithSongs() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithId(1L, "Kind of Blue", 1959, artist);
         album.setGrade(5);
         album.setFavorite(true);
@@ -122,7 +123,7 @@ class AlbumServiceTest {
         assertThat(result.isFavorite()).isTrue();
         assertThat(result.getArtist().getId()).isEqualTo(1L);
         assertThat(result.getArtist().getName()).isEqualTo("Miles Davis");
-        assertThat(result.getArtist().getGenre()).isEqualTo("Jazz");
+        assertThat(result.getArtist().getGenre()).isEqualTo(Genre.JAZZ_AND_FUNK);
         assertThat(result.getTags()).containsExactly("masterpiece");
         assertThat(result.getSongs()).hasSize(2);
         assertThat(result.getSongs().get(0).getTitle()).isEqualTo("So What"); // sorted by track
@@ -142,7 +143,7 @@ class AlbumServiceTest {
 
     @Test
     void create_validDto_savesAndReturnsSummary() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
 
         ArgumentCaptor<AlbumEntity> captor = ArgumentCaptor.forClass(AlbumEntity.class);
@@ -175,7 +176,7 @@ class AlbumServiceTest {
 
     @Test
     void create_nullYear_savesWithNullYear() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
         when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> {
             AlbumEntity saved = inv.getArgument(0);
@@ -192,7 +193,7 @@ class AlbumServiceTest {
 
     @Test
     void update_onlyTitle_updatesOnlyTitle() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithId(1L, "Old Title", 1959, artist);
         when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
         when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -205,7 +206,7 @@ class AlbumServiceTest {
 
     @Test
     void update_allFields_updatesAll() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithId(1L, "Old", 1959, artist);
         when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
         when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -229,7 +230,7 @@ class AlbumServiceTest {
 
     @Test
     void delete_existingId_deletesSuccessfully() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithId(1L, "Kind of Blue", 1959, artist);
         when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
 
@@ -253,7 +254,7 @@ class AlbumServiceTest {
 
     @Test
     void setGrade_validGrade_setsGrade() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithId(1L, "Kind of Blue", 1959, artist);
         when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
         when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -275,7 +276,7 @@ class AlbumServiceTest {
 
     @Test
     void toggleFavorite_currentlyFalse_setsTrue() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithId(1L, "Kind of Blue", 1959, artist);
         album.setFavorite(false);
         when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
@@ -288,7 +289,7 @@ class AlbumServiceTest {
 
     @Test
     void toggleFavorite_currentlyTrue_setsFalse() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithId(1L, "Kind of Blue", 1959, artist);
         album.setFavorite(true);
         when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
@@ -311,7 +312,7 @@ class AlbumServiceTest {
 
     @Test
     void setTags_existingTags_assignsWithoutCreating() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithId(1L, "Kind of Blue", 1959, artist);
         var jazzTag = tagWithId(10L, "jazz");
         var classicTag = tagWithId(11L, "classic");
@@ -329,7 +330,7 @@ class AlbumServiceTest {
 
     @Test
     void setTags_newTags_createsAndAssigns() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithId(1L, "Kind of Blue", 1959, artist);
 
         when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
@@ -349,7 +350,7 @@ class AlbumServiceTest {
 
     @Test
     void setTags_emptyList_clearsAllTags() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithTags(1L, "Kind of Blue", 1959, artist,
                 new HashSet<>(Set.of(tagWithId(1L, "old"))));
 
@@ -373,7 +374,7 @@ class AlbumServiceTest {
 
     @Test
     void toSummaryDto_includesSongCount() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithId(1L, "Kind of Blue", 1959, artist);
         album.getSongs().add(songWithId(1L, "So What", 1, 1, album));
         album.getSongs().add(songWithId(2L, "Freddie Freeloader", 2, 1, album));
@@ -387,7 +388,7 @@ class AlbumServiceTest {
 
     @Test
     void toDto_songsSortedByDiscThenTrack() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithId(1L, "Kind of Blue", 1959, artist);
         var song1 = songWithId(1L, "Track 1 Disc 2", 1, 2, album);
         var song2 = songWithId(2L, "Track 2 Disc 1", 2, 1, album);
@@ -406,7 +407,7 @@ class AlbumServiceTest {
 
     @Test
     void toSummaryDto_tagsSortedAlphabetically() {
-        var artist = artistWithId(1L, "Miles Davis", "Jazz");
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         var album = albumWithTags(1L, "Kind of Blue", 1959, artist,
                 new HashSet<>(Set.of(tagWithId(1L, "zebra"), tagWithId(2L, "alpha"), tagWithId(3L, "middle"))));
         when(albumRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class)))

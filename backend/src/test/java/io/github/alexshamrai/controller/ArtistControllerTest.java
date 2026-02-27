@@ -1,5 +1,6 @@
 package io.github.alexshamrai.controller;
 
+import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.dto.ArtistDto;
 import io.github.alexshamrai.exception.NotFoundException;
 import io.github.alexshamrai.service.ArtistService;
@@ -44,8 +45,8 @@ class ArtistControllerTest {
 
     @Test
     void list_noFilters_returns200WithList() throws Exception {
-        var artist1 = artistDto(1L, "Band One", "Rock");
-        var artist2 = artistDto(2L, "Band Two", "Jazz");
+        var artist1 = artistDto(1L, "Band One", Genre.PROGRESSIVE_ROCK);
+        var artist2 = artistDto(2L, "Band Two", Genre.JAZZ_AND_FUNK);
         when(artistService.findAll(null, null, null, null)).thenReturn(List.of(artist1, artist2));
 
         mockMvc.perform(get("/api/artists"))
@@ -57,27 +58,27 @@ class ArtistControllerTest {
 
     @Test
     void list_withGenreFilter_passesGenreToService() throws Exception {
-        when(artistService.findAll("Rock", null, null, null)).thenReturn(List.of());
+        when(artistService.findAll(Genre.PROGRESSIVE_ROCK, null, null, null)).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/artists").param("genre", "Rock"))
+        mockMvc.perform(get("/api/artists").param("genre", "Progressive Rock"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
 
-        verify(artistService).findAll("Rock", null, null, null);
+        verify(artistService).findAll(Genre.PROGRESSIVE_ROCK, null, null, null);
     }
 
     @Test
     void list_withAllFilters_passesAllToService() throws Exception {
-        when(artistService.findAll("Rock", "Indie", true, "chill")).thenReturn(List.of());
+        when(artistService.findAll(Genre.PROGRESSIVE_ROCK, "Indie", true, "chill")).thenReturn(List.of());
 
         mockMvc.perform(get("/api/artists")
-                        .param("genre", "Rock")
+                        .param("genre", "Progressive Rock")
                         .param("subgenre", "Indie")
                         .param("favorite", "true")
                         .param("tag", "chill"))
                 .andExpect(status().isOk());
 
-        verify(artistService).findAll("Rock", "Indie", true, "chill");
+        verify(artistService).findAll(Genre.PROGRESSIVE_ROCK, "Indie", true, "chill");
     }
 
     @Test
@@ -96,7 +97,7 @@ class ArtistControllerTest {
         var artist = ArtistDto.builder()
                 .id(1L)
                 .name("Genesis")
-                .genre("Rock")
+                .genre(Genre.PROGRESSIVE_ROCK)
                 .subgenre("Progressive")
                 .favorite(true)
                 .tags(List.of("classic", "prog"))
@@ -108,7 +109,7 @@ class ArtistControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("Genesis")))
-                .andExpect(jsonPath("$.genre", is("Rock")))
+                .andExpect(jsonPath("$.genre", is("Progressive Rock")))
                 .andExpect(jsonPath("$.subgenre", is("Progressive")))
                 .andExpect(jsonPath("$.favorite", is(true)))
                 .andExpect(jsonPath("$.tags", hasSize(2)))
@@ -129,13 +130,13 @@ class ArtistControllerTest {
 
     @Test
     void create_validBody_returns201() throws Exception {
-        var created = artistDto(1L, "New Band", "Rock");
+        var created = artistDto(1L, "New Band", Genre.PROGRESSIVE_ROCK);
         when(artistService.create(any())).thenReturn(created);
 
         mockMvc.perform(post("/api/artists")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"name": "New Band", "genre": "Rock"}
+                                {"name": "New Band", "genre": "Progressive Rock"}
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(1)))
@@ -147,7 +148,7 @@ class ArtistControllerTest {
         mockMvc.perform(post("/api/artists")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"genre": "Rock"}
+                                {"genre": "Progressive Rock"}
                                 """))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status", is(400)))
@@ -170,7 +171,7 @@ class ArtistControllerTest {
         mockMvc.perform(post("/api/artists")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"name": "", "genre": "Rock"}
+                                {"name": "", "genre": "Progressive Rock"}
                                 """))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.name").exists());
@@ -190,13 +191,13 @@ class ArtistControllerTest {
 
     @Test
     void update_existingId_returns200() throws Exception {
-        var updated = artistDto(1L, "Updated", "Jazz");
+        var updated = artistDto(1L, "Updated", Genre.JAZZ_AND_FUNK);
         when(artistService.update(eq(1L), any())).thenReturn(updated);
 
         mockMvc.perform(put("/api/artists/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"name": "Updated", "genre": "Jazz"}
+                                {"name": "Updated", "genre": "Jazz & Funk"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Updated")));
@@ -215,13 +216,13 @@ class ArtistControllerTest {
 
     @Test
     void partialUpdate_existingId_returns200() throws Exception {
-        var updated = artistDto(1L, "Updated", "Jazz");
+        var updated = artistDto(1L, "Updated", Genre.JAZZ_AND_FUNK);
         when(artistService.update(eq(1L), any())).thenReturn(updated);
 
         mockMvc.perform(patch("/api/artists/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"name": "Updated", "genre": "Jazz"}
+                                {"name": "Updated", "genre": "Jazz & Funk"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Updated")));
@@ -263,7 +264,7 @@ class ArtistControllerTest {
     @Test
     void toggleFavorite_existingId_returns200() throws Exception {
         var toggled = ArtistDto.builder()
-                .id(1L).name("Band").genre("Rock").favorite(true).tags(List.of()).albumCount(0).build();
+                .id(1L).name("Band").genre(Genre.PROGRESSIVE_ROCK).favorite(true).tags(List.of()).albumCount(0).build();
         when(artistService.toggleFavorite(1L)).thenReturn(toggled);
 
         mockMvc.perform(patch("/api/artists/1/favorite"))
@@ -285,7 +286,7 @@ class ArtistControllerTest {
     @Test
     void setTags_validBody_returns200() throws Exception {
         var withTags = ArtistDto.builder()
-                .id(1L).name("Band").genre("Rock").favorite(false)
+                .id(1L).name("Band").genre(Genre.PROGRESSIVE_ROCK).favorite(false)
                 .tags(List.of("chill", "rock")).albumCount(0).build();
         when(artistService.setTags(eq(1L), any())).thenReturn(withTags);
 
@@ -300,7 +301,7 @@ class ArtistControllerTest {
 
     @Test
     void setTags_emptyList_returns200() throws Exception {
-        var noTags = artistDto(1L, "Band", "Rock");
+        var noTags = artistDto(1L, "Band", Genre.PROGRESSIVE_ROCK);
         when(artistService.setTags(eq(1L), any())).thenReturn(noTags);
 
         mockMvc.perform(put("/api/artists/1/tags")

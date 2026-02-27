@@ -1,6 +1,7 @@
 package io.github.alexshamrai.service;
 
 import io.github.alexshamrai.domain.ArtistEntity;
+import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.domain.TagEntity;
 import io.github.alexshamrai.dto.ArtistCreateDto;
 import io.github.alexshamrai.dto.ArtistDto;
@@ -26,7 +27,7 @@ public class ArtistService {
     private final ArtistRepository artistRepository;
     private final TagRepository tagRepository;
 
-    public List<ArtistDto> findAll(String genre, String subgenre, Boolean favorite, String tag) {
+    public List<ArtistDto> findAll(Genre genre, String subgenre, Boolean favorite, String tag) {
         Specification<ArtistEntity> spec = Specification.where(
                 (Specification<ArtistEntity>) (root, query, cb) -> cb.conjunction());
 

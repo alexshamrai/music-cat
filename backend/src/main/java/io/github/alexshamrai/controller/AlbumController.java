@@ -1,5 +1,6 @@
 package io.github.alexshamrai.controller;
 
+import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.dto.AlbumCreateDto;
 import io.github.alexshamrai.dto.AlbumDto;
 import io.github.alexshamrai.dto.AlbumFilterParams;
@@ -33,7 +34,7 @@ public class AlbumController {
 
     @GetMapping
     public ResponseEntity<List<AlbumSummaryDto>> list(
-            @RequestParam(required = false) String genre,
+            @RequestParam(required = false) Genre genre,
             @RequestParam(required = false) String subgenre,
             @RequestParam(required = false) Long artistId,
             @RequestParam(required = false) String artistName,

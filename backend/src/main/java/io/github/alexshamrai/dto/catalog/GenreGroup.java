@@ -5,4 +5,4 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Genre(String genre, List<Artist> artists) {}
+public record GenreGroup(io.github.alexshamrai.domain.Genre genre, List<Artist> artists) {}

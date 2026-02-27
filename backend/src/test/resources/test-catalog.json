@@ -10,7 +10,7 @@
   "warnings": [],
   "catalog": [
     {
-      "genre": "Rock",
+      "genre": "Progressive Rock",
       "artists": [
         {
           "name": "Test Artist",
@@ -37,7 +37,7 @@
       ]
     },
     {
-      "genre": "Jazz",
+      "genre": "Jazz & Funk",
       "artists": [
         {
           "name": "Jazz Artist",

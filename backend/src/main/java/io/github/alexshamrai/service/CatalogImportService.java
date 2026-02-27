@@ -14,7 +14,8 @@ import io.github.alexshamrai.dto.ImportResult;
 import io.github.alexshamrai.dto.catalog.Album;
 import io.github.alexshamrai.dto.catalog.Artist;
 import io.github.alexshamrai.dto.catalog.Catalog;
-import io.github.alexshamrai.dto.catalog.Genre;
+import io.github.alexshamrai.domain.Genre;
+import io.github.alexshamrai.dto.catalog.GenreGroup;
 import io.github.alexshamrai.repository.AlbumRepository;
 import io.github.alexshamrai.repository.ArtistRepository;
 import io.github.alexshamrai.repository.SongRepository;
@@ -57,8 +58,8 @@ public class CatalogImportService {
         int albumCount = 0;
         int songCount = 0;
 
-        for (Genre genreEntry : catalog.catalog()) {
-            String genre = genreEntry.genre();
+        for (GenreGroup genreEntry : catalog.catalog()) {
+            Genre genre = genreEntry.genre();
 
             for (Artist artistEntry : genreEntry.artists()) {
                 ArtistEntity artist = findOrCreateArtist(artistEntry.name(), genre);
@@ -99,7 +100,7 @@ public class CatalogImportService {
         return new ImportResult(artistCount, albumCount, songCount);
     }
 
-    private ArtistEntity findOrCreateArtist(String name, String genre) {
+    private ArtistEntity findOrCreateArtist(String name, Genre genre) {
         return artistRepository.findByNameAndGenre(name, genre)
             .orElseGet(() -> {
                 ArtistEntity artist = ArtistEntity.builder()

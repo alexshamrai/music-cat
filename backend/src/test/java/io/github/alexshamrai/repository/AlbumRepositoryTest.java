@@ -2,6 +2,7 @@ package io.github.alexshamrai.repository;
 
 import io.github.alexshamrai.domain.AlbumEntity;
 import io.github.alexshamrai.domain.ArtistEntity;
+import io.github.alexshamrai.domain.Genre;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -24,7 +25,7 @@ class AlbumRepositoryTest {
 
     @Test
     void existsByArtistIdAndTitle_exists_returnsTrue() {
-        ArtistEntity savedArtist = entityManager.persistAndFlush(artist("Pink Floyd", "Rock"));
+        ArtistEntity savedArtist = entityManager.persistAndFlush(artist("Pink Floyd", Genre.PROGRESSIVE_ROCK));
         entityManager.persistAndFlush(album("The Wall", 1979, savedArtist));
 
         boolean result = albumRepository.existsByArtistIdAndTitle(savedArtist.getId(), "The Wall");
@@ -34,7 +35,7 @@ class AlbumRepositoryTest {
 
     @Test
     void existsByArtistIdAndTitle_wrongTitle_returnsFalse() {
-        ArtistEntity savedArtist = entityManager.persistAndFlush(artist("Pink Floyd", "Rock"));
+        ArtistEntity savedArtist = entityManager.persistAndFlush(artist("Pink Floyd", Genre.PROGRESSIVE_ROCK));
         entityManager.persistAndFlush(album("The Wall", 1979, savedArtist));
 
         boolean result = albumRepository.existsByArtistIdAndTitle(savedArtist.getId(), "Animals");
@@ -44,8 +45,8 @@ class AlbumRepositoryTest {
 
     @Test
     void existsByArtistIdAndTitle_wrongArtistId_returnsFalse() {
-        ArtistEntity artist1 = entityManager.persistAndFlush(artist("Pink Floyd", "Rock"));
-        ArtistEntity artist2 = entityManager.persistAndFlush(artist("Led Zeppelin", "Rock"));
+        ArtistEntity artist1 = entityManager.persistAndFlush(artist("Pink Floyd", Genre.PROGRESSIVE_ROCK));
+        ArtistEntity artist2 = entityManager.persistAndFlush(artist("Led Zeppelin", Genre.HARD_ROCK_AND_METAL));
         entityManager.persistAndFlush(album("The Wall", 1979, artist1));
 
         boolean result = albumRepository.existsByArtistIdAndTitle(artist2.getId(), "The Wall");
@@ -55,7 +56,7 @@ class AlbumRepositoryTest {
 
     @Test
     void existsByArtistIdAndTitle_noAlbums_returnsFalse() {
-        ArtistEntity savedArtist = entityManager.persistAndFlush(artist("Empty Artist", "Rock"));
+        ArtistEntity savedArtist = entityManager.persistAndFlush(artist("Empty Artist", Genre.PROGRESSIVE_ROCK));
 
         boolean result = albumRepository.existsByArtistIdAndTitle(savedArtist.getId(), "Any Album");
 

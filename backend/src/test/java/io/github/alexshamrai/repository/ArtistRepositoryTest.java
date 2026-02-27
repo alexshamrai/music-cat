@@ -1,6 +1,7 @@
 package io.github.alexshamrai.repository;
 
 import io.github.alexshamrai.domain.ArtistEntity;
+import io.github.alexshamrai.domain.Genre;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -22,45 +23,45 @@ class ArtistRepositoryTest {
 
     @Test
     void findByNameAndGenre_exists_returnsArtist() {
-        entityManager.persistAndFlush(artist("Genesis", "Rock"));
+        entityManager.persistAndFlush(artist("Genesis", Genre.PROGRESSIVE_ROCK));
 
-        var result = artistRepository.findByNameAndGenre("Genesis", "Rock");
+        var result = artistRepository.findByNameAndGenre("Genesis", Genre.PROGRESSIVE_ROCK);
 
         assertThat(result).isPresent();
         assertThat(result.get().getName()).isEqualTo("Genesis");
-        assertThat(result.get().getGenre()).isEqualTo("Rock");
+        assertThat(result.get().getGenre()).isEqualTo(Genre.PROGRESSIVE_ROCK);
     }
 
     @Test
     void findByNameAndGenre_wrongGenre_returnsEmpty() {
-        entityManager.persistAndFlush(artist("Genesis", "Rock"));
+        entityManager.persistAndFlush(artist("Genesis", Genre.PROGRESSIVE_ROCK));
 
-        var result = artistRepository.findByNameAndGenre("Genesis", "Jazz");
+        var result = artistRepository.findByNameAndGenre("Genesis", Genre.JAZZ_AND_FUNK);
 
         assertThat(result).isEmpty();
     }
 
     @Test
     void findByNameAndGenre_wrongName_returnsEmpty() {
-        entityManager.persistAndFlush(artist("Genesis", "Rock"));
+        entityManager.persistAndFlush(artist("Genesis", Genre.PROGRESSIVE_ROCK));
 
-        var result = artistRepository.findByNameAndGenre("Pink Floyd", "Rock");
+        var result = artistRepository.findByNameAndGenre("Pink Floyd", Genre.PROGRESSIVE_ROCK);
 
         assertThat(result).isEmpty();
     }
 
     @Test
     void findByNameAndGenre_caseSensitive() {
-        entityManager.persistAndFlush(artist("Genesis", "Rock"));
+        entityManager.persistAndFlush(artist("Genesis", Genre.PROGRESSIVE_ROCK));
 
-        var result = artistRepository.findByNameAndGenre("genesis", "Rock");
+        var result = artistRepository.findByNameAndGenre("genesis", Genre.PROGRESSIVE_ROCK);
 
         assertThat(result).isEmpty();
     }
 
     @Test
     void save_validArtist_generatesId() {
-        ArtistEntity saved = artistRepository.save(artist("New Artist", "Jazz"));
+        ArtistEntity saved = artistRepository.save(artist("New Artist", Genre.JAZZ_AND_FUNK));
 
         assertThat(saved.getId()).isNotNull();
     }
