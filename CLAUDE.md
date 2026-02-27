@@ -8,7 +8,7 @@ Personal music catalog app for browsing, rating, tagging, and randomly picking a
 
 ## Current State
 
-Tasks 0–3 from `task-list.md` are complete. Next up: Task 4 (Album CRUD API).
+Tasks 0–4 from `task-list.md` are complete. Next up: Task 5 (Browse & Random Album API).
 
 **Done:**
 - `music_scanner.py` — One-time Python scanner that produced `catalog.json` (prerequisite, already run)
@@ -17,18 +17,20 @@ Tasks 0–3 from `task-list.md` are complete. Next up: Task 4 (Album CRUD API).
 - `task-list.md` — Sequential implementation tasks (Tasks 0-10)
 - **Backend skeleton** — Spring Boot app with Gradle build, Flyway migration, H2 database, application.yml
 - **Domain entities** — ArtistEntity, AlbumEntity, SongEntity, TagEntity with JPA mappings
-- **Repositories** — ArtistRepository, AlbumRepository, SongRepository, TagRepository
+- **Repositories** — ArtistRepository, AlbumRepository (with EntityGraph), SongRepository, TagRepository
 - **Catalog import** — CatalogImportService (JSON → DB), CatalogAutoImporter (auto-imports on first startup if DB empty), POST /api/catalog/import endpoint
 - **Catalog DTOs** — Java records in `dto.catalog` package: Catalog, Genre, Artist, Album, Stats, ImportResult
 - **Artist CRUD API** — ArtistService, ArtistController (full CRUD + favorite toggle + tag management)
-- **DTOs** — ArtistDto, ArtistCreateDto, ArtistUpdateDto in `dto` package
+- **Album CRUD API** — AlbumService, AlbumController (full CRUD + grade + favorite + tags + rich filtering via AlbumFilterParams)
+- **Tag CRUD API** — TagService, TagController (list, create, delete)
+- **DTOs** — ArtistDto, ArtistCreateDto, ArtistUpdateDto, AlbumDto, AlbumSummaryDto, AlbumCreateDto, AlbumUpdateDto, AlbumFilterParams, GradeDto, SongDto, TagDto, TagCreateDto
 - **Exception handling** — NotFoundException, GlobalExceptionHandler with @ControllerAdvice (404, 400 validation, 500)
 
 **Not started:**
 - Frontend (React) — `frontend/` directory is empty
-- REST APIs for albums, browse, random, tags
+- REST APIs for browse, random
 - Google Sheets backup, export endpoints
-- JPA Specifications (for album filtering)
+- JPA Specifications (extracted as separate classes — currently inline in AlbumService)
 
 ## Architecture
 
@@ -88,19 +90,18 @@ Base package: `io.github.alexshamrai`
 
 **Implemented:**
 - `domain/` — JPA entities: ArtistEntity, AlbumEntity, SongEntity, TagEntity
-- `repository/` — Spring Data JPA repos with JpaSpecificationExecutor
-- `service/` — CatalogImportService (catalog.json → DB), ArtistService (CRUD + favorite + tags)
-- `controller/` — CatalogController (POST /api/catalog/import), ArtistController (full CRUD + favorite + tags)
-- `dto/` — ArtistDto, ArtistCreateDto, ArtistUpdateDto, ImportResult
+- `repository/` — Spring Data JPA repos with JpaSpecificationExecutor, @EntityGraph for efficient loading
+- `service/` — CatalogImportService, ArtistService, AlbumService (with JPA Specification filtering), TagService
+- `controller/` — CatalogController, ArtistController, AlbumController (full CRUD + grade + favorite + tags), TagController
+- `dto/` — Artist DTOs, Album DTOs (AlbumDto, AlbumSummaryDto, AlbumCreateDto, AlbumUpdateDto, AlbumFilterParams, GradeDto), SongDto, TagDto, TagCreateDto, ImportResult
 - `dto/catalog/` — Java records mapping catalog.json: Catalog, Genre, Artist, Album, Stats
 - `exception/` — NotFoundException, GlobalExceptionHandler (@ControllerAdvice)
 - `startup/` — CatalogAutoImporter (imports on first run if DB empty)
 
 **Planned (not yet created):**
-- `specification/` — AlbumSpecs/ArtistSpecs for dynamic query filters
-- `service/` — AlbumService, TagService, RandomPickService, CatalogExportService, GoogleSheetsBackupService
-- `controller/` — AlbumController, TagController, BrowseController, RandomController
-- `dto/` — Album DTOs (AlbumDto, AlbumSummaryDto, AlbumCreateDto, etc.)
+- `specification/` — AlbumSpecs/ArtistSpecs as extracted separate classes (currently inline in services)
+- `service/` — RandomPickService, CatalogExportService, GoogleSheetsBackupService
+- `controller/` — BrowseController, RandomController
 - `exception/` — NoMatchException
 - `config/` — WebConfig (SPA routing), GoogleSheetsConfig
 

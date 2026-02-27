@@ -438,7 +438,7 @@ Show me the Swagger UI and example responses for each.
 
 ---
 
-## Task 4 — Album CRUD API
+## Task 4 — Album CRUD API ✅ COMPLETED
 
 > **Done when:** All album endpoints work — create, read, update, delete, grade, favorite, tags. Album detail returns song list.
 
