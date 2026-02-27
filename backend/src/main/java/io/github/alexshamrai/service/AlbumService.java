@@ -1,7 +1,6 @@
 package io.github.alexshamrai.service;
 
 import io.github.alexshamrai.domain.AlbumEntity;
-import io.github.alexshamrai.domain.ArtistEntity;
 import io.github.alexshamrai.domain.SongEntity;
 import io.github.alexshamrai.domain.TagEntity;
 import io.github.alexshamrai.dto.AlbumCreateDto;
@@ -14,7 +13,7 @@ import io.github.alexshamrai.exception.NotFoundException;
 import io.github.alexshamrai.repository.AlbumRepository;
 import io.github.alexshamrai.repository.ArtistRepository;
 import io.github.alexshamrai.repository.TagRepository;
-import jakarta.persistence.criteria.Join;
+import io.github.alexshamrai.specification.AlbumSpecs;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -118,7 +117,7 @@ public class AlbumService {
                 .orElseThrow(() -> new NotFoundException("Album not found with id: " + id));
     }
 
-    private Specification<AlbumEntity> buildSpecification(AlbumFilterParams filters) {
+    Specification<AlbumEntity> buildSpecification(AlbumFilterParams filters) {
         Specification<AlbumEntity> spec = Specification.where(
                 (Specification<AlbumEntity>) (root, query, cb) -> cb.conjunction());
 
@@ -127,48 +126,31 @@ public class AlbumService {
         }
 
         if (filters.getGenre() != null) {
-            spec = spec.and((root, query, cb) -> {
-                Join<AlbumEntity, ArtistEntity> artistJoin = root.join("artist");
-                return cb.equal(artistJoin.get("genre"), filters.getGenre());
-            });
+            spec = spec.and(AlbumSpecs.artistGenreEquals(filters.getGenre()));
         }
         if (filters.getSubgenre() != null) {
-            spec = spec.and((root, query, cb) -> {
-                Join<AlbumEntity, ArtistEntity> artistJoin = root.join("artist");
-                return cb.equal(artistJoin.get("subgenre"), filters.getSubgenre());
-            });
+            spec = spec.and(AlbumSpecs.artistSubgenreEquals(filters.getSubgenre()));
         }
         if (filters.getArtistId() != null) {
-            spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("artist").get("id"), filters.getArtistId()));
+            spec = spec.and(AlbumSpecs.byArtist(filters.getArtistId()));
         }
         if (filters.getArtistName() != null) {
-            spec = spec.and((root, query, cb) -> {
-                Join<AlbumEntity, ArtistEntity> artistJoin = root.join("artist");
-                return cb.like(cb.lower(artistJoin.get("name")),
-                        "%" + filters.getArtistName().toLowerCase() + "%");
-            });
+            spec = spec.and(AlbumSpecs.artistNameContains(filters.getArtistName()));
         }
         if (filters.getTag() != null && !filters.getTag().isEmpty()) {
-            spec = spec.and((root, query, cb) -> {
-                query.distinct(true);
-                Join<AlbumEntity, TagEntity> tagJoin = root.join("tags");
-                return tagJoin.get("name").in(filters.getTag());
-            });
+            spec = spec.and(AlbumSpecs.hasAnyTag(filters.getTag()));
         }
         if (filters.getMinGrade() != null) {
-            spec = spec.and((root, query, cb) ->
-                    cb.greaterThanOrEqualTo(root.get("grade"), filters.getMinGrade()));
+            spec = spec.and(AlbumSpecs.gradeGte(filters.getMinGrade()));
         }
         if (filters.getMaxGrade() != null) {
-            spec = spec.and((root, query, cb) ->
-                    cb.lessThanOrEqualTo(root.get("grade"), filters.getMaxGrade()));
+            spec = spec.and(AlbumSpecs.gradeLte(filters.getMaxGrade()));
         }
         if (Boolean.TRUE.equals(filters.getFavorite())) {
-            spec = spec.and((root, query, cb) -> cb.isTrue(root.get("isFavorite")));
+            spec = spec.and(AlbumSpecs.isFavorite());
         }
         if (Boolean.TRUE.equals(filters.getUnrated())) {
-            spec = spec.and((root, query, cb) -> cb.isNull(root.get("grade")));
+            spec = spec.and(AlbumSpecs.isUnrated());
         }
 
         return spec;

@@ -8,7 +8,7 @@ Personal music catalog app for browsing, rating, tagging, and randomly picking a
 
 ## Current State
 
-Tasks 0–4 from `task-list.md` are complete. Next up: Task 5 (Browse & Random Album API).
+Tasks 0–5 from `task-list.md` are complete. Next up: Task 6 (Frontend Shell, Routing & Dashboard).
 
 **Done:**
 - `music_scanner.py` — One-time Python scanner that produced `catalog.json` (prerequisite, already run)
@@ -24,13 +24,15 @@ Tasks 0–4 from `task-list.md` are complete. Next up: Task 5 (Browse & Random A
 - **Album CRUD API** — AlbumService, AlbumController (full CRUD + grade + favorite + tags + rich filtering via AlbumFilterParams)
 - **Tag CRUD API** — TagService, TagController (list, create, delete)
 - **DTOs** — ArtistDto, ArtistCreateDto, ArtistUpdateDto, AlbumDto, AlbumSummaryDto, AlbumCreateDto, AlbumUpdateDto, AlbumFilterParams, GradeDto, SongDto, TagDto, TagCreateDto
-- **Exception handling** — NotFoundException, GlobalExceptionHandler with @ControllerAdvice (404, 400 validation, 500)
+- **Exception handling** — NotFoundException, NoMatchException, GlobalExceptionHandler with @ControllerAdvice (404, 400 validation, 500)
+- **Browse API** — BrowseService, BrowseController (genres with counts, artists by genre, albums by artist, tag stats, favorites, full stats with grade distribution)
+- **Random Album API** — RandomPickService, RandomController (single random album, multiple random albums, all album filters supported)
+- **JPA Specifications** — AlbumSpecs extracted as reusable static utility class (artistGenreEquals, byArtist, hasAnyTag, gradeGte, isFavorite, isUnrated, etc.)
+- **Browse DTOs** — BrowseGenreDto, BrowseTagDto, BrowseStatsDto, BrowseFavoritesDto
 
 **Not started:**
 - Frontend (React) — `frontend/` directory is empty
-- REST APIs for browse, random
 - Google Sheets backup, export endpoints
-- JPA Specifications (extracted as separate classes — currently inline in AlbumService)
 
 ## Architecture
 
@@ -91,18 +93,16 @@ Base package: `io.github.alexshamrai`
 **Implemented:**
 - `domain/` — JPA entities: ArtistEntity, AlbumEntity, SongEntity, TagEntity
 - `repository/` — Spring Data JPA repos with JpaSpecificationExecutor, @EntityGraph for efficient loading
-- `service/` — CatalogImportService, ArtistService, AlbumService (with JPA Specification filtering), TagService
-- `controller/` — CatalogController, ArtistController, AlbumController (full CRUD + grade + favorite + tags), TagController
-- `dto/` — Artist DTOs, Album DTOs (AlbumDto, AlbumSummaryDto, AlbumCreateDto, AlbumUpdateDto, AlbumFilterParams, GradeDto), SongDto, TagDto, TagCreateDto, ImportResult
+- `specification/` — AlbumSpecs (reusable static JPA Specification methods for album filtering)
+- `service/` — CatalogImportService, ArtistService, AlbumService (uses AlbumSpecs), TagService, BrowseService, RandomPickService
+- `controller/` — CatalogController, ArtistController, AlbumController, TagController, BrowseController, RandomController
+- `dto/` — Artist DTOs, Album DTOs (AlbumDto, AlbumSummaryDto, AlbumCreateDto, AlbumUpdateDto, AlbumFilterParams, GradeDto), SongDto, TagDto, TagCreateDto, ImportResult, BrowseGenreDto, BrowseTagDto, BrowseStatsDto, BrowseFavoritesDto
 - `dto/catalog/` — Java records mapping catalog.json: Catalog, Genre, Artist, Album, Stats
-- `exception/` — NotFoundException, GlobalExceptionHandler (@ControllerAdvice)
+- `exception/` — NotFoundException, NoMatchException, GlobalExceptionHandler (@ControllerAdvice)
 - `startup/` — CatalogAutoImporter (imports on first run if DB empty)
 
 **Planned (not yet created):**
-- `specification/` — AlbumSpecs/ArtistSpecs as extracted separate classes (currently inline in services)
-- `service/` — RandomPickService, CatalogExportService, GoogleSheetsBackupService
-- `controller/` — BrowseController, RandomController
-- `exception/` — NoMatchException
+- `service/` — CatalogExportService, GoogleSheetsBackupService
 - `config/` — WebConfig (SPA routing), GoogleSheetsConfig
 
 ## Important Conventions
