@@ -4,9 +4,14 @@ import io.github.alexshamrai.domain.AlbumEntity;
 import io.github.alexshamrai.domain.ArtistEntity;
 import io.github.alexshamrai.domain.SongEntity;
 import io.github.alexshamrai.domain.TagEntity;
+import io.github.alexshamrai.dto.AlbumCreateDto;
+import io.github.alexshamrai.dto.AlbumDto;
+import io.github.alexshamrai.dto.AlbumSummaryDto;
+import io.github.alexshamrai.dto.AlbumUpdateDto;
 import io.github.alexshamrai.dto.ArtistCreateDto;
 import io.github.alexshamrai.dto.ArtistDto;
 import io.github.alexshamrai.dto.ArtistUpdateDto;
+import io.github.alexshamrai.dto.SongDto;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -112,6 +117,88 @@ public final class TestDataFactory {
                 .favorite(false)
                 .tags(List.of())
                 .albumCount(0)
+                .build();
+    }
+
+    // ==================== Album helpers ====================
+
+    public static AlbumEntity albumWithId(Long id, String title, Integer year, ArtistEntity artist) {
+        return AlbumEntity.builder()
+                .id(id)
+                .title(title)
+                .year(year)
+                .artist(artist)
+                .songs(new ArrayList<>())
+                .tags(new HashSet<>())
+                .build();
+    }
+
+    public static AlbumEntity albumWithSongs(Long id, String title, Integer year, ArtistEntity artist, List<SongEntity> songs) {
+        return AlbumEntity.builder()
+                .id(id)
+                .title(title)
+                .year(year)
+                .artist(artist)
+                .songs(songs)
+                .tags(new HashSet<>())
+                .build();
+    }
+
+    public static AlbumEntity albumWithTags(Long id, String title, Integer year, ArtistEntity artist, Set<TagEntity> tags) {
+        return AlbumEntity.builder()
+                .id(id)
+                .title(title)
+                .year(year)
+                .artist(artist)
+                .songs(new ArrayList<>())
+                .tags(tags)
+                .build();
+    }
+
+    public static SongEntity songWithId(Long id, String title, int track, int disc, AlbumEntity album) {
+        return SongEntity.builder()
+                .id(id)
+                .title(title)
+                .trackNumber(track)
+                .discNumber(disc)
+                .album(album)
+                .build();
+    }
+
+    public static AlbumCreateDto albumCreateDto(String title, Integer year, Long artistId) {
+        return new AlbumCreateDto(title, year, artistId);
+    }
+
+    public static AlbumUpdateDto albumUpdateDto(String title, Integer year) {
+        return new AlbumUpdateDto(title, year);
+    }
+
+    public static AlbumSummaryDto albumSummaryDto(Long id, String title, Integer year, String artistName, String genre) {
+        return AlbumSummaryDto.builder()
+                .id(id)
+                .title(title)
+                .year(year)
+                .artistName(artistName)
+                .genre(genre)
+                .favorite(false)
+                .tags(List.of())
+                .songCount(0)
+                .build();
+    }
+
+    public static AlbumDto albumDto(Long id, String title, Integer year, Long artistId, String artistName, String genre) {
+        return AlbumDto.builder()
+                .id(id)
+                .title(title)
+                .year(year)
+                .favorite(false)
+                .artist(AlbumDto.ArtistSummaryDto.builder()
+                        .id(artistId)
+                        .name(artistName)
+                        .genre(genre)
+                        .build())
+                .tags(List.of())
+                .songs(List.of())
                 .build();
     }
 }

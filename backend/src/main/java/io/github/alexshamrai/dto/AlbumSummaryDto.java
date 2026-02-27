@@ -1,0 +1,25 @@
+package io.github.alexshamrai.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class AlbumSummaryDto {
+
+    private Long id;
+    private String title;
+    private Integer year;
+    private Integer grade;
+    private boolean favorite;
+    private String artistName;
+    private String genre;
+    private List<String> tags;
+    private int songCount;
+}
