@@ -25,6 +25,15 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(NoMatchException.class)
+    public ResponseEntity<Map<String, Object>> handleNoMatch(NoMatchException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "status", 404,
+                        "message", ex.getMessage()
+                ));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         var fieldErrors = ex.getBindingResult().getFieldErrors().stream()

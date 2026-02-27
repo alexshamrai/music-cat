@@ -516,7 +516,7 @@ Show me example responses for album list (summary) and album detail (with songs)
 
 ---
 
-## Task 5 — Browse & Random Album API
+## Task 5 — Browse & Random Album API ✅ COMPLETED
 
 > **Done when:** Browse endpoints return genre/tag summaries. `GET /api/random/album?genre=Jazz` returns a random album that changes on repeated calls.
 

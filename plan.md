@@ -869,22 +869,24 @@ External Drive      catalog.json         H2 Database            Google Sheets
 - [x] POST /api/catalog/import endpoint (manual re-import)
 - [x] Verify: start app → catalog.json auto-loaded → data visible in H2 console
 
-### Phase 3 — CRUD API (Day 3-4)
-- [ ] DTO layer: ArtistDto, AlbumDto, create/update variants
-- [ ] ArtistService + ArtistController (full CRUD + tags + favorite)
-- [ ] AlbumService + AlbumController (full CRUD + grade + tags + favorite)
-- [ ] TagService + TagController
-- [ ] GlobalExceptionHandler (@ControllerAdvice)
-- [ ] Validation: @Min/@Max on grade, @NotBlank on names, etc.
-- [ ] Verify via Swagger UI: create, update, delete, tag, grade, favorite
+### Phase 3 — CRUD API (Day 3-4) ✅
+- [x] DTO layer: ArtistDto, AlbumDto, create/update variants
+- [x] ArtistService + ArtistController (full CRUD + tags + favorite)
+- [x] AlbumService + AlbumController (full CRUD + grade + tags + favorite)
+- [x] TagService + TagController
+- [x] GlobalExceptionHandler (@ControllerAdvice)
+- [x] Validation: @Min/@Max on grade, @NotBlank on names, etc.
+- [x] Verify via Swagger UI: create, update, delete, tag, grade, favorite
 
-### Phase 4 — Browse & Random (Day 5)
-- [ ] BrowseController: genres, tags, favorites, stats endpoints
-- [ ] AlbumSpecs / ArtistSpecs (JPA Specification classes for dynamic filters)
-- [ ] AlbumFilterParams (query param binding class)
-- [ ] RandomPickService (random with all filter combinations)
-- [ ] RandomController: single random + multiple random
-- [ ] Verify: `GET /api/random/album?genre=Jazz&minGrade=3`
+### Phase 4 — Browse & Random (Day 5) ✅
+- [x] BrowseController: genres, tags, favorites, stats endpoints
+- [x] AlbumSpecs (JPA Specification class for dynamic album filters)
+- [x] AlbumFilterParams (query param binding class)
+- [x] BrowseService: genre/tag summaries, favorites, stats with grade distribution
+- [x] RandomPickService (random with all filter combinations)
+- [x] RandomController: single random + multiple random
+- [x] NoMatchException for empty random results
+- [x] Verify: `GET /api/random/album?genre=Jazz&minGrade=3`
 
 ### Phase 5 — Google Sheets Backup (Day 6)
 - [ ] Google Cloud project setup + Sheets API enable + service account
