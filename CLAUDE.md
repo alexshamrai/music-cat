@@ -8,7 +8,7 @@ Personal music catalog app for browsing, rating, tagging, and randomly picking a
 
 ## Current State
 
-Tasks 0–5 from `task-list.md` are complete. Next up: Task 6 (Frontend Shell, Routing & Dashboard).
+Tasks 0–6 from `task-list.md` are complete. Next up: Task 7 (Browse, Artists & Album Detail Pages).
 
 **Done:**
 - `music_scanner.py` — One-time Python scanner that produced `catalog.json` (prerequisite, already run)
@@ -30,8 +30,11 @@ Tasks 0–5 from `task-list.md` are complete. Next up: Task 6 (Frontend Shell, R
 - **JPA Specifications** — AlbumSpecs extracted as reusable static utility class (artistGenreEquals, byArtist, hasAnyTag, gradeGte, isFavorite, isUnrated, etc.)
 - **Browse DTOs** — BrowseGenreDto, BrowseTagDto, BrowseStatsDto, BrowseFavoritesDto
 
+- **Frontend shell** — React 19 + TypeScript + Vite 7, TanStack Query v5, React Router 7, Tailwind CSS 4, Lucide icons; Vite proxy to :8080 in dev, builds to backend static resources
+- **Frontend structure** — `src/types/index.ts` (all TS interfaces), `src/api/client.ts` (typed axios calls), `src/hooks/` (useArtists, useAlbums, useBrowse, useRandomAlbum), `src/components/Layout.tsx + Sidebar.tsx`, `src/pages/DashboardPage.tsx` (live stats), all other pages as placeholders
+
 **Not started:**
-- Frontend (React) — `frontend/` directory is empty
+- Task 7: Browse, Artist list/detail, Album list/detail pages (full implementations)
 - Google Sheets backup, export endpoints
 
 ## Architecture
@@ -39,7 +42,7 @@ Tasks 0–5 from `task-list.md` are complete. Next up: Task 6 (Frontend Shell, R
 Monorepo with two modules that build into a single deployable JAR:
 
 - **backend/** — Java 25, Spring Boot 4.0.2, Spring Data JPA, H2 (file-persisted), Flyway migrations, SpringDoc OpenAPI 3.0.1
-- **frontend/** — React 19, TypeScript, Vite 6, TanStack Query v5, React Router 7, Tailwind CSS 4, Lucide icons (not started)
+- **frontend/** — React 19, TypeScript, Vite 7, TanStack Query v5, React Router 7, Tailwind CSS 4, Lucide icons
 - **catalog.json** — Scanner output at project root (one-time initial seed)
 - **config/** — Google Sheets service account credentials
 
