@@ -634,7 +634,7 @@ Show me the responses.
 
 ---
 
-## Task 6 — Frontend Shell, Routing & Dashboard
+## Task 6 — Frontend Shell, Routing & Dashboard ✅ COMPLETED
 
 > **Done when:** `npm run dev` shows the app with sidebar navigation. Dashboard page displays real stats from the API. Clicking sidebar links navigates between pages (pages can be placeholder content for now).
 
@@ -758,7 +758,7 @@ For all other pages, create simple components that show the page title and a "Co
 
 ---
 
-## Task 7 — Frontend: Browse, Artists & Album Detail Pages
+## Task 7 — Frontend: Browse, Artists & Album Detail Pages ✅ COMPLETED
 
 > **Done when:** You can navigate Genre → Artist → Album drill-down. Artist page shows albums. Album detail shows songs with clickable star rating, favorite toggle, and tag management.
 

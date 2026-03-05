@@ -8,7 +8,7 @@ Personal music catalog app for browsing, rating, tagging, and randomly picking a
 
 ## Current State
 
-Tasks 0–6 from `task-list.md` are complete. Next up: Task 7 (Browse, Artists & Album Detail Pages).
+Tasks 0–7 from `task-list.md` are complete. Next up: Task 8 (Random Pick, Favorites & Tags Pages).
 
 **Done:**
 - `music_scanner.py` — One-time Python scanner that produced `catalog.json` (prerequisite, already run)
@@ -31,10 +31,14 @@ Tasks 0–6 from `task-list.md` are complete. Next up: Task 7 (Browse, Artists &
 - **Browse DTOs** — BrowseGenreDto, BrowseTagDto, BrowseStatsDto, BrowseFavoritesDto
 
 - **Frontend shell** — React 19 + TypeScript + Vite 7, TanStack Query v5, React Router 7, Tailwind CSS 4, Lucide icons; Vite proxy to :8080 in dev, builds to backend static resources
-- **Frontend structure** — `src/types/index.ts` (all TS interfaces), `src/api/client.ts` (typed axios calls), `src/hooks/` (useArtists, useAlbums, useBrowse, useRandomAlbum), `src/components/Layout.tsx + Sidebar.tsx`, `src/pages/DashboardPage.tsx` (live stats), all other pages as placeholders
+- **Frontend structure** — `src/types/index.ts` (all TS interfaces), `src/api/client.ts` (typed axios calls), `src/hooks/` (useArtists, useAlbums, useBrowse, useRandomAlbum), `src/components/Layout.tsx + Sidebar.tsx`, `src/pages/DashboardPage.tsx` (live stats)
+- **Shared components** — StarRating (clickable 1-5 stars), FavoriteToggle (heart icon), TagBadge (pill with remove), FilterBar (genre/grade/favorite/tag filters), AlbumCard (summary card), ArtistCard (artist card)
+- **Browse page** — Genre grid with inline accordion expansion showing artists, drill-down to artist detail
+- **Artist pages** — ArtistListPage (filtered grid of ArtistCards), ArtistDetailPage (header + favorite + tags + album grid)
+- **Album pages** — AlbumListPage (FilterBar + AlbumCard grid), AlbumDetailPage (header + star rating + favorite + tags + song table)
 
 **Not started:**
-- Task 7: Browse, Artist list/detail, Album list/detail pages (full implementations)
+- Task 8: Random Pick, Favorites & Tags pages
 - Google Sheets backup, export endpoints
 
 ## Architecture
