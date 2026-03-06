@@ -8,7 +8,7 @@ Personal music catalog app for browsing, rating, tagging, and randomly picking a
 
 ## Current State
 
-Tasks 0–7 from `task-list.md` are complete. Next up: Task 8 (Random Pick, Favorites & Tags Pages).
+Tasks 0–8 from `task-list.md` are complete. Next up: Task 9 (Google Sheets Backup).
 
 **Done:**
 - `music_scanner.py` — One-time Python scanner that produced `catalog.json` (prerequisite, already run)
@@ -37,9 +37,13 @@ Tasks 0–7 from `task-list.md` are complete. Next up: Task 8 (Random Pick, Favo
 - **Artist pages** — ArtistListPage (filtered grid of ArtistCards), ArtistDetailPage (header + favorite + tags + album grid)
 - **Album pages** — AlbumListPage (FilterBar + AlbumCard grid), AlbumDetailPage (header + star rating + favorite + tags + song table)
 
+- **Random Pick page** — "Surprise Me" button with genre/grade/favorite filters, shows full album detail with inline rating/tagging, "Roll Again" flow
+- **Favorites page** — Favorite artists and albums grids with empty state, inline unfavorite toggles
+- **Tags page** — Tag cloud with sort (name/usage), create/delete tags, click tag to show associated artists and albums
+
 **Not started:**
-- Task 8: Random Pick, Favorites & Tags pages
-- Google Sheets backup, export endpoints
+- Task 9: Google Sheets backup
+- Task 10: Export, build integration, polish
 
 ## Architecture
 

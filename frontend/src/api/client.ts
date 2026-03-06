@@ -133,6 +133,15 @@ export const fetchTagStats = async () => {
   return data;
 };
 
+export const createTag = async (name: string) => {
+  const { data } = await api.post<Tag>('/tags', { name });
+  return data;
+};
+
+export const deleteTag = async (id: number) => {
+  await api.delete(`/tags/${id}`);
+};
+
 export const fetchFavorites = async () => {
   const { data } = await api.get<BrowseFavorites>('/browse/favorites');
   return data;
