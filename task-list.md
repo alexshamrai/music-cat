@@ -863,7 +863,7 @@ Test the full flow:
 
 ---
 
-## Task 8 — Frontend: Random Pick, Favorites & Tags Pages
+## Task 8 — Frontend: Random Pick, Favorites & Tags Pages ✅ COMPLETED
 
 > **Done when:** "Surprise Me" returns a random album with filters working. Favorites and Tags pages display correctly.
 
