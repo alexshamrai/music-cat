@@ -129,13 +129,13 @@ public final class SheetMapper {
 
     // ==================== Helpers ====================
 
-    /** Returns the string value of cell at {@code index}, or "" if the row is too short. */
+    /** Returns the trimmed string value of cell at {@code index}, or "" if the row is too short or the cell is null. */
     private static String cell(List<Object> row, int index) {
         if (index >= row.size()) {
             return "";
         }
         Object value = row.get(index);
-        return value == null ? "" : value.toString();
+        return value == null ? "" : value.toString().trim();
     }
 
     private static String nullToEmpty(Object value) {

@@ -42,6 +42,14 @@ public class GoogleSheetsClient implements SheetsClient {
         });
     }
 
+    /**
+     * Replaces all content in {@code sheetName} with {@code rows}.
+     *
+     * <p><b>Non-atomic:</b> the operation clears the tab first, then writes rows in chunks.
+     * A failure between the clear and the final write chunk leaves the tab empty or partially
+     * filled. Callers (e.g. the Task 10 sync) must be able to re-invoke {@code overwrite}
+     * to self-heal: the next successful call will restore the full dataset.
+     */
     @Override
     public void overwrite(String sheetName, List<List<Object>> rows) {
         executeWithRetry(() -> {

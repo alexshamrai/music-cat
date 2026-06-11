@@ -225,4 +225,41 @@ class SheetMapperTest {
 
         assertThat(parsed.tags()).isEmpty();
     }
+
+    // ==================== Stray-whitespace trimming on JOIN KEY fields ====================
+
+    @Test
+    void parseArtistRow_strayWhitespaceInName_isTrimmed() {
+        // The spec requires parsing to tolerate stray whitespace; a hand-edited sheet cell
+        // like "Pink Floyd " must not silently break artist→album joins in Task 11.
+        List<Object> row = List.of("  Pink Floyd  ", "Progressive Rock", "", "FALSE", "");
+
+        ArtistRow parsed = SheetMapper.parseArtistRow(row);
+
+        assertThat(parsed.name()).isEqualTo("Pink Floyd");
+    }
+
+    @Test
+    void parseAlbumRow_strayWhitespaceInArtistNameAndTitle_isTrimmed() {
+        // Trailing space in artistName or title would silently drop the album when
+        // matching against artist names in Task 11 sync.
+        List<Object> row = List.of("  Miles Davis  ", " Kind of Blue ", "1959", "5", "FALSE", "");
+
+        AlbumRow parsed = SheetMapper.parseAlbumRow(row);
+
+        assertThat(parsed.artistName()).isEqualTo("Miles Davis");
+        assertThat(parsed.title()).isEqualTo("Kind of Blue");
+    }
+
+    @Test
+    void parseSongRow_strayWhitespaceInKeyFields_isTrimmed() {
+        // artistName, albumTitle, and title are all JOIN KEY / display fields that must be trimmed.
+        List<Object> row = List.of("  Bach  ", " The Well-Tempered Clavier ", "1", "2", " Prelude No. 1 ");
+
+        SongRow parsed = SheetMapper.parseSongRow(row);
+
+        assertThat(parsed.artistName()).isEqualTo("Bach");
+        assertThat(parsed.albumTitle()).isEqualTo("The Well-Tempered Clavier");
+        assertThat(parsed.title()).isEqualTo("Prelude No. 1");
+    }
 }

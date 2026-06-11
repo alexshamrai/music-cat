@@ -21,9 +21,16 @@ public class GoogleSheetsConfig {
 
     @Bean
     public Sheets sheets(SheetsProperties props) throws IOException, GeneralSecurityException {
-        GoogleCredentials credentials = GoogleCredentials
-                .fromStream(new FileInputStream(props.credentialsPath()))
-                .createScoped(List.of(SheetsScopes.SPREADSHEETS));
+        String credentialsPath = props.credentialsPath();
+        if (credentialsPath == null || credentialsPath.isBlank()) {
+            throw new IllegalStateException(
+                    "music-cat.sheets.credentials-path must be set when sheets are enabled");
+        }
+        GoogleCredentials credentials;
+        try (var stream = new FileInputStream(credentialsPath)) {
+            credentials = GoogleCredentials.fromStream(stream)
+                    .createScoped(List.of(SheetsScopes.SPREADSHEETS));
+        }
         return new Sheets.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 GsonFactory.getDefaultInstance(),
