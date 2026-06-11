@@ -17,6 +17,10 @@ spring:
 
 music-cat:
   catalog-path: ../catalog.json
+  sheets:
+    enabled: false
+    credentials-path: ${SHEETS_CREDENTIALS_PATH:../config/google-credentials.json}
+    spreadsheet-id: ${SHEETS_SPREADSHEET_ID:}
 
 server:
   port: 8080
