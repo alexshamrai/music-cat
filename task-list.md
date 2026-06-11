@@ -34,7 +34,8 @@ free tier, with Google Sheets as the persistent source of truth.
 
 **Execution conventions for every task:**
 - TDD where the task touches Java: write the failing test first, then implement.
-- Run `cd backend && ./gradlew test` before claiming a task done; all tests must pass.
+- Run `./gradlew :backend:test` (from repo root — there is no backend/gradlew) before
+  claiming a task done; all tests must pass.
 - Commit at the end of each task (and at natural checkpoints inside large tasks).
 - `year` is an H2 reserved word — keep it quoted in SQL/JPA.
 - Genre is the `io.github.alexshamrai.domain.Genre` enum; sheets/exports store its
@@ -182,12 +183,12 @@ asserting the context starts with sheets.enabled=false and contains NO SheetsCli
 
 ## 7. Acceptance criteria
 
-- [ ] `cd backend && ./gradlew test` — green, including new SheetMapperTest
-- [ ] `./gradlew bootRun` starts cleanly with sheets disabled; log contains no Sheets noise
-- [ ] No bean of type SheetsClient exists when music-cat.sheets.enabled=false (test proves it)
-- [ ] SheetMapper covers: round-trip, nulls, tag lists, numeric-string years, short rows
-- [ ] No manual setup or credentials were needed anywhere in this task
-- [ ] Committed
+- [x] `./gradlew :backend:test` — green, including new SheetMapperTest (222 tests, 0 failures)
+- [x] `./gradlew :backend:bootRun` starts cleanly with sheets disabled; log contains no Sheets noise (started in 2.4s, stats endpoint verified)
+- [x] No bean of type SheetsClient exists when music-cat.sheets.enabled=false (SheetsDisabledTest proves it)
+- [x] SheetMapper covers: round-trip, nulls, tag lists, numeric-string years, short rows, whitespace-trimmed keys
+- [x] No manual setup or credentials were needed anywhere in this task
+- [x] Committed (111e9ae + review fixes 0fbd9b1)
 ```
 
 ---
@@ -759,7 +760,7 @@ gcloud secrets create sheets-sa-key --data-file=config/google-credentials.json
 
 Delete ./data/music-cat.mv.db (local H2 file) so the DB is empty, then:
 
-cd backend && SHEETS_SPREADSHEET_ID=<id> ./gradlew bootRun \
+SHEETS_SPREADSHEET_ID=<id> ./gradlew :backend:bootRun \
     --args='--music-cat.sheets.enabled=true'
 
 Expected: log shows "Seeded from catalog.json and pushed initial state to Google Sheets".
