@@ -16,11 +16,13 @@ import io.github.alexshamrai.dto.catalog.Artist;
 import io.github.alexshamrai.dto.catalog.Catalog;
 import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.dto.catalog.GenreGroup;
+import io.github.alexshamrai.event.CatalogChangedEvent;
 import io.github.alexshamrai.repository.AlbumRepository;
 import io.github.alexshamrai.repository.ArtistRepository;
 import io.github.alexshamrai.repository.SongRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,7 @@ public class CatalogImportService {
     private final ArtistRepository artistRepository;
     private final AlbumRepository albumRepository;
     private final SongRepository songRepository;
+    private final ApplicationEventPublisher eventPublisher;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Patterns for parsing track number from filename (ordered by priority)
@@ -97,6 +100,7 @@ public class CatalogImportService {
         }
 
         log.info("Import completed: {} artists, {} albums, {} songs", artistCount, albumCount, songCount);
+        eventPublisher.publishEvent(new CatalogChangedEvent(true));
         return new ImportResult(artistCount, albumCount, songCount);
     }
 

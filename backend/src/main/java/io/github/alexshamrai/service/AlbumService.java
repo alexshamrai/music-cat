@@ -9,12 +9,14 @@ import io.github.alexshamrai.dto.AlbumFilterParams;
 import io.github.alexshamrai.dto.AlbumSummaryDto;
 import io.github.alexshamrai.dto.AlbumUpdateDto;
 import io.github.alexshamrai.dto.SongDto;
+import io.github.alexshamrai.event.CatalogChangedEvent;
 import io.github.alexshamrai.exception.NotFoundException;
 import io.github.alexshamrai.repository.AlbumRepository;
 import io.github.alexshamrai.repository.ArtistRepository;
 import io.github.alexshamrai.repository.TagRepository;
 import io.github.alexshamrai.specification.AlbumSpecs;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,7 @@ public class AlbumService {
     private final AlbumRepository albumRepository;
     private final ArtistRepository artistRepository;
     private final TagRepository tagRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public List<AlbumSummaryDto> findAll(AlbumFilterParams filters) {
         Specification<AlbumEntity> spec = buildSpecification(filters);
@@ -56,7 +59,9 @@ public class AlbumService {
                 .artist(artist)
                 .build();
 
-        return toSummaryDto(albumRepository.save(album));
+        AlbumSummaryDto result = toSummaryDto(albumRepository.save(album));
+        eventPublisher.publishEvent(new CatalogChangedEvent(true));
+        return result;
     }
 
     @Transactional
@@ -70,7 +75,9 @@ public class AlbumService {
             album.setYear(dto.getYear());
         }
 
-        return toSummaryDto(albumRepository.save(album));
+        AlbumSummaryDto result = toSummaryDto(albumRepository.save(album));
+        eventPublisher.publishEvent(new CatalogChangedEvent(true));
+        return result;
     }
 
     @Transactional
@@ -78,20 +85,25 @@ public class AlbumService {
         var album = albumRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Album not found with id: " + id));
         albumRepository.delete(album);
+        eventPublisher.publishEvent(new CatalogChangedEvent(true));
     }
 
     @Transactional
     public AlbumSummaryDto setGrade(Long id, int grade) {
         var album = getEntityById(id);
         album.setGrade(grade);
-        return toSummaryDto(albumRepository.save(album));
+        AlbumSummaryDto result = toSummaryDto(albumRepository.save(album));
+        eventPublisher.publishEvent(new CatalogChangedEvent(false));
+        return result;
     }
 
     @Transactional
     public AlbumSummaryDto toggleFavorite(Long id) {
         var album = getEntityById(id);
         album.setFavorite(!album.isFavorite());
-        return toSummaryDto(albumRepository.save(album));
+        AlbumSummaryDto result = toSummaryDto(albumRepository.save(album));
+        eventPublisher.publishEvent(new CatalogChangedEvent(false));
+        return result;
     }
 
     @Transactional
@@ -109,7 +121,9 @@ public class AlbumService {
                 .collect(Collectors.toSet());
 
         album.setTags(tags);
-        return toSummaryDto(albumRepository.save(album));
+        AlbumSummaryDto result = toSummaryDto(albumRepository.save(album));
+        eventPublisher.publishEvent(new CatalogChangedEvent(false));
+        return result;
     }
 
     private AlbumEntity getEntityById(Long id) {

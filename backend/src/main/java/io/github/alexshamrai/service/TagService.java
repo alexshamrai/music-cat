@@ -2,9 +2,11 @@ package io.github.alexshamrai.service;
 
 import io.github.alexshamrai.domain.TagEntity;
 import io.github.alexshamrai.dto.TagDto;
+import io.github.alexshamrai.event.CatalogChangedEvent;
 import io.github.alexshamrai.exception.NotFoundException;
 import io.github.alexshamrai.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import java.util.List;
 public class TagService {
 
     private final TagRepository tagRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public List<TagDto> findAll() {
         return tagRepository.findAll().stream()
@@ -33,7 +36,9 @@ public class TagService {
         var tag = TagEntity.builder()
                 .name(name.strip())
                 .build();
-        return toDto(tagRepository.save(tag));
+        TagDto result = toDto(tagRepository.save(tag));
+        eventPublisher.publishEvent(new CatalogChangedEvent(false));
+        return result;
     }
 
     @Transactional
@@ -45,6 +50,7 @@ public class TagService {
         tag.getAlbums().forEach(album -> album.getTags().remove(tag));
 
         tagRepository.delete(tag);
+        eventPublisher.publishEvent(new CatalogChangedEvent(false));
     }
 
     private TagDto toDto(TagEntity entity) {

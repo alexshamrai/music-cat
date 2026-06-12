@@ -6,11 +6,13 @@ import io.github.alexshamrai.domain.TagEntity;
 import io.github.alexshamrai.dto.ArtistCreateDto;
 import io.github.alexshamrai.dto.ArtistDto;
 import io.github.alexshamrai.dto.ArtistUpdateDto;
+import io.github.alexshamrai.event.CatalogChangedEvent;
 import io.github.alexshamrai.exception.NotFoundException;
 import io.github.alexshamrai.repository.ArtistRepository;
 import io.github.alexshamrai.repository.TagRepository;
 import jakarta.persistence.criteria.Join;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ public class ArtistService {
 
     private final ArtistRepository artistRepository;
     private final TagRepository tagRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public List<ArtistDto> findAll(Genre genre, String subgenre, Boolean favorite, String tag) {
         Specification<ArtistEntity> spec = Specification.where(
@@ -65,7 +68,9 @@ public class ArtistService {
                 .subgenre(dto.getSubgenre())
                 .build();
 
-        return toDto(artistRepository.save(artist));
+        ArtistDto result = toDto(artistRepository.save(artist));
+        eventPublisher.publishEvent(new CatalogChangedEvent(true));
+        return result;
     }
 
     @Transactional
@@ -82,7 +87,9 @@ public class ArtistService {
             artist.setSubgenre(dto.getSubgenre());
         }
 
-        return toDto(artistRepository.save(artist));
+        ArtistDto result = toDto(artistRepository.save(artist));
+        eventPublisher.publishEvent(new CatalogChangedEvent(true));
+        return result;
     }
 
     @Transactional
@@ -90,13 +97,16 @@ public class ArtistService {
         var artist = artistRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Artist not found with id: " + id));
         artistRepository.delete(artist);
+        eventPublisher.publishEvent(new CatalogChangedEvent(true));
     }
 
     @Transactional
     public ArtistDto toggleFavorite(Long id) {
         var artist = getEntityById(id);
         artist.setFavorite(!artist.isFavorite());
-        return toDto(artistRepository.save(artist));
+        ArtistDto result = toDto(artistRepository.save(artist));
+        eventPublisher.publishEvent(new CatalogChangedEvent(false));
+        return result;
     }
 
     @Transactional
@@ -114,7 +124,9 @@ public class ArtistService {
                 .collect(Collectors.toSet());
 
         artist.setTags(tags);
-        return toDto(artistRepository.save(artist));
+        ArtistDto result = toDto(artistRepository.save(artist));
+        eventPublisher.publishEvent(new CatalogChangedEvent(false));
+        return result;
     }
 
     private ArtistEntity getEntityById(Long id) {
