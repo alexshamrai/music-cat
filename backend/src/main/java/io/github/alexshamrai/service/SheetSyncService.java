@@ -14,12 +14,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @ConditionalOnProperty(name = "music-cat.sheets.enabled", havingValue = "true")
@@ -40,13 +42,30 @@ public class SheetSyncService {
     private volatile Instant lastPushAt;
     private volatile String lastError;
 
+    /** Serializes concurrent pushCatalog calls — clear-then-write (overwrite) is not atomic. */
+    private final ReentrantLock pushLock = new ReentrantLock();
+
     /**
      * Pushes the entire catalog to Google Sheets.
+     *
+     * <p>Always runs inside its own read-only transaction so that lazy associations can be
+     * traversed safely regardless of the caller's context (e.g. an ApplicationReadyEvent
+     * fired from a non-request thread where OSIV is absent).
      *
      * @param includeSongs if true, also rewrites the Songs tab; if false, Songs are only
      *                     rewritten when {@code songsDirty} is set (self-heal after a prior failure)
      */
+    @Transactional(readOnly = true)
     public SyncResultDto pushCatalog(boolean includeSongs) {
+        pushLock.lock();
+        try {
+            return doPushCatalog(includeSongs);
+        } finally {
+            pushLock.unlock();
+        }
+    }
+
+    private SyncResultDto doPushCatalog(boolean includeSongs) {
         boolean shouldWriteSongs = includeSongs || songsDirty.get();
 
         try {
@@ -55,7 +74,7 @@ public class SheetSyncService {
                     .comparing((ArtistEntity a) -> a.getGenre().getDisplayName())
                     .thenComparing(ArtistEntity::getName);
 
-            List<ArtistEntity> artists = artistRepository.findAll().stream()
+            List<ArtistEntity> artists = artistRepository.findAllForSync().stream()
                     .sorted(artistComparator)
                     .toList();
 
@@ -72,7 +91,7 @@ public class SheetSyncService {
                     .thenComparing(AlbumEntity::getYear, Comparator.nullsLast(Comparator.naturalOrder()))
                     .thenComparing(AlbumEntity::getTitle);
 
-            List<AlbumEntity> albums = albumRepository.findAll().stream()
+            List<AlbumEntity> albums = albumRepository.findAllForSync().stream()
                     .sorted(albumComparator)
                     .toList();
 
@@ -92,7 +111,7 @@ public class SheetSyncService {
                         .thenComparingInt(SongEntity::getDiscNumber)
                         .thenComparingInt(SongEntity::getTrackNumber);
 
-                List<SongEntity> songs = songRepository.findAll().stream()
+                List<SongEntity> songs = songRepository.findAllForSync().stream()
                         .sorted(songComparator)
                         .toList();
 
@@ -112,7 +131,8 @@ public class SheetSyncService {
             return new SyncResultDto(artists.size(), albums.size(), songCount, lastPushAt);
 
         } catch (Exception e) {
-            lastError = e.getMessage();
+            String msg = e.getMessage();
+            lastError = (msg != null) ? msg : e.getClass().getSimpleName();
             if (shouldWriteSongs) {
                 // A failure mid-songs write — mark dirty for self-heal
                 songsDirty.set(true);

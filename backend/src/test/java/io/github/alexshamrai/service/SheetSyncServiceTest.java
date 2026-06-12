@@ -68,8 +68,8 @@ class SheetSyncServiceTest {
 
     @Test
     void pushCatalog_nonStructural_writesArtistsAndAlbumsButNotSongs() {
-        when(artistRepository.findAll()).thenReturn(List.of(artist));
-        when(albumRepository.findAll()).thenReturn(List.of(album));
+        when(artistRepository.findAllForSync()).thenReturn(List.of(artist));
+        when(albumRepository.findAllForSync()).thenReturn(List.of(album));
 
         sheetSyncService.pushCatalog(false);
 
@@ -80,8 +80,8 @@ class SheetSyncServiceTest {
 
     @Test
     void pushCatalog_nonStructural_artistRowsHaveHeaderFirst() {
-        when(artistRepository.findAll()).thenReturn(List.of(artist));
-        when(albumRepository.findAll()).thenReturn(List.of(album));
+        when(artistRepository.findAllForSync()).thenReturn(List.of(artist));
+        when(albumRepository.findAllForSync()).thenReturn(List.of(album));
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<List<Object>>> captor = ArgumentCaptor.forClass(List.class);
@@ -97,8 +97,8 @@ class SheetSyncServiceTest {
 
     @Test
     void pushCatalog_nonStructural_albumRowsHaveHeaderFirst() {
-        when(artistRepository.findAll()).thenReturn(List.of(artist));
-        when(albumRepository.findAll()).thenReturn(List.of(album));
+        when(artistRepository.findAllForSync()).thenReturn(List.of(artist));
+        when(albumRepository.findAllForSync()).thenReturn(List.of(album));
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<List<Object>>> captor = ArgumentCaptor.forClass(List.class);
@@ -116,9 +116,9 @@ class SheetSyncServiceTest {
 
     @Test
     void pushCatalog_structural_writesArtistsAlbumsAndSongs() {
-        when(artistRepository.findAll()).thenReturn(List.of(artist));
-        when(albumRepository.findAll()).thenReturn(List.of(album));
-        when(songRepository.findAll()).thenReturn(List.of(song));
+        when(artistRepository.findAllForSync()).thenReturn(List.of(artist));
+        when(albumRepository.findAllForSync()).thenReturn(List.of(album));
+        when(songRepository.findAllForSync()).thenReturn(List.of(song));
 
         sheetSyncService.pushCatalog(true);
 
@@ -129,9 +129,9 @@ class SheetSyncServiceTest {
 
     @Test
     void pushCatalog_structural_songRowsHaveHeaderFirst() {
-        when(artistRepository.findAll()).thenReturn(List.of(artist));
-        when(albumRepository.findAll()).thenReturn(List.of(album));
-        when(songRepository.findAll()).thenReturn(List.of(song));
+        when(artistRepository.findAllForSync()).thenReturn(List.of(artist));
+        when(albumRepository.findAllForSync()).thenReturn(List.of(album));
+        when(songRepository.findAllForSync()).thenReturn(List.of(song));
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<List<Object>>> captor = ArgumentCaptor.forClass(List.class);
@@ -147,9 +147,9 @@ class SheetSyncServiceTest {
 
     @Test
     void pushCatalog_structural_songCountInResult() {
-        when(artistRepository.findAll()).thenReturn(List.of(artist));
-        when(albumRepository.findAll()).thenReturn(List.of(album));
-        when(songRepository.findAll()).thenReturn(List.of(song));
+        when(artistRepository.findAllForSync()).thenReturn(List.of(artist));
+        when(albumRepository.findAllForSync()).thenReturn(List.of(album));
+        when(songRepository.findAllForSync()).thenReturn(List.of(song));
 
         SyncResultDto result = sheetSyncService.pushCatalog(true);
 
@@ -168,8 +168,8 @@ class SheetSyncServiceTest {
         var bluesArtist2 = artistWithId(3L, "A-Artist", Genre.BLUES);
         // Blues (displayName "Blues") sorts before Jazz & Funk, within Blues: A before C
 
-        when(artistRepository.findAll()).thenReturn(List.of(jazzArtist, bluesArtist1, bluesArtist2));
-        when(albumRepository.findAll()).thenReturn(List.of());
+        when(artistRepository.findAllForSync()).thenReturn(List.of(jazzArtist, bluesArtist1, bluesArtist2));
+        when(albumRepository.findAllForSync()).thenReturn(List.of());
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<List<Object>>> captor = ArgumentCaptor.forClass(List.class);
@@ -195,8 +195,8 @@ class SheetSyncServiceTest {
         var album3 = albumWithId(3L, "Late Album", 1970, artist1);    // artist1, year 1970
         var album4 = albumWithId(4L, "Another Album", 1980, artist2); // artist2
 
-        when(artistRepository.findAll()).thenReturn(List.of(artist1, artist2));
-        when(albumRepository.findAll()).thenReturn(List.of(album1, album3, album4, album2));
+        when(artistRepository.findAllForSync()).thenReturn(List.of(artist1, artist2));
+        when(albumRepository.findAllForSync()).thenReturn(List.of(album1, album3, album4, album2));
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<List<Object>>> captor = ArgumentCaptor.forClass(List.class);
@@ -218,8 +218,8 @@ class SheetSyncServiceTest {
 
     @Test
     void pushCatalog_sheetsClientThrows_setsLastError() {
-        when(artistRepository.findAll()).thenReturn(List.of(artist));
-        when(albumRepository.findAll()).thenThrow(new RuntimeException("Sheets API error"));
+        when(artistRepository.findAllForSync()).thenReturn(List.of(artist));
+        when(albumRepository.findAllForSync()).thenThrow(new RuntimeException("Sheets API error"));
 
         assertThatThrownBy(() -> sheetSyncService.pushCatalog(false))
                 .isInstanceOf(RuntimeException.class)
@@ -230,9 +230,9 @@ class SheetSyncServiceTest {
 
     @Test
     void pushCatalog_structuralFailure_marksSongsDirty() {
-        when(artistRepository.findAll()).thenReturn(List.of(artist));
-        when(albumRepository.findAll()).thenReturn(List.of(album));
-        when(songRepository.findAll()).thenThrow(new RuntimeException("Sheets songs error"));
+        when(artistRepository.findAllForSync()).thenReturn(List.of(artist));
+        when(albumRepository.findAllForSync()).thenReturn(List.of(album));
+        when(songRepository.findAllForSync()).thenThrow(new RuntimeException("Sheets songs error"));
 
         assertThatThrownBy(() -> sheetSyncService.pushCatalog(true))
                 .isInstanceOf(RuntimeException.class);
@@ -242,10 +242,10 @@ class SheetSyncServiceTest {
 
     @Test
     void pushCatalog_afterStructuralFailure_nonStructuralPushSelfHealsWithSongs() {
-        when(artistRepository.findAll()).thenReturn(List.of(artist));
-        when(albumRepository.findAll()).thenReturn(List.of(album));
+        when(artistRepository.findAllForSync()).thenReturn(List.of(artist));
+        when(albumRepository.findAllForSync()).thenReturn(List.of(album));
         // First call (structural push) throws on Songs; second call (non-structural self-heal) succeeds
-        when(songRepository.findAll())
+        when(songRepository.findAllForSync())
                 .thenThrow(new RuntimeException("Sheets songs error"))
                 .thenReturn(List.of(song));
 
@@ -261,9 +261,9 @@ class SheetSyncServiceTest {
 
     @Test
     void pushCatalog_success_clearsLastError() {
-        when(artistRepository.findAll()).thenReturn(List.of(artist));
+        when(artistRepository.findAllForSync()).thenReturn(List.of(artist));
         // First call throws, second call succeeds (chained stubbing)
-        when(albumRepository.findAll())
+        when(albumRepository.findAllForSync())
                 .thenThrow(new RuntimeException("temporary error"))
                 .thenReturn(List.of(album));
 
