@@ -9,6 +9,7 @@ import io.github.alexshamrai.dto.SyncResultDto;
 import io.github.alexshamrai.dto.SyncStatusDto;
 import io.github.alexshamrai.service.CatalogImportService;
 import io.github.alexshamrai.service.SheetSyncService;
+import io.github.alexshamrai.service.SheetsCatalogReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Instant;
 import java.util.Map;
 
 @RestController
@@ -28,6 +30,7 @@ public class CatalogController {
 
     private final CatalogImportService catalogImportService;
     private final ObjectProvider<SheetSyncService> sheetSyncServiceProvider;
+    private final ObjectProvider<SheetsCatalogReader> sheetsCatalogReaderProvider;
 
     @PostMapping("/import")
     public ResponseEntity<ImportResult> importCatalog(@RequestParam("file") MultipartFile file)
@@ -51,6 +54,21 @@ public class CatalogController {
         }
         SyncResultDto result = syncService.pushCatalog(true);
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/sync/pull")
+    public ResponseEntity<?> pullSync() {
+        SheetsCatalogReader reader = sheetsCatalogReaderProvider.getIfAvailable();
+        SheetSyncService syncService = sheetSyncServiceProvider.getIfAvailable();
+        if (reader == null || syncService == null) {
+            return ResponseEntity.status(503)
+                    .body(Map.of("status", 503, "message", "Google Sheets sync is not configured"));
+        }
+        ImportResult result = reader.replaceFromSheets();
+        Instant syncedAt = Instant.now();
+        syncService.recordPull(syncedAt);
+        return ResponseEntity.ok(new SyncResultDto(
+                result.artistCount(), result.albumCount(), result.songCount(), syncedAt));
     }
 
     @GetMapping("/sync/status")

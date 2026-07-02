@@ -54,6 +54,19 @@ public class CatalogImportService {
 
     @Transactional
     public ImportResult importFromJson(Path catalogFile) throws IOException {
+        return importFromJson(catalogFile, true);
+    }
+
+    /**
+     * Imports catalog.json into the database.
+     *
+     * @param publishEvent whether to publish a structural {@link CatalogChangedEvent} after the
+     *                     import. The boot-time auto-importer passes {@code false} so that boot
+     *                     seeding never triggers an implicit Sheets push — pushes at boot are
+     *                     decided explicitly by {@code CatalogAutoImporter}'s decision tree.
+     */
+    @Transactional
+    public ImportResult importFromJson(Path catalogFile, boolean publishEvent) throws IOException {
         String json = Files.readString(catalogFile);
         Catalog catalog = objectMapper.readValue(json, Catalog.class);
 
@@ -100,7 +113,9 @@ public class CatalogImportService {
         }
 
         log.info("Import completed: {} artists, {} albums, {} songs", artistCount, albumCount, songCount);
-        eventPublisher.publishEvent(new CatalogChangedEvent(true));
+        if (publishEvent) {
+            eventPublisher.publishEvent(new CatalogChangedEvent(true));
+        }
         return new ImportResult(artistCount, albumCount, songCount);
     }
 

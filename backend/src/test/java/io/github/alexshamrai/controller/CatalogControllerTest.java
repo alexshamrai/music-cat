@@ -83,6 +83,14 @@ class CatalogControllerTest {
     }
 
     @Test
+    void syncPull_sheetsDisabled_returns503() throws Exception {
+        mockMvc.perform(post("/api/catalog/sync/pull"))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.status", is(503)))
+                .andExpect(jsonPath("$.message", is("Google Sheets sync is not configured")));
+    }
+
+    @Test
     void syncStatus_sheetsDisabled_returnsEnabledFalse() throws Exception {
         mockMvc.perform(get("/api/catalog/sync/status"))
                 .andExpect(status().isOk())

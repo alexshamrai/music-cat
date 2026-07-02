@@ -40,6 +40,7 @@ public class SheetSyncService {
 
     private final AtomicBoolean songsDirty = new AtomicBoolean(false);
     private volatile Instant lastPushAt;
+    private volatile Instant lastPullAt;
     private volatile String lastError;
 
     /** Serializes concurrent pushCatalog calls — clear-then-write (overwrite) is not atomic. */
@@ -141,7 +142,12 @@ public class SheetSyncService {
         }
     }
 
+    /** Records a successful pull-from-Sheets (POST /api/catalog/sync/pull). */
+    public void recordPull(Instant pulledAt) {
+        this.lastPullAt = pulledAt;
+    }
+
     public SyncStatusDto getStatus() {
-        return new SyncStatusDto(true, lastPushAt, null, songsDirty.get(), lastError);
+        return new SyncStatusDto(true, lastPushAt, lastPullAt, songsDirty.get(), lastError);
     }
 }

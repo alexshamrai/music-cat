@@ -393,13 +393,16 @@ field silently falls out of the persistence loop.
 
 ## 6. Acceptance criteria
 
-- [ ] `./gradlew test` green, including the round-trip invariant test
-- [ ] All four boot scenarios covered by tests (sheets data / blank sheets / reader error /
-      disabled)
-- [ ] POST /api/catalog/sync/pull replaces DB content from sheets (test proves old rows gone)
-- [ ] GET /api/catalog/sync/status now reports lastPullAt
-- [ ] A Sheets outage at boot falls back to catalog.json and does NOT push (test proves it)
-- [ ] Committed
+- [x] `./gradlew test` green (259 tests, 0 failures), including SheetsRoundTripInvariantTest
+- [x] All four boot scenarios covered by tests (sheets data / blank sheets / reader error /
+      disabled) — CatalogAutoImporterTest (8 decision-tree tests)
+- [x] POST /api/catalog/sync/pull replaces DB content from sheets (SyncPullIntegrationTest
+      proves old rows gone)
+- [x] GET /api/catalog/sync/status now reports lastPullAt
+- [x] A Sheets outage at boot falls back to catalog.json and does NOT push (auto-import
+      suppresses CatalogChangedEvent via importFromJson(path, false); boot pushes happen
+      only explicitly in the blank-sheets seed case)
+- [x] Committed
 ```
 
 ---
