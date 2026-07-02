@@ -287,14 +287,16 @@ CatalogControllerTest additions:
 
 ## 6. Acceptance criteria
 
-- [ ] `./gradlew test` green
-- [ ] Every mutating endpoint publishes CatalogChangedEvent exactly once (grep the
-      services; list them in your completion report)
-- [ ] A Sheets failure never breaks a user mutation (test proves 200 despite mock throwing)
-- [ ] Songs tab is NOT rewritten for a grade change (test proves it)
-- [ ] POST /api/catalog/sync/push → 503 when disabled; GET sync/status → enabled=false
-- [ ] App still boots and all OLD tests pass with sheets disabled
-- [ ] Committed
+- [x] `./gradlew test` green (240 tests, 0 failures)
+- [x] Every mutating endpoint publishes CatalogChangedEvent exactly once — ArtistService
+      (create/update/delete structural; toggleFavorite/setTags non-structural), AlbumService
+      (create/update/delete structural; setGrade/toggleFavorite/setTags non-structural),
+      TagService (create/delete non-structural), CatalogImportService.importFromJson (structural)
+- [x] A Sheets failure never breaks a user mutation (sheetsFailure_doesNotBreakGradeRequest)
+- [x] Songs tab is NOT rewritten for a grade change (gradeChange_nonStructural_doesNotWriteSongsTab)
+- [x] POST /api/catalog/sync/push → 503 when disabled; GET sync/status → enabled=false (CatalogControllerTest)
+- [x] App still boots and all OLD tests pass with sheets disabled (SheetsDisabledTest)
+- [x] Committed (1b87bfb + review fixes 9ec1981)
 ```
 
 ---
