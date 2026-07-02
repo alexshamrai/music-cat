@@ -26,6 +26,12 @@ class ArtistCrudIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @org.junit.jupiter.api.BeforeEach
+    void authenticate() {
+        // Real HTTP over RANDOM_PORT — authenticate with the default local credentials
+        restTemplate = restTemplate.withBasicAuth("admin", "admin");
+    }
+
     @Test
     void fullCrudLifecycle() {
         // CREATE

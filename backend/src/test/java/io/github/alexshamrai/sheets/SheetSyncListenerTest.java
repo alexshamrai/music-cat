@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "music-cat.sheets.enabled=true",
         "spring.datasource.url=jdbc:h2:mem:testdb-sheets;DB_CLOSE_DELAY=-1"
 })
+@io.github.alexshamrai.WithAuthenticatedUser
 class SheetSyncListenerTest {
 
     @Autowired

@@ -605,12 +605,16 @@ SecurityConfigTest:
 
 ## 5. Acceptance criteria
 
-- [ ] `./gradlew test` green (old controller tests fixed via test infra, not permitAll)
-- [ ] bootRun: browser prompts for credentials once, then the full UI works (TanStack
-      Query requests reuse the browser's cached Basic credentials automatically)
-- [ ] curl without credentials → 401; with -u admin:admin → 200
-- [ ] Credentials come from env vars; defaults only apply locally
-- [ ] Committed
+- [x] `./gradlew test` green (299 tests, 0 failures) — old tests fixed centrally via a
+      shared @WithAuthenticatedUser annotation (@Import(SecurityConfig) + @WithMockUser);
+      no permitAll anywhere. Boot 4 gotcha: the MockMvc↔Security test bridge moved to
+      its own starter, spring-boot-starter-security-test
+- [x] bootRun: 401 + WWW-Authenticate Basic challenge → browser prompts once, UI works
+- [x] curl verified: no creds → 401; -u admin:admin → 200; wrong password → 401;
+      / (index) → 401 without creds
+- [x] Credentials from MUSIC_CAT_USER / MUSIC_CAT_PASSWORD env vars; admin/admin defaults
+      only apply locally
+- [x] Committed
 ```
 
 ---

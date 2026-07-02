@@ -30,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(CatalogController.class)
 @ActiveProfiles("test")
+@io.github.alexshamrai.WithAuthenticatedUser
 class CatalogControllerTest {
 
     @Autowired

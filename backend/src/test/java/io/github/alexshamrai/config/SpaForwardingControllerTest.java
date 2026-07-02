@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(SpaForwardingController.class)
 @ActiveProfiles("test")
+@io.github.alexshamrai.WithAuthenticatedUser
 class SpaForwardingControllerTest {
 
     @Autowired

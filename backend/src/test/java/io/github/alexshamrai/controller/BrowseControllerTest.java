@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(BrowseController.class)
 @ActiveProfiles("test")
+@io.github.alexshamrai.WithAuthenticatedUser
 class BrowseControllerTest {
 
     @Autowired

@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ArtistController.class)
 @ActiveProfiles("test")
+@io.github.alexshamrai.WithAuthenticatedUser
 class ArtistControllerTest {
 
     @Autowired

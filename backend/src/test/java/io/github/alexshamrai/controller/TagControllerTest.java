@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(TagController.class)
 @ActiveProfiles("test")
+@io.github.alexshamrai.WithAuthenticatedUser
 class TagControllerTest {
 
     @Autowired

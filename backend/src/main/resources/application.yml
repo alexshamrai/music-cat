@@ -17,6 +17,9 @@ spring:
 
 music-cat:
   catalog-path: ../catalog.json
+  auth:
+    username: ${MUSIC_CAT_USER:admin}
+    password: ${MUSIC_CAT_PASSWORD:admin}
   sheets:
     enabled: false
     credentials-path: ${SHEETS_CREDENTIALS_PATH:../config/google-credentials.json}
