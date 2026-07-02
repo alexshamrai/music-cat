@@ -5,7 +5,6 @@ import io.github.alexshamrai.domain.AlbumEntity;
 import io.github.alexshamrai.domain.ArtistEntity;
 import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.domain.SongEntity;
-import io.github.alexshamrai.dto.ImportResult;
 import io.github.alexshamrai.repository.AlbumRepository;
 import io.github.alexshamrai.repository.ArtistRepository;
 import io.github.alexshamrai.repository.SongRepository;
@@ -94,7 +93,7 @@ class SheetsCatalogReaderTest {
     void loadFromSheets_populatesFullGraphFromTabs() {
         stubFullCatalog();
 
-        ImportResult result = reader.loadFromSheets();
+        SheetsLoadResult result = reader.loadFromSheets();
 
         assertThat(result.artistCount()).isEqualTo(2);
         assertThat(result.albumCount()).isEqualTo(3);
@@ -158,7 +157,7 @@ class SheetsCatalogReaderTest {
                         List.of("Ghost Artist", "Phantom Album", "2000", "", "FALSE", "")),
                 List.of(SONGS_HEADER));
 
-        ImportResult result = reader.loadFromSheets();
+        SheetsLoadResult result = reader.loadFromSheets();
 
         assertThat(result.artistCount()).isEqualTo(1);
         assertThat(result.albumCount()).isEqualTo(1);
@@ -181,7 +180,7 @@ class SheetsCatalogReaderTest {
                         List.of("Miles Davis", "Kind of Blue", "1", "1", "So What"),
                         List.of("Miles Davis", "Unknown Album", "1", "1", "Lost Song")));
 
-        ImportResult result = reader.loadFromSheets();
+        SheetsLoadResult result = reader.loadFromSheets();
 
         assertThat(result.songCount()).isEqualTo(1);
         assertThat(songRepository.findAllForSync())
@@ -213,7 +212,7 @@ class SheetsCatalogReaderTest {
                 List.of(ALBUMS_HEADER),
                 List.of(SONGS_HEADER));
 
-        ImportResult result = reader.replaceFromSheets();
+        SheetsLoadResult result = reader.replaceFromSheets();
 
         assertThat(result.artistCount()).isEqualTo(1);
         assertThat(artistRepository.findAll())
@@ -245,6 +244,99 @@ class SheetsCatalogReaderTest {
         when(sheetsClient.read("Artists")).thenReturn(List.of());
 
         assertThat(reader.sheetsHaveData()).isFalse();
+    }
+
+    @Test
+    void sheetsHaveData_artistsBlankButAlbumsHaveRows_returnsTrue() {
+        // A partially-failed overwrite can leave Artists cleared while Albums survive —
+        // that must NOT look like a blank spreadsheet (seed+push would wipe Albums)
+        when(sheetsClient.read("Artists")).thenReturn(List.of(ARTISTS_HEADER));
+        when(sheetsClient.read("Albums")).thenReturn(List.of(
+                ALBUMS_HEADER,
+                List.of("Miles Davis", "Kind of Blue", "1959", "5", "TRUE", "")));
+
+        assertThat(reader.sheetsHaveData()).isTrue();
+    }
+
+    // ==================== row resilience ====================
+
+    @Test
+    void loadFromSheets_fullyBlankRow_skippedSilentlyWithoutWarning() {
+        stubTabs(
+                List.of(
+                        ARTISTS_HEADER,
+                        List.of("", "", "", "", ""),
+                        List.of("Miles Davis", "Jazz & Funk", "", "FALSE", "")),
+                List.of(ALBUMS_HEADER),
+                List.of(SONGS_HEADER));
+
+        SheetsLoadResult result = reader.loadFromSheets();
+
+        assertThat(result.artistCount()).isEqualTo(1);
+        assertThat(result.warnings()).isEmpty();
+    }
+
+    @Test
+    void loadFromSheets_unknownGenreRow_skippedWithWarningRestImported() {
+        stubTabs(
+                List.of(
+                        ARTISTS_HEADER,
+                        List.of("Typo Artist", "Jazzz", "", "FALSE", ""),
+                        List.of("Miles Davis", "Jazz & Funk", "", "FALSE", "")),
+                List.of(ALBUMS_HEADER),
+                List.of(SONGS_HEADER));
+
+        SheetsLoadResult result = reader.loadFromSheets();
+
+        assertThat(result.artistCount()).isEqualTo(1);
+        assertThat(result.warnings()).hasSize(1);
+        assertThat(result.warnings().get(0)).contains("Typo Artist").contains("Unknown genre");
+        assertThat(artistRepository.findAll())
+                .extracting(ArtistEntity::getName)
+                .containsExactly("Miles Davis");
+    }
+
+    @Test
+    void loadFromSheets_duplicateArtistName_firstWinsSecondSkippedWithWarning() {
+        stubTabs(
+                List.of(
+                        ARTISTS_HEADER,
+                        List.of("Miles Davis", "Jazz & Funk", "", "TRUE", ""),
+                        List.of("Miles Davis", "Blues", "", "FALSE", "")),
+                List.of(ALBUMS_HEADER),
+                List.of(SONGS_HEADER));
+
+        SheetsLoadResult result = reader.loadFromSheets();
+
+        assertThat(result.artistCount()).isEqualTo(1);
+        assertThat(result.warnings()).hasSize(1);
+        assertThat(result.warnings().get(0)).contains("duplicate artist");
+        List<ArtistEntity> artists = artistRepository.findAll();
+        assertThat(artists).hasSize(1);
+        assertThat(artists.get(0).getGenre()).isEqualTo(Genre.JAZZ_AND_FUNK);
+    }
+
+    @Test
+    void loadFromSheets_duplicateAlbumKey_firstWinsSecondSkippedWithWarning() {
+        stubTabs(
+                List.of(
+                        ARTISTS_HEADER,
+                        List.of("Miles Davis", "Jazz & Funk", "", "FALSE", "")),
+                List.of(
+                        ALBUMS_HEADER,
+                        List.of("Miles Davis", "Kind of Blue", "1959", "5", "TRUE", ""),
+                        List.of("Miles Davis", "Kind of Blue", "1960", "1", "FALSE", "")),
+                List.of(SONGS_HEADER));
+
+        SheetsLoadResult result = reader.loadFromSheets();
+
+        assertThat(result.albumCount()).isEqualTo(1);
+        assertThat(result.warnings()).hasSize(1);
+        assertThat(result.warnings().get(0)).contains("duplicate album");
+        List<AlbumEntity> albums = albumRepository.findAllForSync();
+        assertThat(albums).hasSize(1);
+        assertThat(albums.get(0).getYear()).isEqualTo(1959);
+        assertThat(albums.get(0).getGrade()).isEqualTo(5);
     }
 
     // ==================== helpers ====================

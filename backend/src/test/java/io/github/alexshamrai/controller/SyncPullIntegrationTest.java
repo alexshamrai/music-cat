@@ -79,6 +79,30 @@ class SyncPullIntegrationTest {
         mockMvc.perform(get("/api/catalog/sync/status"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.enabled", is(true)))
-                .andExpect(jsonPath("$.lastPullAt", notNullValue()));
+                .andExpect(jsonPath("$.lastPullAt", notNullValue()))
+                .andExpect(jsonPath("$.suspended", is(false)));
+    }
+
+    @Test
+    void syncPull_withSkippedRows_suspendsEventPushes() throws Exception {
+        when(sheetsClient.read("Artists")).thenReturn(List.of(
+                List.of("name", "genre", "subgenre", "favorite", "tags"),
+                List.of("Sheet Artist", "Jazz & Funk", "", "TRUE", "")));
+        // Album row referencing an artist missing from the Artists tab → skipped with warning
+        when(sheetsClient.read("Albums")).thenReturn(List.of(
+                List.of("artist", "title", "year", "grade", "favorite", "tags"),
+                List.of("Ghost Artist", "Phantom Album", "2000", "", "FALSE", "")));
+        when(sheetsClient.read("Songs")).thenReturn(List.of(
+                List.of("artist", "album", "disc", "track", "title")));
+
+        mockMvc.perform(post("/api/catalog/sync/pull"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.albumCount", is(0)));
+
+        // The DB is missing a sheet row — pushes must be suspended so it isn't erased
+        mockMvc.perform(get("/api/catalog/sync/status"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.suspended", is(true)))
+                .andExpect(jsonPath("$.lastError", notNullValue()));
     }
 }

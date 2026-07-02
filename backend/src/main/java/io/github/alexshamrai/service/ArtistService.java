@@ -116,6 +116,7 @@ public class ArtistService {
         Set<String> uniqueNames = tagNames.stream()
                 .map(String::strip)
                 .filter(name -> !name.isEmpty())
+                .map(TagNames::requireValid)
                 .collect(Collectors.toSet());
 
         Set<TagEntity> tags = uniqueNames.stream()

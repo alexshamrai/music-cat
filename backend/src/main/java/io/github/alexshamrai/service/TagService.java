@@ -28,6 +28,7 @@ public class TagService {
 
     @Transactional
     public TagDto create(String name) {
+        TagNames.requireValid(name);
         var existing = tagRepository.findByName(name.strip());
         if (existing.isPresent()) {
             return toDto(existing.get());

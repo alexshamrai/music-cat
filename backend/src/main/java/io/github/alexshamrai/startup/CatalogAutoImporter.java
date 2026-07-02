@@ -8,6 +8,7 @@ import io.github.alexshamrai.repository.ArtistRepository;
 import io.github.alexshamrai.service.CatalogImportService;
 import io.github.alexshamrai.service.SheetSyncService;
 import io.github.alexshamrai.service.SheetsCatalogReader;
+import io.github.alexshamrai.service.SheetsLoadResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,20 +19,21 @@ import org.springframework.stereotype.Component;
 /**
  * Populates an empty database on boot. Decision tree:
  * <ol>
- *   <li>DB not empty → skip</li>
+ *   <li>DB not empty → skip (resume event pushes)</li>
  *   <li>DB empty + sheets enabled + sheets have data → restore from Google Sheets</li>
  *   <li>DB empty + sheets enabled + sheets blank → seed from catalog.json, push everything up</li>
  *   <li>DB empty + sheets disabled → import catalog.json</li>
  * </ol>
  *
- * <p>If the Sheets restore throws (network down, malformed rows), we fall back to the
- * catalog.json import WITHOUT pushing — a transient Sheets outage must not overwrite the
- * spreadsheet (the persistent store) with stale seed data. The failed restore surfaces
- * via GET /api/catalog/sync/status.
+ * <p>Event-driven pushes start SUSPENDED (see {@link SheetSyncService}) and are resumed
+ * here only when the DB provably mirrors the spreadsheet. If the Sheets restore throws,
+ * produces zero artists despite non-blank tabs, or skips rows, we fall back / continue
+ * with pushes still suspended — a diverged DB must never overwrite the spreadsheet (the
+ * persistent store). The failure surfaces via GET /api/catalog/sync/status.
  *
  * <p>Auto-import never publishes {@link io.github.alexshamrai.event.CatalogChangedEvent}
  * (it calls {@code importFromJson(path, false)}) — pushes at boot happen only explicitly
- * in case 3, so the fallback path provably leaves the sheet untouched.
+ * in case 3, so the fallback paths provably leave the sheet untouched.
  */
 @Component
 @Slf4j
@@ -57,8 +59,13 @@ public class CatalogAutoImporter {
 
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
+        SheetSyncService sync = sheetSyncService.getIfAvailable();
+
         if (artistRepository.count() > 0) {
             log.info("Database already contains data, skipping auto-import");
+            if (sync != null) {
+                sync.resumeEventPushes();
+            }
             return;
         }
 
@@ -71,32 +78,66 @@ public class CatalogAutoImporter {
 
         try {
             if (reader.sheetsHaveData()) {
-                ImportResult result = reader.loadFromSheets();
-                log.info("Restored {} artists / {} albums / {} songs from Google Sheets",
-                        result.artistCount(), result.albumCount(), result.songCount());
+                restoreFromSheets(reader, sync);
                 return;
             }
         } catch (Exception e) {
             log.error("Sheets restore failed — falling back to catalog.json import WITHOUT pushing, "
                     + "so the spreadsheet stays untouched", e);
             importCatalogJson();
+            if (sync != null) {
+                sync.suspendEventPushes("Boot restore from Google Sheets failed: " + e.getMessage()
+                        + " — running on catalog.json seed data; repair connectivity/sheet, then POST /api/catalog/sync/pull");
+            }
             return;
         }
 
         // Sheets enabled but blank → seed from catalog.json and push the initial state up
         ImportResult seeded = importCatalogJson();
-        if (seeded == null) {
+        if (sync == null) {
             return;
         }
-        SheetSyncService sync = sheetSyncService.getIfAvailable();
-        if (sync != null) {
-            try {
-                sync.pushCatalog(true);
-                log.info("Seeded from catalog.json and pushed initial state to Google Sheets");
-            } catch (Exception e) {
-                log.error("Seeded from catalog.json but the initial push to Google Sheets failed "
-                        + "— check GET /api/catalog/sync/status", e);
+        if (seeded == null) {
+            // Nothing to seed (no catalog.json): empty DB and blank sheet are trivially consistent
+            sync.resumeEventPushes();
+            return;
+        }
+        try {
+            sync.pushCatalog(true); // success resumes event pushes automatically
+            log.info("Seeded from catalog.json and pushed initial state to Google Sheets");
+        } catch (Exception e) {
+            log.error("Seeded from catalog.json but the initial push to Google Sheets failed "
+                    + "— event pushes stay suspended; check GET /api/catalog/sync/status", e);
+        }
+    }
+
+    private void restoreFromSheets(SheetsCatalogReader reader, SheetSyncService sync) {
+        SheetsLoadResult result = reader.loadFromSheets();
+
+        if (result.artistCount() == 0) {
+            // Tabs had rows but none produced an artist — e.g. a partially-failed prior
+            // overwrite left the Artists tab blank. Treat the sheet as inconsistent.
+            log.error("Sheets restore produced 0 artists although the spreadsheet has data — "
+                    + "seeding from catalog.json WITHOUT pushing; repair the sheet, then POST /api/catalog/sync/pull");
+            importCatalogJson();
+            if (sync != null) {
+                sync.suspendEventPushes("Restore found data in the spreadsheet but produced 0 artists — "
+                        + "running on catalog.json seed data; repair the sheet, then POST /api/catalog/sync/pull");
             }
+            return;
+        }
+
+        log.info("Restored {} artists / {} albums / {} songs from Google Sheets",
+                result.artistCount(), result.albumCount(), result.songCount());
+        if (sync == null) {
+            return;
+        }
+        if (result.clean()) {
+            sync.resumeEventPushes();
+        } else {
+            sync.suspendEventPushes("Restore skipped " + result.warnings().size()
+                    + " sheet row(s) — a push would erase them from the sheet. Repair the sheet, then "
+                    + "POST /api/catalog/sync/pull. First warning: " + result.warnings().get(0));
         }
     }
 

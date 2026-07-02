@@ -27,6 +27,11 @@ public class SheetSyncListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     public void onCatalogChanged(CatalogChangedEvent event) {
+        if (sheetSyncService.eventPushesSuspended()) {
+            log.warn("Sheets sync is suspended — skipping push after a catalog change "
+                    + "(check GET /api/catalog/sync/status; recover via sync/pull or an explicit sync/push)");
+            return;
+        }
         try {
             sheetSyncService.pushCatalog(event.structural());
         } catch (Exception e) {

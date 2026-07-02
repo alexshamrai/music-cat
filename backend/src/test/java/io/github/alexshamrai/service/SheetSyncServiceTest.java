@@ -48,6 +48,9 @@ class SheetSyncServiceTest {
     @Mock
     private SongRepository songRepository;
 
+    @Mock
+    private io.github.alexshamrai.sheets.SheetsSyncLock syncLock;
+
     @InjectMocks
     private SheetSyncService sheetSyncService;
 
@@ -274,5 +277,43 @@ class SheetSyncServiceTest {
 
         assertThat(sheetSyncService.getStatus().lastError()).isNull();
         assertThat(sheetSyncService.getStatus().lastPushAt()).isNotNull();
+    }
+
+    // ==================== event-push suspension ====================
+
+    @Test
+    void eventPushes_startSuspended_untilBootRehydrationDecides() {
+        assertThat(sheetSyncService.eventPushesSuspended()).isTrue();
+        assertThat(sheetSyncService.getStatus().suspended()).isTrue();
+    }
+
+    @Test
+    void resumeAndSuspend_toggleTheFlag_suspendRecordsReason() {
+        sheetSyncService.resumeEventPushes();
+        assertThat(sheetSyncService.eventPushesSuspended()).isFalse();
+
+        sheetSyncService.suspendEventPushes("DB diverged from sheet");
+        assertThat(sheetSyncService.eventPushesSuspended()).isTrue();
+        assertThat(sheetSyncService.getStatus().lastError()).isEqualTo("DB diverged from sheet");
+    }
+
+    @Test
+    void successfulPush_resumesEventPushes() {
+        when(artistRepository.findAllForSync()).thenReturn(List.of(artist));
+        when(albumRepository.findAllForSync()).thenReturn(List.of(album));
+
+        assertThat(sheetSyncService.eventPushesSuspended()).isTrue();
+        sheetSyncService.pushCatalog(false);
+
+        assertThat(sheetSyncService.eventPushesSuspended()).isFalse();
+    }
+
+    @Test
+    void failedPush_doesNotResumeEventPushes() {
+        when(artistRepository.findAllForSync()).thenThrow(new RuntimeException("Sheets down"));
+
+        assertThatThrownBy(() -> sheetSyncService.pushCatalog(false));
+
+        assertThat(sheetSyncService.eventPushesSuspended()).isTrue();
     }
 }

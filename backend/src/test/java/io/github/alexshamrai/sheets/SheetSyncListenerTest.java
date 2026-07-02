@@ -41,6 +41,9 @@ class SheetSyncListenerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private io.github.alexshamrai.service.SheetSyncService sheetSyncService;
+
     // Mock the SheetsClient interface — replaces GoogleSheetsClient in the context
     @MockitoBean
     private SheetsClient sheetsClient;
@@ -139,6 +142,30 @@ class SheetSyncListenerTest {
                                 {"grade": 3}
                                 """))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void whileSuspended_mutationDoesNotPush_requestStillSucceeds() throws Exception {
+        var artistResponse = mockMvc.perform(post("/api/artists")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"name": "Suspended Artist", "genre": "Blues"}
+                                """))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Long artistId = extractId(artistResponse.getResponse().getContentAsString());
+
+        sheetSyncService.suspendEventPushes("test: DB diverged from sheet");
+        org.mockito.Mockito.reset(sheetsClient);
+        try {
+            mockMvc.perform(patch("/api/artists/" + artistId + "/favorite"))
+                    .andExpect(status().isOk());
+
+            // Suspended → the mutation must NOT touch the spreadsheet
+            verify(sheetsClient, never()).overwrite(any(), any());
+        } finally {
+            sheetSyncService.resumeEventPushes();
+        }
     }
 
     // Quick JSON id extractor — avoids ObjectMapper dependency overhead in test

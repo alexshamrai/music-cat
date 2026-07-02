@@ -100,6 +100,15 @@ class TagServiceTest {
         assertThat(result.getName()).isEqualTo("rock");
     }
 
+    @Test
+    void create_nameWithComma_rejected() {
+        // Tags are stored comma-separated in Google Sheets — a comma would split the tag on pull
+        assertThatThrownBy(() -> tagService.create("rock, hard"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("comma");
+        verify(tagRepository, never()).save(any());
+    }
+
     // ==================== delete tests ====================
 
     @Test

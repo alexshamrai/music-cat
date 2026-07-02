@@ -10,6 +10,7 @@ import io.github.alexshamrai.repository.ArtistRepository;
 import io.github.alexshamrai.repository.SongRepository;
 import io.github.alexshamrai.sheets.SheetMapper;
 import io.github.alexshamrai.sheets.SheetsClient;
+import io.github.alexshamrai.sheets.SheetsSyncLock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @ConditionalOnProperty(name = "music-cat.sheets.enabled", havingValue = "true")
@@ -38,13 +38,24 @@ public class SheetSyncService {
     private final AlbumRepository albumRepository;
     private final SongRepository songRepository;
 
+    /** Serializes pushes against each other AND against pulls/boot restores. */
+    private final SheetsSyncLock syncLock;
+
     private final AtomicBoolean songsDirty = new AtomicBoolean(false);
+
+    /**
+     * While true, event-driven pushes (SheetSyncListener) are skipped. Starts true so a
+     * mutation arriving before boot rehydration finishes can never push a partial DB over
+     * the spreadsheet; CatalogAutoImporter resumes pushes once the DB provably mirrors the
+     * sheet (clean restore, clean pull, or a successful full push). A failed or
+     * warning-laden restore keeps pushes suspended — the sheet holds data the DB lacks,
+     * and a push would erase it.
+     */
+    private final AtomicBoolean eventPushesSuspended = new AtomicBoolean(true);
+
     private volatile Instant lastPushAt;
     private volatile Instant lastPullAt;
     private volatile String lastError;
-
-    /** Serializes concurrent pushCatalog calls — clear-then-write (overwrite) is not atomic. */
-    private final ReentrantLock pushLock = new ReentrantLock();
 
     /**
      * Pushes the entire catalog to Google Sheets.
@@ -58,11 +69,11 @@ public class SheetSyncService {
      */
     @Transactional(readOnly = true)
     public SyncResultDto pushCatalog(boolean includeSongs) {
-        pushLock.lock();
+        syncLock.lock();
         try {
             return doPushCatalog(includeSongs);
         } finally {
-            pushLock.unlock();
+            syncLock.unlock();
         }
     }
 
@@ -128,6 +139,8 @@ public class SheetSyncService {
 
             lastPushAt = Instant.now();
             lastError = null;
+            // A successful full push means the sheet now mirrors the DB — safe to resume
+            eventPushesSuspended.set(false);
 
             return new SyncResultDto(artists.size(), albums.size(), songCount, lastPushAt);
 
@@ -147,7 +160,29 @@ public class SheetSyncService {
         this.lastPullAt = pulledAt;
     }
 
+    /**
+     * Suspends event-driven pushes because the DB is known (or suspected) to diverge from
+     * the spreadsheet. The reason surfaces via GET /api/catalog/sync/status. Recovery:
+     * a clean POST /api/catalog/sync/pull, or an explicit POST /api/catalog/sync/push
+     * (operator override — the push succeeding resumes automatically).
+     */
+    public void suspendEventPushes(String reason) {
+        eventPushesSuspended.set(true);
+        lastError = reason;
+        log.warn("Event-driven Sheets pushes suspended: {}", reason);
+    }
+
+    /** Resumes event-driven pushes — call only when the DB provably mirrors the sheet. */
+    public void resumeEventPushes() {
+        eventPushesSuspended.set(false);
+    }
+
+    public boolean eventPushesSuspended() {
+        return eventPushesSuspended.get();
+    }
+
     public SyncStatusDto getStatus() {
-        return new SyncStatusDto(true, lastPushAt, lastPullAt, songsDirty.get(), lastError);
+        return new SyncStatusDto(true, lastPushAt, lastPullAt, songsDirty.get(),
+                eventPushesSuspended.get(), lastError);
     }
 }

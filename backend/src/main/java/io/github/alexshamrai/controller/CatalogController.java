@@ -12,6 +12,7 @@ import io.github.alexshamrai.service.CatalogExportService;
 import io.github.alexshamrai.service.CatalogImportService;
 import io.github.alexshamrai.service.SheetSyncService;
 import io.github.alexshamrai.service.SheetsCatalogReader;
+import io.github.alexshamrai.service.SheetsLoadResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.ResponseEntity;
@@ -82,9 +83,17 @@ public class CatalogController {
             return ResponseEntity.status(503)
                     .body(Map.of("status", 503, "message", "Google Sheets sync is not configured"));
         }
-        ImportResult result = reader.replaceFromSheets();
+        SheetsLoadResult result = reader.replaceFromSheets();
         Instant syncedAt = Instant.now();
         syncService.recordPull(syncedAt);
+        if (result.clean()) {
+            // DB now mirrors the sheet exactly — event pushes are safe again
+            syncService.resumeEventPushes();
+        } else {
+            syncService.suspendEventPushes("Pull skipped " + result.warnings().size()
+                    + " sheet row(s) — a push would erase them from the sheet. First warning: "
+                    + result.warnings().get(0));
+        }
         return ResponseEntity.ok(new SyncResultDto(
                 result.artistCount(), result.albumCount(), result.songCount(), syncedAt));
     }
@@ -93,7 +102,7 @@ public class CatalogController {
     public ResponseEntity<SyncStatusDto> syncStatus() {
         SheetSyncService syncService = sheetSyncServiceProvider.getIfAvailable();
         if (syncService == null) {
-            return ResponseEntity.ok(new SyncStatusDto(false, null, null, false, null));
+            return ResponseEntity.ok(new SyncStatusDto(false, null, null, false, false, null));
         }
         return ResponseEntity.ok(syncService.getStatus());
     }
