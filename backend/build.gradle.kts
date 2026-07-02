@@ -44,3 +44,15 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks.bootJar {
+    archiveBaseName = "music-cat"
+}
+
+// Build the React frontend and package it into the jar's static/ resources
+tasks.processResources {
+    dependsOn(":frontend:npmBuild")
+    from(project(":frontend").layout.projectDirectory.dir("dist")) {
+        into("static")
+    }
+}

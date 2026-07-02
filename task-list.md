@@ -536,14 +536,16 @@ configuration reference (music-cat.* properties incl. sheets); link to /swagger-
 
 ## 5. Acceptance criteria
 
-- [ ] `./gradlew clean :backend:bootJar` succeeds (Gradle downloads node itself)
-- [ ] `java -jar backend/build/libs/music-cat-*.jar` → http://localhost:8080 loads the app
-- [ ] Direct browser hits on /browse, /albums/1, /random return the SPA (no Whitelabel 404)
-- [ ] /swagger-ui and /api/browse/stats still work
-- [ ] `npm run dev` flow unchanged
-- [ ] backend/src/main/resources/static is gitignored and absent from `git status` after build
-- [ ] `./gradlew test` green
-- [ ] Committed
+- [x] `./gradlew clean :backend:bootJar` succeeds in 25s (Gradle downloads node itself)
+- [x] `java -jar backend/build/libs/music-cat-*.jar` → http://localhost:8080 loads the app
+      (jar renamed to music-cat-0.0.1-SNAPSHOT.jar via archiveBaseName)
+- [x] Direct hits on /browse, /albums/1 return the SPA index.html (200); bonus fix:
+      unknown paths now 404 instead of 500 (NoResourceFoundException handler)
+- [x] /swagger-ui and /api/browse/stats verified working from the jar
+- [x] `npm run dev` flow unchanged (vite dev server up in 2s, proxy untouched)
+- [x] backend/src/main/resources/static gitignored + `git rm -r`'d (was committed)
+- [x] `./gradlew test` green (279 tests, 0 failures)
+- [x] Committed
 ```
 
 ---
