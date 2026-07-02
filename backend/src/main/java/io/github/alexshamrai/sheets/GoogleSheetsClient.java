@@ -60,6 +60,13 @@ public class GoogleSheetsClient implements SheetsClient {
      * A failure between the clear and the final write chunk leaves the tab empty or partially
      * filled. Callers (e.g. the Task 10 sync) must be able to re-invoke {@code overwrite}
      * to self-heal: the next successful call will restore the full dataset.
+     *
+     * <p>The first chunk is written with {@code values.update} at A1; every later chunk uses
+     * {@code values.append} instead of another {@code update} at a computed offset — confirmed
+     * against a real spreadsheet (Task 16) that {@code update} refuses to write beyond the
+     * sheet's current row count even with a fully-bounded target range (e.g.
+     * "Songs!A10001:E20000" against a 10,000-row grid fails with "exceeds grid limits");
+     * {@code append} is the API's actual mechanism for growing a sheet's grid to fit more rows.
      */
     @Override
     public void overwrite(String sheetName, List<List<Object>> rows) {
@@ -72,25 +79,33 @@ public class GoogleSheetsClient implements SheetsClient {
 
         int total = rows.size();
         int offset = 0;
+        boolean firstChunk = true;
         while (offset < total) {
             int end = Math.min(offset + CHUNK_SIZE, total);
             List<List<Object>> chunk = rows.subList(offset, end);
-
-            String range = offset == 0
-                    ? sheetName + "!A1"
-                    : sheetName + "!A" + (offset + 1);
-
             ValueRange body = new ValueRange().setValues(chunk);
-            final String finalRange = range;
+            boolean isFirst = firstChunk;
 
-            executeWithRetry(() -> {
-                sheets().spreadsheets().values()
-                        .update(spreadsheetId, finalRange, body)
-                        .setValueInputOption("RAW")
-                        .execute();
-                return null;
-            });
+            if (isFirst) {
+                executeWithRetry(() -> {
+                    sheets().spreadsheets().values()
+                            .update(spreadsheetId, sheetName + "!A1", body)
+                            .setValueInputOption("RAW")
+                            .execute();
+                    return null;
+                });
+            } else {
+                executeWithRetry(() -> {
+                    sheets().spreadsheets().values()
+                            .append(spreadsheetId, sheetName + "!A1", body)
+                            .setValueInputOption("RAW")
+                            .setInsertDataOption("INSERT_ROWS")
+                            .execute();
+                    return null;
+                });
+            }
 
+            firstChunk = false;
             offset = end;
         }
     }
