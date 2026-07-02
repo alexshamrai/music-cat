@@ -7,6 +7,7 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import io.github.alexshamrai.config.SheetsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
@@ -23,18 +24,28 @@ public class GoogleSheetsClient implements SheetsClient {
     private static final int CHUNK_SIZE = 10_000;
     private static final int MAX_RETRIES = 3;
 
-    private final Sheets sheets;
+    // ObjectProvider defers credential loading (GoogleSheetsConfig#sheets does file I/O) until
+    // the first real API call, instead of at bean construction time. SheetSyncListener/
+    // CatalogAutoImporter force this bean's dependency chain eager (@Lazy(false), needed for
+    // event-listener wiring), so a direct Sheets dependency here would fail Spring context
+    // refresh itself on a missing/bad credentials file — crash-looping the whole app instead of
+    // degrading to catalog.json like every other Sheets failure already does.
+    private final ObjectProvider<Sheets> sheetsProvider;
     private final String spreadsheetId;
 
-    public GoogleSheetsClient(Sheets sheets, SheetsProperties props) {
-        this.sheets = sheets;
+    public GoogleSheetsClient(ObjectProvider<Sheets> sheetsProvider, SheetsProperties props) {
+        this.sheetsProvider = sheetsProvider;
         this.spreadsheetId = props.spreadsheetId();
+    }
+
+    private Sheets sheets() {
+        return sheetsProvider.getObject();
     }
 
     @Override
     public List<List<Object>> read(String sheetName) {
         return executeWithRetry(() -> {
-            var response = sheets.spreadsheets().values()
+            var response = sheets().spreadsheets().values()
                     .get(spreadsheetId, sheetName)
                     .execute();
             List<List<Object>> values = response.getValues();
@@ -53,7 +64,7 @@ public class GoogleSheetsClient implements SheetsClient {
     @Override
     public void overwrite(String sheetName, List<List<Object>> rows) {
         executeWithRetry(() -> {
-            sheets.spreadsheets().values()
+            sheets().spreadsheets().values()
                     .clear(spreadsheetId, sheetName, new ClearValuesRequest())
                     .execute();
             return null;
@@ -73,7 +84,7 @@ public class GoogleSheetsClient implements SheetsClient {
             final String finalRange = range;
 
             executeWithRetry(() -> {
-                sheets.spreadsheets().values()
+                sheets().spreadsheets().values()
                         .update(spreadsheetId, finalRange, body)
                         .setValueInputOption("RAW")
                         .execute();
