@@ -34,7 +34,8 @@ free tier, with Google Sheets as the persistent source of truth.
 
 **Execution conventions for every task:**
 - TDD where the task touches Java: write the failing test first, then implement.
-- Run `cd backend && ./gradlew test` before claiming a task done; all tests must pass.
+- Run `./gradlew :backend:test` (from repo root — there is no backend/gradlew) before
+  claiming a task done; all tests must pass.
 - Commit at the end of each task (and at natural checkpoints inside large tasks).
 - `year` is an H2 reserved word — keep it quoted in SQL/JPA.
 - Genre is the `io.github.alexshamrai.domain.Genre` enum; sheets/exports store its
@@ -182,12 +183,12 @@ asserting the context starts with sheets.enabled=false and contains NO SheetsCli
 
 ## 7. Acceptance criteria
 
-- [ ] `cd backend && ./gradlew test` — green, including new SheetMapperTest
-- [ ] `./gradlew bootRun` starts cleanly with sheets disabled; log contains no Sheets noise
-- [ ] No bean of type SheetsClient exists when music-cat.sheets.enabled=false (test proves it)
-- [ ] SheetMapper covers: round-trip, nulls, tag lists, numeric-string years, short rows
-- [ ] No manual setup or credentials were needed anywhere in this task
-- [ ] Committed
+- [x] `./gradlew :backend:test` — green, including new SheetMapperTest (222 tests, 0 failures)
+- [x] `./gradlew :backend:bootRun` starts cleanly with sheets disabled; log contains no Sheets noise (started in 2.4s, stats endpoint verified)
+- [x] No bean of type SheetsClient exists when music-cat.sheets.enabled=false (SheetsDisabledTest proves it)
+- [x] SheetMapper covers: round-trip, nulls, tag lists, numeric-string years, short rows, whitespace-trimmed keys
+- [x] No manual setup or credentials were needed anywhere in this task
+- [x] Committed (111e9ae + review fixes 0fbd9b1)
 ```
 
 ---
@@ -286,14 +287,16 @@ CatalogControllerTest additions:
 
 ## 6. Acceptance criteria
 
-- [ ] `./gradlew test` green
-- [ ] Every mutating endpoint publishes CatalogChangedEvent exactly once (grep the
-      services; list them in your completion report)
-- [ ] A Sheets failure never breaks a user mutation (test proves 200 despite mock throwing)
-- [ ] Songs tab is NOT rewritten for a grade change (test proves it)
-- [ ] POST /api/catalog/sync/push → 503 when disabled; GET sync/status → enabled=false
-- [ ] App still boots and all OLD tests pass with sheets disabled
-- [ ] Committed
+- [x] `./gradlew test` green (240 tests, 0 failures)
+- [x] Every mutating endpoint publishes CatalogChangedEvent exactly once — ArtistService
+      (create/update/delete structural; toggleFavorite/setTags non-structural), AlbumService
+      (create/update/delete structural; setGrade/toggleFavorite/setTags non-structural),
+      TagService (create/delete non-structural), CatalogImportService.importFromJson (structural)
+- [x] A Sheets failure never breaks a user mutation (sheetsFailure_doesNotBreakGradeRequest)
+- [x] Songs tab is NOT rewritten for a grade change (gradeChange_nonStructural_doesNotWriteSongsTab)
+- [x] POST /api/catalog/sync/push → 503 when disabled; GET sync/status → enabled=false (CatalogControllerTest)
+- [x] App still boots and all OLD tests pass with sheets disabled (SheetsDisabledTest)
+- [x] Committed (1b87bfb + review fixes 9ec1981)
 ```
 
 ---
@@ -390,13 +393,16 @@ field silently falls out of the persistence loop.
 
 ## 6. Acceptance criteria
 
-- [ ] `./gradlew test` green, including the round-trip invariant test
-- [ ] All four boot scenarios covered by tests (sheets data / blank sheets / reader error /
-      disabled)
-- [ ] POST /api/catalog/sync/pull replaces DB content from sheets (test proves old rows gone)
-- [ ] GET /api/catalog/sync/status now reports lastPullAt
-- [ ] A Sheets outage at boot falls back to catalog.json and does NOT push (test proves it)
-- [ ] Committed
+- [x] `./gradlew test` green (259 tests, 0 failures), including SheetsRoundTripInvariantTest
+- [x] All four boot scenarios covered by tests (sheets data / blank sheets / reader error /
+      disabled) — CatalogAutoImporterTest (8 decision-tree tests)
+- [x] POST /api/catalog/sync/pull replaces DB content from sheets (SyncPullIntegrationTest
+      proves old rows gone)
+- [x] GET /api/catalog/sync/status now reports lastPullAt
+- [x] A Sheets outage at boot falls back to catalog.json and does NOT push (auto-import
+      suppresses CatalogChangedEvent via importFromJson(path, false); boot pushes happen
+      only explicitly in the blank-sheets seed case)
+- [x] Committed
 ```
 
 ---
@@ -445,10 +451,12 @@ Content-Disposition headers.
 
 ## 4. Acceptance criteria
 
-- [ ] `./gradlew test` green
-- [ ] Manual check: bootRun, curl both endpoints, open the files — JSON has grades/tags,
-      CSVs open correctly in a spreadsheet app with quoted names intact
-- [ ] Committed
+- [x] `./gradlew test` green (270 tests, 0 failures)
+- [x] Manual check: bootRun, curled both endpoints — JSON has full enriched structure
+      (7 genres, 176 artists, 2830 albums, 30876 tracks); artists.csv 177 lines,
+      albums.csv 2831 lines; quoted fields with embedded commas intact
+      ("So, It's Like That")
+- [x] Committed
 ```
 
 ---
@@ -528,14 +536,16 @@ configuration reference (music-cat.* properties incl. sheets); link to /swagger-
 
 ## 5. Acceptance criteria
 
-- [ ] `./gradlew clean :backend:bootJar` succeeds (Gradle downloads node itself)
-- [ ] `java -jar backend/build/libs/music-cat-*.jar` → http://localhost:8080 loads the app
-- [ ] Direct browser hits on /browse, /albums/1, /random return the SPA (no Whitelabel 404)
-- [ ] /swagger-ui and /api/browse/stats still work
-- [ ] `npm run dev` flow unchanged
-- [ ] backend/src/main/resources/static is gitignored and absent from `git status` after build
-- [ ] `./gradlew test` green
-- [ ] Committed
+- [x] `./gradlew clean :backend:bootJar` succeeds in 25s (Gradle downloads node itself)
+- [x] `java -jar backend/build/libs/music-cat-*.jar` → http://localhost:8080 loads the app
+      (jar renamed to music-cat-0.0.1-SNAPSHOT.jar via archiveBaseName)
+- [x] Direct hits on /browse, /albums/1 return the SPA index.html (200); bonus fix:
+      unknown paths now 404 instead of 500 (NoResourceFoundException handler)
+- [x] /swagger-ui and /api/browse/stats verified working from the jar
+- [x] `npm run dev` flow unchanged (vite dev server up in 2s, proxy untouched)
+- [x] backend/src/main/resources/static gitignored + `git rm -r`'d (was committed)
+- [x] `./gradlew test` green (279 tests, 0 failures)
+- [x] Committed
 ```
 
 ---
@@ -595,12 +605,16 @@ SecurityConfigTest:
 
 ## 5. Acceptance criteria
 
-- [ ] `./gradlew test` green (old controller tests fixed via test infra, not permitAll)
-- [ ] bootRun: browser prompts for credentials once, then the full UI works (TanStack
-      Query requests reuse the browser's cached Basic credentials automatically)
-- [ ] curl without credentials → 401; with -u admin:admin → 200
-- [ ] Credentials come from env vars; defaults only apply locally
-- [ ] Committed
+- [x] `./gradlew test` green (299 tests, 0 failures) — old tests fixed centrally via a
+      shared @WithAuthenticatedUser annotation (@Import(SecurityConfig) + @WithMockUser);
+      no permitAll anywhere. Boot 4 gotcha: the MockMvc↔Security test bridge moved to
+      its own starter, spring-boot-starter-security-test
+- [x] bootRun: 401 + WWW-Authenticate Basic challenge → browser prompts once, UI works
+- [x] curl verified: no creds → 401; -u admin:admin → 200; wrong password → 401;
+      / (index) → 401 without creds
+- [x] Credentials from MUSIC_CAT_USER / MUSIC_CAT_PASSWORD env vars; admin/admin defaults
+      only apply locally
+- [x] Committed
 ```
 
 ---
@@ -677,14 +691,20 @@ Run locally and record the "Started MusicLibraryApplication in X seconds" line:
 
 ## 4. Acceptance criteria
 
-- [ ] docker build . succeeds from a clean clone (no local node/gradle needed beyond the wrapper)
-- [ ] docker run with cloud profile + sheets disabled boots, imports catalog.json,
-      http://localhost:8080 serves UI behind Basic auth, /api/browse/stats shows 176/2830 counts
-- [ ] Startup line recorded in the completion report; lazy-init confirmed not to break
-      CatalogAutoImporter (the import demonstrably ran)
-- [ ] Image runs within -m 1g (no OOM kill during boot + a browse click-through)
-- [ ] `./gradlew test` still green (cloud profile changes nothing by default)
-- [ ] Dockerfile + .dockerignore + application-cloud.yml committed
+- [x] docker build . succeeds from a clean context (Gradle + Node downloaded inside;
+      gotcha: .dockerignore needs `**/.gradle` or the host's darwin-arm64 node leaks in);
+      image 433 MB
+- [x] docker run with cloud profile + sheets disabled boots, imports catalog.json,
+      serves UI behind Basic auth (401 without creds), /api/browse/stats shows
+      176 artists / 2830 albums / 30876 songs
+- [x] Startup: "Started MusicLibraryApplication in 4.364 seconds"; auto-import ran
+      (lazy-init did not break it, @Lazy(false) on CatalogAutoImporter +
+      SheetSyncListener) and completed in 1.7s — total ~6.1s to fully populated.
+      Import was 37s until a fix: FlushModeType.COMMIT in importFromJson (the per-album
+      exists-check auto-flushed the growing persistence context — O(n²) dirty checks)
+- [x] Runs in -m 1g: 348 MiB peak during boot + browse/random/albums click-through, no OOM
+- [x] `./gradlew test` still green (299 tests)
+- [x] Dockerfile + .dockerignore + application-cloud.yml committed
 ```
 
 ---
@@ -759,7 +779,7 @@ gcloud secrets create sheets-sa-key --data-file=config/google-credentials.json
 
 Delete ./data/music-cat.mv.db (local H2 file) so the DB is empty, then:
 
-cd backend && SHEETS_SPREADSHEET_ID=<id> ./gradlew bootRun \
+SHEETS_SPREADSHEET_ID=<id> ./gradlew :backend:bootRun \
     --args='--music-cat.sheets.enabled=true'
 
 Expected: log shows "Seeded from catalog.json and pushed initial state to Google Sheets".

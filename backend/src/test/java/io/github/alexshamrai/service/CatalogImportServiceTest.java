@@ -15,6 +15,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -43,6 +44,9 @@ class CatalogImportServiceTest {
 
     @Mock
     private SongRepository songRepository;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private CatalogImportService catalogImportService;
