@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
@@ -62,6 +63,7 @@ class CatalogAutoImporterTest {
     Path tempDir;
 
     private Path catalogFile;
+    private ReadinessState readinessState;
 
     @BeforeEach
     void createCatalogFile() throws IOException {
@@ -70,8 +72,9 @@ class CatalogAutoImporterTest {
     }
 
     private CatalogAutoImporter importer(String catalogPath) {
+        readinessState = new ReadinessState();
         return new CatalogAutoImporter(
-                catalogImportService, artistRepository, readerProvider, syncProvider, catalogPath);
+                catalogImportService, artistRepository, readerProvider, syncProvider, readinessState, catalogPath);
     }
 
     private static SheetsLoadResult cleanLoad() {
@@ -87,6 +90,7 @@ class CatalogAutoImporterTest {
 
         verify(syncService).resumeEventPushes();
         verifyNoInteractions(catalogImportService, readerProvider);
+        assertThat(readinessState.isReady()).isTrue();
     }
 
     @Test
@@ -208,6 +212,9 @@ class CatalogAutoImporterTest {
         verify(syncService, never()).pushCatalog(anyBoolean());
         verify(syncService, never()).resumeEventPushes();
         verify(syncService).suspendEventPushes(anyString());
+        // Readiness must flip even on the exception-fallback branch — a permanently-503
+        // app on a Sheets outage would be worse than the empty-DB race it's meant to prevent.
+        assertThat(readinessState.isReady()).isTrue();
     }
 
     @Test

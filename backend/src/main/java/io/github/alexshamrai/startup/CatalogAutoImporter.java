@@ -44,22 +44,39 @@ public class CatalogAutoImporter {
     private final ArtistRepository artistRepository;
     private final ObjectProvider<SheetsCatalogReader> sheetsCatalogReader;
     private final ObjectProvider<SheetSyncService> sheetSyncService;
+    private final ReadinessState readinessState;
     private final String catalogPath;
 
     public CatalogAutoImporter(CatalogImportService catalogImportService,
                                ArtistRepository artistRepository,
                                ObjectProvider<SheetsCatalogReader> sheetsCatalogReader,
                                ObjectProvider<SheetSyncService> sheetSyncService,
+                               ReadinessState readinessState,
                                @Value("${music-cat.catalog-path}") String catalogPath) {
         this.catalogImportService = catalogImportService;
         this.artistRepository = artistRepository;
         this.sheetsCatalogReader = sheetsCatalogReader;
         this.sheetSyncService = sheetSyncService;
+        this.readinessState = readinessState;
         this.catalogPath = catalogPath;
     }
 
+    /**
+     * Wraps the boot decision in try/finally so {@link ReadinessState#markReady()} always
+     * runs on exit — including every early-return branch below — so the
+     * {@link io.github.alexshamrai.config.ReadinessGateFilter} window closes as soon as the
+     * decision is made, not just on the happy path.
+     */
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
+        try {
+            doOnApplicationReady();
+        } finally {
+            readinessState.markReady();
+        }
+    }
+
+    private void doOnApplicationReady() {
         SheetSyncService sync = sheetSyncService.getIfAvailable();
 
         if (artistRepository.count() > 0) {
