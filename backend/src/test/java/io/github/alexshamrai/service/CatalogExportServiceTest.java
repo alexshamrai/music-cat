@@ -200,6 +200,19 @@ class CatalogExportServiceTest {
                 .contains("B.B. King,Blues,Live at the Regal,1965,5,true,\"classic, live\",3");
     }
 
+    @Test
+    void exportCsvZip_formulaLikeTitle_isNeutralized() throws IOException {
+        ArtistEntity evil = artistWithId(4L, "=HYPERLINK(\"http://evil\",\"x\")", Genre.POP_AND_ROCK);
+        when(artistRepository.findAllForSync()).thenReturn(List.of(evil));
+        when(albumRepository.findAllForSync()).thenReturn(List.of());
+        when(songRepository.findAllForSync()).thenReturn(List.of());
+
+        Map<String, String> entries = unzip(service.exportCsvZip());
+
+        assertThat(lines(entries.get("artists.csv")))
+                .contains("\"'=HYPERLINK(\"\"http://evil\"\",\"\"x\"\")\",Pop & Rock,,false,,0");
+    }
+
     // ==================== helpers ====================
 
     private static Map<String, String> unzip(byte[] zipBytes) throws IOException {

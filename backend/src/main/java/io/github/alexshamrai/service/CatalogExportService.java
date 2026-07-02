@@ -173,12 +173,20 @@ public class CatalogExportService {
         return row.append('\n').toString();
     }
 
-    /** Quotes fields containing comma/quote/newline, doubling embedded quotes; null → empty. */
+    /**
+     * Quotes fields containing comma/quote/newline, doubling embedded quotes; null → empty.
+     * Values starting with =/+/-/@ are prefixed with a leading quote to prevent them being
+     * interpreted as a live formula when the CSV is opened in a spreadsheet app (CSV/formula
+     * injection, CWE-1236) — artist/album titles and tags are unrestricted free text.
+     */
     private static String csvEscape(Object field) {
         if (field == null) {
             return "";
         }
         String value = field.toString();
+        if (!value.isEmpty() && "=+-@".indexOf(value.charAt(0)) >= 0) {
+            value = "'" + value;
+        }
         if (value.contains(",") || value.contains("\"") || value.contains("\n") || value.contains("\r")) {
             return '"' + value.replace("\"", "\"\"") + '"';
         }
