@@ -151,6 +151,14 @@ public class SheetSyncService {
                 // A failure mid-songs write — mark dirty for self-heal
                 songsDirty.set(true);
             }
+            // overwrite() is non-atomic (clear then write in chunks), so a failure here can
+            // leave a tab empty/partial. Suspend event pushes so a diverged sheet is never
+            // trusted again until an explicit sync/push or sync/pull recovers it — otherwise a
+            // later cold boot could restore the corrupted tab as truth and silently discard
+            // every rating/tag/favorite since the last successful push.
+            eventPushesSuspended.set(true);
+            log.warn("Sheets push failed — suspending event-driven pushes until sync/push or "
+                    + "sync/pull recovers", e);
             throw e;
         }
     }

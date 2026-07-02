@@ -316,4 +316,20 @@ class SheetSyncServiceTest {
 
         assertThat(sheetSyncService.eventPushesSuspended()).isTrue();
     }
+
+    @Test
+    void failedPush_fromResumedState_suspendsEventPushes() {
+        // Unlike failedPush_doesNotResumeEventPushes (which starts already-suspended and can't
+        // distinguish "stayed suspended" from "was re-suspended"), this starts resumed so a
+        // failure must actively flip the flag — otherwise a later cold boot could restore a
+        // partially-overwritten tab as truth without ever being marked untrustworthy.
+        sheetSyncService.resumeEventPushes();
+        assertThat(sheetSyncService.eventPushesSuspended()).isFalse();
+
+        when(artistRepository.findAllForSync()).thenThrow(new RuntimeException("Sheets down"));
+
+        assertThatThrownBy(() -> sheetSyncService.pushCatalog(false));
+
+        assertThat(sheetSyncService.eventPushesSuspended()).isTrue();
+    }
 }
