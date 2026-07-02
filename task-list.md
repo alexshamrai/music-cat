@@ -691,14 +691,20 @@ Run locally and record the "Started MusicLibraryApplication in X seconds" line:
 
 ## 4. Acceptance criteria
 
-- [ ] docker build . succeeds from a clean clone (no local node/gradle needed beyond the wrapper)
-- [ ] docker run with cloud profile + sheets disabled boots, imports catalog.json,
-      http://localhost:8080 serves UI behind Basic auth, /api/browse/stats shows 176/2830 counts
-- [ ] Startup line recorded in the completion report; lazy-init confirmed not to break
-      CatalogAutoImporter (the import demonstrably ran)
-- [ ] Image runs within -m 1g (no OOM kill during boot + a browse click-through)
-- [ ] `./gradlew test` still green (cloud profile changes nothing by default)
-- [ ] Dockerfile + .dockerignore + application-cloud.yml committed
+- [x] docker build . succeeds from a clean context (Gradle + Node downloaded inside;
+      gotcha: .dockerignore needs `**/.gradle` or the host's darwin-arm64 node leaks in);
+      image 433 MB
+- [x] docker run with cloud profile + sheets disabled boots, imports catalog.json,
+      serves UI behind Basic auth (401 without creds), /api/browse/stats shows
+      176 artists / 2830 albums / 30876 songs
+- [x] Startup: "Started MusicLibraryApplication in 4.364 seconds"; auto-import ran
+      (lazy-init did not break it, @Lazy(false) on CatalogAutoImporter +
+      SheetSyncListener) and completed in 1.7s — total ~6.1s to fully populated.
+      Import was 37s until a fix: FlushModeType.COMMIT in importFromJson (the per-album
+      exists-check auto-flushed the growing persistence context — O(n²) dirty checks)
+- [x] Runs in -m 1g: 348 MiB peak during boot + browse/random/albums click-through, no OOM
+- [x] `./gradlew test` still green (299 tests)
+- [x] Dockerfile + .dockerignore + application-cloud.yml committed
 ```
 
 ---

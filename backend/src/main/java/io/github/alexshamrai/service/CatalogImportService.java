@@ -37,6 +37,9 @@ public class CatalogImportService {
     private final ApplicationEventPublisher eventPublisher;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    @jakarta.persistence.PersistenceContext
+    private jakarta.persistence.EntityManager entityManager;
+
     // Patterns for parsing track number from filename (ordered by priority)
     // "01 - Song Title.mp3", "01 - Artist - Song Title.mp3"
     private static final Pattern PATTERN_NUM_DASH = Pattern.compile("^(\\d+)\\s*-\\s*(.+)\\.mp3$", Pattern.CASE_INSENSITIVE);
@@ -67,6 +70,15 @@ public class CatalogImportService {
      */
     @Transactional
     public ImportResult importFromJson(Path catalogFile, boolean publishEvent) throws IOException {
+        // COMMIT flush mode: the per-album exists-check would otherwise auto-flush
+        // (dirty-check) the whole growing persistence context before every query —
+        // O(n^2) over ~34K entities. IDENTITY ids force immediate INSERTs on save(),
+        // so those queries still see everything persisted earlier in this import.
+        // (null in plain unit tests that construct the service without Spring)
+        if (entityManager != null) {
+            entityManager.setFlushMode(jakarta.persistence.FlushModeType.COMMIT);
+        }
+
         String json = Files.readString(catalogFile);
         Catalog catalog = objectMapper.readValue(json, Catalog.class);
 

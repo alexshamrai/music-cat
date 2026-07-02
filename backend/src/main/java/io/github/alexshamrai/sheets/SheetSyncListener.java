@@ -18,6 +18,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
  * next successful push self-heals.
  */
 @Component
+@org.springframework.context.annotation.Lazy(false)
 @ConditionalOnProperty(name = "music-cat.sheets.enabled", havingValue = "true")
 @RequiredArgsConstructor
 @Slf4j

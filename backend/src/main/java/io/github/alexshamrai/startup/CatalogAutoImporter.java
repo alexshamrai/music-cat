@@ -36,6 +36,7 @@ import org.springframework.stereotype.Component;
  * in case 3, so the fallback paths provably leave the sheet untouched.
  */
 @Component
+@org.springframework.context.annotation.Lazy(false)
 @Slf4j
 public class CatalogAutoImporter {
 
