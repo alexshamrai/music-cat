@@ -18,9 +18,10 @@ import static org.mockito.Mockito.when;
 class ReadinessGateFilterTest {
 
     @Test
-    void notReady_returns503_doesNotContinueChain() throws Exception {
+    void notReady_timesOut_returns503_doesNotContinueChain() throws Exception {
         ReadinessState readinessState = new ReadinessState();
-        ReadinessGateFilter filter = new ReadinessGateFilter(readinessState);
+        // 0s timeout: never becomes ready, so this returns immediately without blocking the test
+        ReadinessGateFilter filter = new ReadinessGateFilter(readinessState, 0);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain chain = mock(FilterChain.class);
@@ -33,10 +34,35 @@ class ReadinessGateFilterTest {
     }
 
     @Test
-    void ready_continuesChain() throws Exception {
+    void notReady_becomesReadyDuringWait_continuesChain() throws Exception {
+        ReadinessState readinessState = new ReadinessState();
+        ReadinessGateFilter filter = new ReadinessGateFilter(readinessState, 5);
+        Thread readyLater = new Thread(() -> {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            readinessState.markReady();
+        });
+        readyLater.start();
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        filter.doFilterInternal(request, response, chain);
+        readyLater.join();
+
+        verify(chain).doFilter(request, response);
+        verify(response, never()).setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+    }
+
+    @Test
+    void alreadyReady_continuesChainImmediately() throws Exception {
         ReadinessState readinessState = new ReadinessState();
         readinessState.markReady();
-        ReadinessGateFilter filter = new ReadinessGateFilter(readinessState);
+        ReadinessGateFilter filter = new ReadinessGateFilter(readinessState, 25);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain chain = mock(FilterChain.class);

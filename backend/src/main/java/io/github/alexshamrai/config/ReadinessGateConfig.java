@@ -9,10 +9,12 @@ import org.springframework.core.Ordered;
 @Configuration
 public class ReadinessGateConfig {
 
+    private static final long READY_TIMEOUT_SECONDS = 25;
+
     @Bean
     public FilterRegistrationBean<ReadinessGateFilter> readinessGateFilter(ReadinessState readinessState) {
         FilterRegistrationBean<ReadinessGateFilter> registration =
-                new FilterRegistrationBean<>(new ReadinessGateFilter(readinessState));
+                new FilterRegistrationBean<>(new ReadinessGateFilter(readinessState, READY_TIMEOUT_SECONDS));
         registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return registration;
     }
