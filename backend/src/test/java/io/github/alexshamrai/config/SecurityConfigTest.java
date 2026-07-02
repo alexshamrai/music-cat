@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -51,5 +52,25 @@ class SecurityConfigTest {
     void rootIndexWithoutCredentials_returns401() throws Exception {
         mockMvc.perform(get("/"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    // ==================== blind cross-site form CSRF guard ====================
+
+    @Test
+    void postWithoutXhrHeader_returns403_evenWithValidCredentials() throws Exception {
+        // Simulates a blind cross-site <form method=POST> — no custom header possible —
+        // riding on cached Basic credentials. Must be rejected before reaching the controller.
+        mockMvc.perform(post("/api/catalog/sync/push").with(httpBasic("admin", "admin")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void postWithXhrHeader_reachesController() throws Exception {
+        // Sheets is disabled in the test profile, so reaching the controller means 503
+        // ("not configured"), not 403 — proving the filter let the request through.
+        mockMvc.perform(post("/api/catalog/sync/push")
+                        .header("X-Requested-With", "XMLHttpRequest")
+                        .with(httpBasic("admin", "admin")))
+                .andExpect(status().isServiceUnavailable());
     }
 }

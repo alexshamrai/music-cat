@@ -13,12 +13,14 @@ import java.lang.annotation.Target;
 /**
  * Central auth fix for MockMvc tests now that every path requires HTTP Basic:
  * imports the production {@link SecurityConfig} (so slices get the real chain with CSRF
- * disabled, not Boot's locked-down default) and runs each test as an authenticated user.
+ * disabled, not Boot's locked-down default), runs each test as an authenticated user, and
+ * attaches the X-Requested-With header every state-changing request now needs (see
+ * {@link io.github.alexshamrai.config.RequireXhrHeaderFilter}).
  * Production security stays untouched — no permitAll anywhere.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, XhrHeaderMockMvcConfig.class})
 @WithMockUser
 public @interface WithAuthenticatedUser {}

@@ -15,7 +15,10 @@ import type {
   Tag,
 } from '../types';
 
-const api = axios.create({ baseURL: '/api' });
+// X-Requested-With can't be set by a plain HTML <form>, so requiring it on the backend
+// blocks blind cross-site form submissions to state-changing endpoints (see
+// RequireXhrHeaderFilter) while every real request from this app sends it automatically.
+const api = axios.create({ baseURL: '/api', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
 
 function toQueryParams(filters?: AlbumFilterParams): Record<string, string | number | boolean | string[]> {
   if (!filters) return {};

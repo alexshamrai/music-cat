@@ -30,6 +30,12 @@ class ArtistCrudIntegrationTest {
     void authenticate() {
         // Real HTTP over RANDOM_PORT — authenticate with the default local credentials
         restTemplate = restTemplate.withBasicAuth("admin", "admin");
+        // Required by RequireXhrHeaderFilter on state-changing requests (blind cross-site
+        // CSRF guard) — a real HTTP client, unlike a browser form, can set it freely.
+        restTemplate.getRestTemplate().getInterceptors().add((request, body, execution) -> {
+            request.getHeaders().add("X-Requested-With", "XMLHttpRequest");
+            return execution.execute(request, body);
+        });
     }
 
     @Test
