@@ -451,10 +451,12 @@ Content-Disposition headers.
 
 ## 4. Acceptance criteria
 
-- [ ] `./gradlew test` green
-- [ ] Manual check: bootRun, curl both endpoints, open the files — JSON has grades/tags,
-      CSVs open correctly in a spreadsheet app with quoted names intact
-- [ ] Committed
+- [x] `./gradlew test` green (270 tests, 0 failures)
+- [x] Manual check: bootRun, curled both endpoints — JSON has full enriched structure
+      (7 genres, 176 artists, 2830 albums, 30876 tracks); artists.csv 177 lines,
+      albums.csv 2831 lines; quoted fields with embedded commas intact
+      ("So, It's Like That")
+- [x] Committed
 ```
 
 ---

@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import io.github.alexshamrai.dto.ImportResult;
 import io.github.alexshamrai.dto.SyncResultDto;
 import io.github.alexshamrai.dto.SyncStatusDto;
+import io.github.alexshamrai.dto.export.ExportCatalog;
+import io.github.alexshamrai.service.CatalogExportService;
 import io.github.alexshamrai.service.CatalogImportService;
 import io.github.alexshamrai.service.SheetSyncService;
 import io.github.alexshamrai.service.SheetsCatalogReader;
@@ -29,6 +31,7 @@ import java.util.Map;
 public class CatalogController {
 
     private final CatalogImportService catalogImportService;
+    private final CatalogExportService catalogExportService;
     private final ObjectProvider<SheetSyncService> sheetSyncServiceProvider;
     private final ObjectProvider<SheetsCatalogReader> sheetsCatalogReaderProvider;
 
@@ -43,6 +46,21 @@ public class CatalogController {
         } finally {
             Files.deleteIfExists(tempFile);
         }
+    }
+
+    @GetMapping("/export/json")
+    public ResponseEntity<ExportCatalog> exportJson() {
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=\"music-cat-export.json\"")
+                .body(catalogExportService.exportJson());
+    }
+
+    @GetMapping("/export/csv")
+    public ResponseEntity<byte[]> exportCsv() {
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/zip")
+                .header("Content-Disposition", "attachment; filename=\"music-cat-export.zip\"")
+                .body(catalogExportService.exportCsvZip());
     }
 
     @PostMapping("/sync/push")
