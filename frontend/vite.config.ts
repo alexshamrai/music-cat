@@ -11,7 +11,8 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: '../backend/src/main/resources/static',
+    // Gradle (:frontend:npmBuild) copies dist/ into the backend jar's static resources
+    outDir: 'dist',
     emptyOutDir: true,
   },
 })

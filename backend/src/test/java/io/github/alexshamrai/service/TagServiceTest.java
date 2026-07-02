@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +28,9 @@ class TagServiceTest {
 
     @Mock
     private TagRepository tagRepository;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private TagService tagService;
@@ -94,6 +98,15 @@ class TagServiceTest {
         TagDto result = tagService.create("  rock  ");
 
         assertThat(result.getName()).isEqualTo("rock");
+    }
+
+    @Test
+    void create_nameWithComma_rejected() {
+        // Tags are stored comma-separated in Google Sheets — a comma would split the tag on pull
+        assertThatThrownBy(() -> tagService.create("rock, hard"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("comma");
+        verify(tagRepository, never()).save(any());
     }
 
     // ==================== delete tests ====================

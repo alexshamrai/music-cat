@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 public interface ArtistRepository extends JpaRepository<ArtistEntity, Long>, JpaSpecificationExecutor<ArtistEntity> {
 
@@ -21,4 +22,9 @@ public interface ArtistRepository extends JpaRepository<ArtistEntity, Long>, Jpa
     @Override
     @EntityGraph(attributePaths = {"tags", "albums"})
     Optional<ArtistEntity> findById(Long id);
+
+    /** Loads all artists with their tags in a single join — used by SheetSyncService. */
+    @EntityGraph(attributePaths = {"tags"})
+    @Query("select distinct a from ArtistEntity a")
+    List<ArtistEntity> findAllForSync();
 }

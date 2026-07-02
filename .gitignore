@@ -7,6 +7,15 @@ build/
 
 # H2 database
 backend/data/
+data/
 
 # Config secrets
-config/google-credentials.json
+config/*.json
+
+# Frontend build output (Gradle copies dist/ into the backend jar)
+frontend/dist/
+frontend/.gradle/
+node_modules/
+
+# Stale frontend artifact location (pre-Task-13 vite outDir)
+backend/src/main/resources/static/
