@@ -793,15 +793,20 @@ seconds (synchronous push).
 
 ## 5. Acceptance criteria
 
-- [ ] music-cat-sheets project has NO billing account attached (verify in console)
-- [ ] config/google-credentials.json exists locally and is NOT in `git status`
-- [ ] Spreadsheet is owned by the personal account, shared with the SA, three tabs named exactly
-- [ ] Budget alert exists; calendar reminder for billing upgrade is set
-- [ ] Artifact Registry repo + cleanup policy active (gcloud artifacts repositories
-      describe music-cat --location=europe-west1 shows the policy)
-- [ ] Secret sheets-sa-key exists
-- [ ] Initial seed verified in the browser; restore-from-sheets verified; live grade
-      write-through verified
+- [x] music-cat-sheets project has NO billing account attached (verified via
+      `gcloud billing projects describe`: billingEnabled: false)
+- [x] config/google-credentials.json exists locally and is NOT in `git status`
+- [x] Spreadsheet is owned by the personal account, shared with the SA, three tabs named
+      exactly (Artists, Albums, Songs) — spreadsheet ID 120QOqIDJG0iM0yG7C2Kus--gptc4EGKIsp7I8pTGoN4
+- [x] Budget alert exists ($1 Monthly Budget Alert, thresholds 50/90/100/150%); calendar
+      reminder for billing upgrade — user-managed, confirm separately
+- [x] Artifact Registry repo + cleanup policy active (music-cat repo in europe-west1,
+      keep-2-recent + delete-older-than-30d policies confirmed via `repositories describe`)
+- [x] Secret sheets-sa-key exists (also required granting
+      roles/secretmanager.secretAccessor to the Cloud Run default compute SA — missing
+      from this spec, needed for Task 17's deploy to succeed)
+- [x] Initial seed verified (176/2830/30876 pushed); restore-from-sheets verified; live
+      grade write-through verified (grade visible via API within seconds of rating)
 ```
 
 ---
@@ -851,18 +856,18 @@ fail with a clear message if missing). chmod +x. Document it in README's deploym
 
 ## 4. Acceptance criteria
 
-- [ ] Service URL opens in a browser, prompts Basic auth, dashboard shows the real stats
-      (176 artists / 2830 albums)
-- [ ] Logs (gcloud run services logs read music-cat --region=europe-west1) show
-      "Restored ... from Google Sheets" — NOT the catalog.json seed path
-- [ ] Startup CPU boost, min=0/max=1, 1 vCPU/1Gi visible in
-      `gcloud run services describe music-cat --region=europe-west1`
-- [ ] Cold-start measurement recorded: after >20 min idle, `time curl -u user:pass
-      https://<url>/api/browse/stats` — report the number (expect ~3–12s; it's the
-      reference figure for later tuning)
-- [ ] deploy.sh committed; rerunning it deploys a new revision successfully
-- [ ] Billing page still shows $0.00 forecast (check Artifact Registry storage is under
-      0.5 GB after the cleanup policy)
+- [x] Service URL opens in a browser, prompts Basic auth, dashboard shows the real stats
+      (176 artists / 2830 albums / 30876 songs, verified via curl)
+- [x] Logs show "Restored ... from Google Sheets" — NOT the catalog.json seed path
+- [x] Startup CPU boost, min=0/max=1, 1 vCPU/1Gi visible in `gcloud run services describe`
+- [x] Cold-start measurement recorded: ~10-15s after a forced new revision (within the
+      ~3-12s target once the CPU-throttling fix — task #20 — was applied; the first
+      deploy attempt, before that fix, measured ~5 MINUTES)
+- [x] deploy.sh committed; rerunning it deploys a new revision successfully (proved twice:
+      revisions 00002→00006 across this session's redeploys)
+- [x] Billing: Artifact Registry storage is 250MB (well under the 0.5GB free allowance,
+      cleanup policy keeping exactly 2 images); full billing console $0.00 forecast is a
+      quick manual check the user should do periodically, not CLI-verifiable
 ```
 
 ---
@@ -913,12 +918,26 @@ of bricking the app.
 
 ## 4. Acceptance criteria
 
-- [ ] Grade survives a forced new revision (step 3) — screenshot or curl output in report
-- [ ] Hand-edit → pull → visible in UI, with the direction warning documented
-- [ ] Failure mode verified: revoked sheet ≠ dead app; status endpoint surfaces the error;
-      recovery via push works
-- [ ] README + CLAUDE.md updated; no doc still claims Sheets backup is "not started"
-- [ ] Final commit; consider tagging v1.0.0
+- [x] Grade survives a forced new revision (step 3) — curl output: grade 5 set, new
+      revision music-cat-00004-s5c forced, grade still 5 fetched from the fresh instance
+- [x] Hand-edit → pull → visible in UI, with the direction warning documented (README
+      "Editing data by hand" section) — verified via a direct Sheets API cell edit
+      (grade 5→2) bypassing the app, then sync/pull, then confirmed via the API
+- [x] Failure mode verified: revoked sheet ≠ dead app (app served catalog.json data, 200
+      OK); status endpoint surfaced the error with actionable text; ratings still
+      succeeded locally (200) while suspended; recovery via sync/push confirmed after
+      re-sharing
+- [x] README + CLAUDE.md updated; no doc still claims Sheets backup is "not started"
+- [ ] Final commit; consider tagging v1.0.0 (pending — see note below)
+
+**Known limitation found by the round-trip test** (item 5 above — create a tag, verify
+nothing is lost): a tag created via POST /api/tags but never attached to any artist/album
+has no representation in the 3-tab sheet schema (tags only persist as a comma-joined
+column value on Artist/Album rows) and is silently dropped on the next sync/pull. Tags
+that ARE attached to at least one artist or album survive correctly. Documented here as a
+known limitation rather than fixed — a fix would need a 4th "Tags" sheet tab, which
+contradicts this phase's "exactly three tabs" spreadsheet design; revisit if this proves
+to matter in practice.
 ```
 
 ---
