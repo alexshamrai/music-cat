@@ -37,7 +37,7 @@ export default function BrowsePage() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Browse</h2>
         <div className="text-gray-500">Loading genres...</div>
       </div>
@@ -46,7 +46,7 @@ export default function BrowsePage() {
 
   if (isError || !genres) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Browse</h2>
         <div className="text-red-500">Failed to load genres.</div>
       </div>
@@ -54,7 +54,7 @@ export default function BrowsePage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Browse</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {genres.map((g) => (

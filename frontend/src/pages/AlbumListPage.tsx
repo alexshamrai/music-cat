@@ -9,7 +9,7 @@ export default function AlbumListPage() {
   const { data: albums, isLoading, isError } = useAlbums(filters);
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Albums</h2>
 
       <FilterBar filters={filters} onChange={setFilters} />

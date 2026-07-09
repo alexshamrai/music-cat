@@ -14,7 +14,7 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h2>
         <div className="text-gray-500">Loading stats...</div>
       </div>
@@ -23,7 +23,7 @@ export default function DashboardPage() {
 
   if (isError || !stats) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h2>
         <div className="text-red-500">Failed to load stats. Is the backend running?</div>
       </div>
@@ -34,7 +34,7 @@ export default function DashboardPage() {
   const maxGradeCount = Math.max(...grades.map(g => stats.gradeDistribution[String(g)] ?? 0), 1);
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h2>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">

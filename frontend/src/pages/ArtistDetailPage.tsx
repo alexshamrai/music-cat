@@ -32,7 +32,7 @@ export default function ArtistDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <div className="text-gray-500">Loading artist...</div>
       </div>
     );
@@ -40,14 +40,14 @@ export default function ArtistDetailPage() {
 
   if (isError || !artist) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <div className="text-red-500">Artist not found.</div>
       </div>
     );
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <Link to="/artists" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
         <ArrowLeft size={14} />
         Back to artists

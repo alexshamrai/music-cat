@@ -8,7 +8,7 @@ export default function FavoritesPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Favorites</h2>
         <div className="text-gray-500">Loading favorites...</div>
       </div>
@@ -17,7 +17,7 @@ export default function FavoritesPage() {
 
   if (isError || !favorites) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Favorites</h2>
         <div className="text-red-500">Failed to load favorites.</div>
       </div>
@@ -28,7 +28,7 @@ export default function FavoritesPage() {
 
   if (!hasAny) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Favorites</h2>
         <div className="flex flex-col items-center justify-center py-16 text-gray-400">
           <Heart size={48} className="mb-4" />
@@ -40,7 +40,7 @@ export default function FavoritesPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-2">Favorites</h2>
       <p className="text-sm text-gray-500 mb-6">
         {favorites.favoriteArtists.length} favorite artists, {favorites.favoriteAlbums.length} favorite albums
