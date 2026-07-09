@@ -238,6 +238,96 @@ class AlbumControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    // ==================== PUT /api/albums/{id}/edit ====================
+
+    @Test
+    void edit_validBody_returns200WithReconciledSongs() throws Exception {
+        var album = AlbumDto.builder()
+                .id(1L)
+                .title("Renamed Album")
+                .year(1970)
+                .favorite(false)
+                .artist(AlbumDto.ArtistSummaryDto.builder()
+                        .id(1L).name("Miles Davis").genre(Genre.JAZZ_AND_FUNK).build())
+                .tags(List.of())
+                .songs(List.of(
+                        SongDto.builder().id(1L).title("So What (Take 1)").trackNumber(1).discNumber(1).build(),
+                        SongDto.builder().id(null).title("Bonus").trackNumber(2).discNumber(1).build()))
+                .build();
+        when(albumService.edit(eq(1L), any())).thenReturn(album);
+
+        mockMvc.perform(put("/api/albums/1/edit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"title": "Renamed Album", "year": 1970,
+                                 "songs": [{"id": 1, "title": "So What (Take 1)"}, {"id": null, "title": "Bonus"}]}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", is("Renamed Album")))
+                .andExpect(jsonPath("$.songs", hasSize(2)))
+                .andExpect(jsonPath("$.songs[0].title", is("So What (Take 1)")));
+    }
+
+    @Test
+    void edit_blankTitle_returns400() throws Exception {
+        mockMvc.perform(put("/api/albums/1/edit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"title": "", "songs": []}
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.title").exists());
+    }
+
+    @Test
+    void edit_missingSongsList_returns400() throws Exception {
+        mockMvc.perform(put("/api/albums/1/edit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"title": "Album"}
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.songs").exists());
+    }
+
+    @Test
+    void edit_blankSongTitle_returns400() throws Exception {
+        mockMvc.perform(put("/api/albums/1/edit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"title": "Album", "songs": [{"id": null, "title": ""}]}
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status", is(400)));
+    }
+
+    @Test
+    void edit_titleCollision_returns400() throws Exception {
+        when(albumService.edit(eq(1L), any()))
+                .thenThrow(new IllegalArgumentException("Another album titled 'Taken' already exists for this artist"));
+
+        mockMvc.perform(put("/api/albums/1/edit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"title": "Taken", "songs": []}
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", is("Another album titled 'Taken' already exists for this artist")));
+    }
+
+    @Test
+    void edit_nonExistentId_returns404() throws Exception {
+        when(albumService.edit(eq(999L), any()))
+                .thenThrow(new NotFoundException("Album not found with id: 999"));
+
+        mockMvc.perform(put("/api/albums/999/edit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"title": "X", "songs": []}
+                                """))
+                .andExpect(status().isNotFound());
+    }
+
     // ==================== DELETE /api/albums/{id} ====================
 
     @Test

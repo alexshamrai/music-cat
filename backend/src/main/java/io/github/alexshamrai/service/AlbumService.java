@@ -5,10 +5,12 @@ import io.github.alexshamrai.domain.SongEntity;
 import io.github.alexshamrai.domain.TagEntity;
 import io.github.alexshamrai.dto.AlbumCreateDto;
 import io.github.alexshamrai.dto.AlbumDto;
+import io.github.alexshamrai.dto.AlbumEditDto;
 import io.github.alexshamrai.dto.AlbumFilterParams;
 import io.github.alexshamrai.dto.AlbumSummaryDto;
 import io.github.alexshamrai.dto.AlbumUpdateDto;
 import io.github.alexshamrai.dto.SongDto;
+import io.github.alexshamrai.dto.SongEditInput;
 import io.github.alexshamrai.event.CatalogChangedEvent;
 import io.github.alexshamrai.exception.NotFoundException;
 import io.github.alexshamrai.repository.AlbumRepository;
@@ -21,8 +23,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -68,7 +73,8 @@ public class AlbumService {
     public AlbumSummaryDto update(Long id, AlbumUpdateDto dto) {
         var album = getEntityById(id);
 
-        if (dto.getTitle() != null) {
+        if (dto.getTitle() != null && !dto.getTitle().equals(album.getTitle())) {
+            requireNoSiblingTitleCollision(album, dto.getTitle());
             album.setTitle(dto.getTitle());
         }
         if (dto.getYear() != null) {
@@ -78,6 +84,75 @@ public class AlbumService {
         AlbumSummaryDto result = toSummaryDto(albumRepository.save(album));
         eventPublisher.publishEvent(new CatalogChangedEvent(true));
         return result;
+    }
+
+    /**
+     * Batch edit: replace the album's title/year and reconcile its songs against the
+     * supplied desired set — all in one transaction and one structural sync push.
+     * Existing songs (matched by id) are renamed with track/disc preserved; songs
+     * absent from the payload are deleted (orphanRemoval); id-less entries are created
+     * on disc 1 with the next free track number.
+     */
+    @Transactional
+    public AlbumDto edit(Long id, AlbumEditDto dto) {
+        var album = getEntityById(id);
+
+        if (!dto.getTitle().equals(album.getTitle())) {
+            requireNoSiblingTitleCollision(album, dto.getTitle());
+            album.setTitle(dto.getTitle());
+        }
+        album.setYear(dto.getYear());
+
+        reconcileSongs(album, dto.getSongs());
+
+        albumRepository.save(album);
+        eventPublisher.publishEvent(new CatalogChangedEvent(true));
+        return toDto(album);
+    }
+
+    /** Rejects renaming an album to a title another album by the same artist already has. */
+    private void requireNoSiblingTitleCollision(AlbumEntity album, String newTitle) {
+        if (albumRepository.existsByArtistIdAndTitle(album.getArtist().getId(), newTitle)) {
+            throw new IllegalArgumentException(
+                    "Another album titled '" + newTitle + "' already exists for this artist");
+        }
+    }
+
+    private void reconcileSongs(AlbumEntity album, List<SongEditInput> desired) {
+        List<SongEntity> current = album.getSongs();
+        Map<Long, SongEntity> byId = current.stream()
+                .filter(s -> s.getId() != null)
+                .collect(Collectors.toMap(SongEntity::getId, s -> s));
+
+        int nextTrack = current.stream()
+                .filter(s -> s.getDiscNumber() == 1)
+                .mapToInt(SongEntity::getTrackNumber)
+                .max()
+                .orElse(0);
+
+        Set<Long> keptIds = new HashSet<>();
+        List<SongEntity> additions = new ArrayList<>();
+        for (SongEditInput input : desired) {
+            if (input.getId() != null) {
+                SongEntity song = byId.get(input.getId());
+                if (song == null) {
+                    throw new IllegalArgumentException(
+                            "Song " + input.getId() + " does not belong to this album — reload and try again");
+                }
+                song.setTitle(input.getTitle());
+                keptIds.add(input.getId());
+            } else {
+                additions.add(SongEntity.builder()
+                        .title(input.getTitle())
+                        .trackNumber(++nextTrack)
+                        .discNumber(1)
+                        .album(album)
+                        .build());
+            }
+        }
+
+        current.removeIf(s -> s.getId() != null && !keptIds.contains(s.getId()));
+        current.addAll(additions);
     }
 
     @Transactional

@@ -3,6 +3,7 @@ package io.github.alexshamrai.controller;
 import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.dto.AlbumCreateDto;
 import io.github.alexshamrai.dto.AlbumDto;
+import io.github.alexshamrai.dto.AlbumEditDto;
 import io.github.alexshamrai.dto.AlbumFilterParams;
 import io.github.alexshamrai.dto.AlbumSummaryDto;
 import io.github.alexshamrai.dto.AlbumUpdateDto;
@@ -72,6 +73,11 @@ public class AlbumController {
     @PutMapping("/{id}")
     public ResponseEntity<AlbumSummaryDto> update(@PathVariable Long id, @Valid @RequestBody AlbumUpdateDto dto) {
         return ResponseEntity.ok(albumService.update(id, dto));
+    }
+
+    @PutMapping("/{id}/edit")
+    public ResponseEntity<AlbumDto> edit(@PathVariable Long id, @Valid @RequestBody AlbumEditDto dto) {
+        return ResponseEntity.ok(albumService.edit(id, dto));
     }
 
     @DeleteMapping("/{id}")

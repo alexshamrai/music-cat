@@ -6,8 +6,12 @@ import io.github.alexshamrai.domain.Genre;
 import io.github.alexshamrai.domain.SongEntity;
 import io.github.alexshamrai.domain.TagEntity;
 import io.github.alexshamrai.dto.AlbumDto;
+import io.github.alexshamrai.dto.AlbumEditDto;
 import io.github.alexshamrai.dto.AlbumFilterParams;
 import io.github.alexshamrai.dto.AlbumSummaryDto;
+import io.github.alexshamrai.dto.SongDto;
+import io.github.alexshamrai.dto.SongEditInput;
+import io.github.alexshamrai.event.CatalogChangedEvent;
 import io.github.alexshamrai.exception.NotFoundException;
 import io.github.alexshamrai.repository.AlbumRepository;
 import io.github.alexshamrai.repository.ArtistRepository;
@@ -31,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -228,6 +233,211 @@ class AlbumServiceTest {
         assertThatThrownBy(() -> albumService.update(999L, albumUpdateDto("X", null)))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("999");
+    }
+
+    // ==================== update collision guard ====================
+
+    @Test
+    void update_titleCollidesWithSiblingAlbum_throwsIllegalArgument() {
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
+        var album = albumWithId(1L, "Old Title", 1959, artist);
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
+        when(albumRepository.existsByArtistIdAndTitle(1L, "Bitches Brew")).thenReturn(true);
+
+        assertThatThrownBy(() -> albumService.update(1L, albumUpdateDto("Bitches Brew", null)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Bitches Brew");
+
+        verify(albumRepository, never()).save(any(AlbumEntity.class));
+        verify(eventPublisher, never()).publishEvent(any());
+    }
+
+    @Test
+    void update_titleUnchanged_skipsCollisionCheck() {
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
+        var album = albumWithId(1L, "Kind of Blue", 1959, artist);
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
+        when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // same title, only year changes — collision check must not fire
+        AlbumSummaryDto result = albumService.update(1L, albumUpdateDto("Kind of Blue", 1960));
+
+        assertThat(result.getYear()).isEqualTo(1960);
+        verify(albumRepository, never()).existsByArtistIdAndTitle(any(), any());
+    }
+
+    // ==================== edit (batch reconcile) tests ====================
+
+    private static AlbumEditDto editDto(String title, Integer year, SongEditInput... songs) {
+        return new AlbumEditDto(title, year, new ArrayList<>(List.of(songs)));
+    }
+
+    private static SongDto songByTitle(AlbumDto album, String title) {
+        return album.getSongs().stream()
+                .filter(s -> s.getTitle().equals(title))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("no song titled '" + title + "'"));
+    }
+
+    @Test
+    void edit_renamesExistingSong_preservingTrackAndDisc() {
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
+        var album = albumWithId(1L, "Kind of Blue", 1959, artist);
+        var s1 = songWithId(1L, "So What", 1, 1, album);
+        var s2 = songWithId(2L, "Flamenco Sketches", 5, 1, album);
+        album.setSongs(new ArrayList<>(List.of(s1, s2)));
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
+        when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AlbumDto result = albumService.edit(1L, editDto("Kind of Blue", 1959,
+                new SongEditInput(1L, "So What (Take 1)"),
+                new SongEditInput(2L, "Flamenco Sketches")));
+
+        assertThat(result.getSongs()).hasSize(2);
+        assertThat(songByTitle(result, "So What (Take 1)").getTrackNumber()).isEqualTo(1);
+        assertThat(s1.getTitle()).isEqualTo("So What (Take 1)");
+        assertThat(s1.getTrackNumber()).isEqualTo(1);
+        assertThat(s2.getTrackNumber()).isEqualTo(5); // untouched
+        verify(eventPublisher).publishEvent(new CatalogChangedEvent(true));
+    }
+
+    @Test
+    void edit_addsNewSong_autoNumberedAfterLastDiscOneTrack() {
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
+        var album = albumWithId(1L, "Kind of Blue", 1959, artist);
+        var s1 = songWithId(1L, "So What", 1, 1, album);
+        var s2 = songWithId(2L, "Blue in Green", 3, 1, album);
+        album.setSongs(new ArrayList<>(List.of(s1, s2)));
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
+        when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AlbumDto result = albumService.edit(1L, editDto("Kind of Blue", 1959,
+                new SongEditInput(1L, "So What"),
+                new SongEditInput(2L, "Blue in Green"),
+                new SongEditInput(null, "Bonus Track")));
+
+        assertThat(result.getSongs()).hasSize(3);
+        SongDto bonus = songByTitle(result, "Bonus Track");
+        assertThat(bonus.getTrackNumber()).isEqualTo(4); // max disc-1 track (3) + 1
+        assertThat(bonus.getDiscNumber()).isEqualTo(1);
+        verify(eventPublisher).publishEvent(new CatalogChangedEvent(true));
+    }
+
+    @Test
+    void edit_addToEmptyAlbum_getsTrackOne() {
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
+        var album = albumWithId(1L, "Empty", 1959, artist);
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
+        when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AlbumDto result = albumService.edit(1L, editDto("Empty", 1959,
+                new SongEditInput(null, "First Song")));
+
+        assertThat(result.getSongs()).hasSize(1);
+        assertThat(result.getSongs().get(0).getTrackNumber()).isEqualTo(1);
+        assertThat(result.getSongs().get(0).getDiscNumber()).isEqualTo(1);
+    }
+
+    @Test
+    void edit_omittedSongIsDeleted() {
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
+        var album = albumWithId(1L, "Kind of Blue", 1959, artist);
+        var s1 = songWithId(1L, "So What", 1, 1, album);
+        var s2 = songWithId(2L, "Freddie Freeloader", 2, 1, album);
+        album.setSongs(new ArrayList<>(List.of(s1, s2)));
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
+        when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // send only s1 — s2 should be removed via orphanRemoval
+        AlbumDto result = albumService.edit(1L, editDto("Kind of Blue", 1959,
+                new SongEditInput(1L, "So What")));
+
+        assertThat(result.getSongs()).hasSize(1);
+        assertThat(result.getSongs().get(0).getTitle()).isEqualTo("So What");
+        assertThat(album.getSongs()).extracting(s -> s.getId()).containsExactly(1L);
+        verify(eventPublisher).publishEvent(new CatalogChangedEvent(true));
+    }
+
+    @Test
+    void edit_updatesAlbumTitleAndYear() {
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
+        var album = albumWithId(1L, "Old Title", 1959, artist);
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
+        when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AlbumDto result = albumService.edit(1L, editDto("New Title", 1970));
+
+        assertThat(result.getTitle()).isEqualTo("New Title");
+        assertThat(result.getYear()).isEqualTo(1970);
+    }
+
+    @Test
+    void edit_clearsYearWhenNull() {
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
+        var album = albumWithId(1L, "Kind of Blue", 1959, artist);
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
+        when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AlbumDto result = albumService.edit(1L, editDto("Kind of Blue", null));
+
+        assertThat(result.getYear()).isNull();
+    }
+
+    @Test
+    void edit_titleCollidesWithSiblingAlbum_throwsIllegalArgument() {
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
+        var album = albumWithId(1L, "Kind of Blue", 1959, artist);
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
+        when(albumRepository.existsByArtistIdAndTitle(1L, "Bitches Brew")).thenReturn(true);
+
+        assertThatThrownBy(() -> albumService.edit(1L, editDto("Bitches Brew", 1959)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Bitches Brew");
+
+        verify(albumRepository, never()).save(any(AlbumEntity.class));
+        verify(eventPublisher, never()).publishEvent(any());
+    }
+
+    @Test
+    void edit_songIdNotBelongingToAlbum_throwsIllegalArgument() {
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
+        var album = albumWithId(1L, "Kind of Blue", 1959, artist);
+        var s1 = songWithId(1L, "So What", 1, 1, album);
+        album.setSongs(new ArrayList<>(List.of(s1)));
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
+
+        assertThatThrownBy(() -> albumService.edit(1L, editDto("Kind of Blue", 1959,
+                new SongEditInput(99L, "Ghost Song"))))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("99");
+
+        verify(albumRepository, never()).save(any(AlbumEntity.class));
+        verify(eventPublisher, never()).publishEvent(any());
+    }
+
+    @Test
+    void edit_nonExistentAlbum_throwsNotFound() {
+        when(albumRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> albumService.edit(999L, editDto("X", null)))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("999");
+    }
+
+    @Test
+    void edit_publishesExactlyOneStructuralEvent() {
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
+        var album = albumWithId(1L, "Kind of Blue", 1959, artist);
+        var s1 = songWithId(1L, "So What", 1, 1, album);
+        album.setSongs(new ArrayList<>(List.of(s1)));
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(album));
+        when(albumRepository.save(any(AlbumEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // rename album + rename song + add + delete in one call
+        albumService.edit(1L, editDto("Renamed", 1959,
+                new SongEditInput(null, "Added")));
+
+        verify(eventPublisher, times(1)).publishEvent(new CatalogChangedEvent(true));
     }
 
     // ==================== delete tests ====================

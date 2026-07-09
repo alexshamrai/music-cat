@@ -119,3 +119,14 @@ export interface AlbumUpdateDto {
   title?: string;
   year?: number;
 }
+
+export interface SongEditInput {
+  id: number | null;
+  title: string;
+}
+
+export interface AlbumEditDto {
+  title: string;
+  year?: number | null;
+  songs: SongEditInput[];
+}

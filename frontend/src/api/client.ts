@@ -7,6 +7,7 @@ import type {
   AlbumSummary,
   AlbumCreateDto,
   AlbumUpdateDto,
+  AlbumEditDto,
   AlbumFilterParams,
   GenreBrowse,
   TagBrowse,
@@ -93,6 +94,12 @@ export const updateAlbum = async (id: number, dto: AlbumUpdateDto) => {
 
 export const deleteAlbum = async (id: number) => {
   await api.delete(`/albums/${id}`);
+};
+
+// Batch edit: album title/year + full desired song set (add/rename/delete), applied atomically.
+export const editAlbum = async (id: number, dto: AlbumEditDto) => {
+  const { data } = await api.put<Album>(`/albums/${id}/edit`, dto);
+  return data;
 };
 
 export const setAlbumGrade = async (id: number, grade: number) => {

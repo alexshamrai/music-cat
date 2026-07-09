@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as api from '../api/client';
-import type { AlbumCreateDto, AlbumFilterParams, AlbumUpdateDto } from '../types';
+import type { AlbumCreateDto, AlbumEditDto, AlbumFilterParams, AlbumUpdateDto } from '../types';
 
 export const useAlbums = (filters?: AlbumFilterParams) =>
   useQuery({
@@ -30,6 +30,18 @@ export const useUpdateAlbum = () => {
     onSuccess: (_data, { id }) => {
       qc.invalidateQueries({ queryKey: ['albums'] });
       qc.invalidateQueries({ queryKey: ['albums', id] });
+    },
+  });
+};
+
+export const useEditAlbum = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, dto }: { id: number; dto: AlbumEditDto }) => api.editAlbum(id, dto),
+    onSuccess: (_data, { id }) => {
+      qc.invalidateQueries({ queryKey: ['albums'] });
+      qc.invalidateQueries({ queryKey: ['albums', id] });
+      qc.invalidateQueries({ queryKey: ['stats'] });
     },
   });
 };
