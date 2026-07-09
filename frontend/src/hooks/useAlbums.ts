@@ -19,7 +19,11 @@ export const useCreateAlbum = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (dto: AlbumCreateDto) => api.createAlbum(dto),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['albums'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['albums'] });
+      qc.invalidateQueries({ queryKey: ['genres'] }); // Browse: per-genre counts + albums-by-artist
+      qc.invalidateQueries({ queryKey: ['stats'] });
+    },
   });
 };
 
@@ -30,6 +34,7 @@ export const useUpdateAlbum = () => {
     onSuccess: (_data, { id }) => {
       qc.invalidateQueries({ queryKey: ['albums'] });
       qc.invalidateQueries({ queryKey: ['albums', id] });
+      qc.invalidateQueries({ queryKey: ['genres'] }); // Browse albums-by-artist shows the title
     },
   });
 };
@@ -41,6 +46,7 @@ export const useEditAlbum = () => {
     onSuccess: (_data, { id }) => {
       qc.invalidateQueries({ queryKey: ['albums'] });
       qc.invalidateQueries({ queryKey: ['albums', id] });
+      qc.invalidateQueries({ queryKey: ['genres'] }); // Browse albums-by-artist shows the title
       qc.invalidateQueries({ queryKey: ['stats'] });
     },
   });
@@ -54,7 +60,9 @@ export const useDeleteAlbum = () => {
     // which would otherwise refetch a now-404 resource while the detail page navigates away.
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['albums'], predicate: (q) => typeof q.queryKey[1] !== 'number' });
+      qc.invalidateQueries({ queryKey: ['genres'] });
       qc.invalidateQueries({ queryKey: ['stats'] });
+      qc.invalidateQueries({ queryKey: ['favorites'] });
     },
   });
 };

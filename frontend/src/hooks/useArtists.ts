@@ -19,7 +19,11 @@ export const useCreateArtist = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (dto: ArtistCreateDto) => api.createArtist(dto),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['artists'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['artists'] });
+      qc.invalidateQueries({ queryKey: ['genres'] }); // Browse genre grid counts
+      qc.invalidateQueries({ queryKey: ['stats'] });
+    },
   });
 };
 
@@ -30,6 +34,8 @@ export const useUpdateArtist = () => {
     onSuccess: (_data, { id }) => {
       qc.invalidateQueries({ queryKey: ['artists'] });
       qc.invalidateQueries({ queryKey: ['artists', id] });
+      qc.invalidateQueries({ queryKey: ['genres'] });    // name/genre change reshuffles Browse grouping + counts
+      qc.invalidateQueries({ queryKey: ['favorites'] }); // a favorited artist's displayed name
     },
   });
 };
@@ -44,6 +50,7 @@ export const useDeleteArtist = () => {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['artists'], predicate: (q) => typeof q.queryKey[1] !== 'number' });
       qc.invalidateQueries({ queryKey: ['albums'] });
+      qc.invalidateQueries({ queryKey: ['genres'] });
       qc.invalidateQueries({ queryKey: ['stats'] });
       qc.invalidateQueries({ queryKey: ['favorites'] });
     },
