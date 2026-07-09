@@ -71,7 +71,7 @@ export default function TagsPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Tags</h2>
         <div className="text-gray-500">Loading tags...</div>
       </div>
@@ -80,7 +80,7 @@ export default function TagsPage() {
 
   if (isError) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Tags</h2>
         <div className="text-red-500">Failed to load tags.</div>
       </div>
@@ -93,7 +93,7 @@ export default function TagsPage() {
   });
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Tags</h2>
 
       {/* Create + Sort */}

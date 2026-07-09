@@ -62,7 +62,7 @@ export default function RandomPickPage() {
   const hasFilters = filters.genre || filters.minGrade || filters.favorite || (filters.tag && filters.tag.length > 0);
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Random Pick</h2>
 
       {/* Filters */}
