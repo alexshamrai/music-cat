@@ -21,7 +21,7 @@ All tasks (0–18) from `task-list.md` are complete. The app is deployed to Clou
 - **Catalog import** — CatalogImportService (JSON → DB), CatalogAutoImporter (auto-imports on first startup if DB empty), POST /api/catalog/import endpoint
 - **Catalog DTOs** — Java records in `dto.catalog` package: Catalog, Genre, Artist, Album, Stats, ImportResult
 - **Artist CRUD API** — ArtistService, ArtistController (full CRUD + favorite toggle + tag management)
-- **Album CRUD API** — AlbumService, AlbumController (full CRUD + grade + favorite + tags + rich filtering via AlbumFilterParams)
+- **Album CRUD API** — AlbumService, AlbumController (full CRUD + grade + favorite + tags + rich filtering via AlbumFilterParams; batch edit via `PUT /{id}/edit` — atomically renames the album and reconciles its full song set: add/rename/delete songs in one transaction and one structural Sheets push. A sibling-title collision guard rejects renames that would duplicate `(artist, title)`. New songs auto-number on disc 1 as `max(track)+1`; track/disc editing is out of scope)
 - **Tag CRUD API** — TagService, TagController (list, create, delete)
 - **DTOs** — ArtistDto, ArtistCreateDto, ArtistUpdateDto, AlbumDto, AlbumSummaryDto, AlbumCreateDto, AlbumUpdateDto, AlbumFilterParams, GradeDto, SongDto, TagDto, TagCreateDto
 - **Exception handling** — NotFoundException, NoMatchException, GlobalExceptionHandler with @ControllerAdvice (404, 400 validation, 500)
@@ -96,7 +96,7 @@ Artist (1) ---> (N) Album (1) ---> (N) Song
 
 All endpoints under `/api/`, all requiring HTTP Basic auth (state-changing requests also require an `X-Requested-With` header):
 - `/api/artists` — Artist CRUD + favorite toggle + tag management
-- `/api/albums` — Album CRUD + grade + favorite + tags; supports rich filtering (genre, minGrade, tags, favorite, unrated)
+- `/api/albums` — Album CRUD + grade + favorite + tags; supports rich filtering (genre, minGrade, tags, favorite, unrated). `PUT /api/albums/{id}/edit` batch-edits title/year and reconciles the full song set (add/rename/delete) atomically
 - `/api/browse/genres`, `/api/browse/tags`, `/api/browse/stats`, `/api/browse/favorites` — Navigation/discovery
 - `/api/random/album`, `/api/random/albums` — Random pick with same filters as album list
 - `/api/tags` — Tag CRUD

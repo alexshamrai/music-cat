@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router';
 import { ArrowLeft, Pencil, Plus, Trash2 } from 'lucide-react';
 import {
@@ -11,12 +11,16 @@ import {
 import StarRating from '../components/StarRating';
 import FavoriteToggle from '../components/FavoriteToggle';
 import TagBadge from '../components/TagBadge';
-import type { Album } from '../types';
+import type { Album, Song } from '../types';
 
 type DraftSong = { key: string; id: number | null; title: string };
 type Draft = { title: string; year: string; songs: DraftSong[] };
 
 const yearIsValid = (y: string) => y.trim() === '' || /^\d{1,4}$/.test(y.trim());
+
+// Canonical song ordering (disc then track), shared by view and edit modes.
+const bySong = (a: Song, b: Song) =>
+  (a.discNumber ?? 1) - (b.discNumber ?? 1) || a.trackNumber - b.trackNumber;
 
 export default function AlbumDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -30,6 +34,13 @@ export default function AlbumDetailPage() {
 
   const [draft, setDraft] = useState<Draft | null>(null);
   const newKeyCounter = useRef(0);
+
+  // Discard any in-progress edit when navigating to a different album — React Router
+  // reuses this component instance on param-only navigation, so the draft would
+  // otherwise leak onto (and be submitted against) the newly viewed album.
+  useEffect(() => {
+    setDraft(null);
+  }, [albumId]);
 
   const addTag = () => {
     const t = tagInput.trim();
@@ -47,7 +58,7 @@ export default function AlbumDetailPage() {
 
   const startEdit = (a: Album) => {
     const songs = [...a.songs]
-      .sort((s1, s2) => (s1.discNumber ?? 1) - (s2.discNumber ?? 1) || s1.trackNumber - s2.trackNumber)
+      .sort(bySong)
       .map((s) => ({ key: `s-${s.id}`, id: s.id, title: s.title }));
     setDraft({ title: a.title, year: a.year != null ? String(a.year) : '', songs });
   };
@@ -104,9 +115,7 @@ export default function AlbumDetailPage() {
 
   const isEditing = draft !== null;
   const hasMultipleDiscs = album.songs.some((s) => s.discNumber && s.discNumber > 1);
-  const sortedSongs = [...album.songs].sort(
-    (a, b) => (a.discNumber ?? 1) - (b.discNumber ?? 1) || a.trackNumber - b.trackNumber,
-  );
+  const sortedSongs = [...album.songs].sort(bySong);
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
