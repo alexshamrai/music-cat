@@ -50,7 +50,12 @@ export const useDeleteAlbum = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => api.deleteAlbum(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['albums'] }),
+    // Invalidate album LIST queries only — not the deleted album's detail (['albums', <number>]),
+    // which would otherwise refetch a now-404 resource while the detail page navigates away.
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['albums'], predicate: (q) => typeof q.queryKey[1] !== 'number' });
+      qc.invalidateQueries({ queryKey: ['stats'] });
+    },
   });
 };
 

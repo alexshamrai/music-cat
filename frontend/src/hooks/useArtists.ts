@@ -38,7 +38,15 @@ export const useDeleteArtist = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => api.deleteArtist(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['artists'] }),
+    // Invalidate artist LIST queries only — not the deleted artist's detail (['artists', <number>]),
+    // which would otherwise refetch a now-404 resource while the detail page navigates away.
+    // Also refresh albums (deleting an artist cascade-deletes its albums), stats and favorites.
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['artists'], predicate: (q) => typeof q.queryKey[1] !== 'number' });
+      qc.invalidateQueries({ queryKey: ['albums'] });
+      qc.invalidateQueries({ queryKey: ['stats'] });
+      qc.invalidateQueries({ queryKey: ['favorites'] });
+    },
   });
 };
 

@@ -184,6 +184,20 @@ class AlbumServiceTest {
     }
 
     @Test
+    void create_titleCollidesWithSiblingAlbum_throwsIllegalArgument() {
+        var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
+        when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
+        when(albumRepository.existsByArtistIdAndTitle(1L, "Kind of Blue")).thenReturn(true);
+
+        assertThatThrownBy(() -> albumService.create(albumCreateDto("Kind of Blue", 1959, 1L)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Kind of Blue");
+
+        verify(albumRepository, never()).save(any(AlbumEntity.class));
+        verify(eventPublisher, never()).publishEvent(any());
+    }
+
+    @Test
     void create_nullYear_savesWithNullYear() {
         var artist = artistWithId(1L, "Miles Davis", Genre.JAZZ_AND_FUNK);
         when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));

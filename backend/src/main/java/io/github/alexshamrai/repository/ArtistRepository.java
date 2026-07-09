@@ -15,6 +15,8 @@ public interface ArtistRepository extends JpaRepository<ArtistEntity, Long>, Jpa
 
     Optional<ArtistEntity> findByNameAndGenre(String name, Genre genre);
 
+    boolean existsByName(String name);
+
     @Override
     @EntityGraph(attributePaths = {"tags"})
     List<ArtistEntity> findAll(Specification<ArtistEntity> spec);

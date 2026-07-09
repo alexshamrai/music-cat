@@ -58,6 +58,8 @@ public class AlbumService {
         var artist = artistRepository.findById(dto.getArtistId())
                 .orElseThrow(() -> new NotFoundException("Artist not found with id: " + dto.getArtistId()));
 
+        requireNoSiblingTitleCollision(dto.getArtistId(), dto.getTitle());
+
         var album = AlbumEntity.builder()
                 .title(dto.getTitle())
                 .year(dto.getYear())
@@ -74,7 +76,7 @@ public class AlbumService {
         var album = getEntityById(id);
 
         if (dto.getTitle() != null && !dto.getTitle().equals(album.getTitle())) {
-            requireNoSiblingTitleCollision(album, dto.getTitle());
+            requireNoSiblingTitleCollision(album.getArtist().getId(), dto.getTitle());
             album.setTitle(dto.getTitle());
         }
         if (dto.getYear() != null) {
@@ -98,7 +100,7 @@ public class AlbumService {
         var album = getEntityById(id);
 
         if (!dto.getTitle().equals(album.getTitle())) {
-            requireNoSiblingTitleCollision(album, dto.getTitle());
+            requireNoSiblingTitleCollision(album.getArtist().getId(), dto.getTitle());
             album.setTitle(dto.getTitle());
         }
         album.setYear(dto.getYear());
@@ -110,11 +112,11 @@ public class AlbumService {
         return toDto(album);
     }
 
-    /** Rejects renaming an album to a title another album by the same artist already has. */
-    private void requireNoSiblingTitleCollision(AlbumEntity album, String newTitle) {
-        if (albumRepository.existsByArtistIdAndTitle(album.getArtist().getId(), newTitle)) {
+    /** Rejects a create/rename that would give an artist two albums with the same title. */
+    private void requireNoSiblingTitleCollision(Long artistId, String title) {
+        if (albumRepository.existsByArtistIdAndTitle(artistId, title)) {
             throw new IllegalArgumentException(
-                    "Another album titled '" + newTitle + "' already exists for this artist");
+                    "Another album titled '" + title + "' already exists for this artist");
         }
     }
 

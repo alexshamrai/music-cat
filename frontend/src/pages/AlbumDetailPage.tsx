@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams, Link } from 'react-router';
+import { useParams, Link, useNavigate } from 'react-router';
 import { ArrowLeft, Pencil, Plus, Trash2 } from 'lucide-react';
 import {
   useAlbum,
@@ -7,10 +7,12 @@ import {
   useToggleAlbumFavorite,
   useSetAlbumTags,
   useEditAlbum,
+  useDeleteAlbum,
 } from '../hooks/useAlbums';
 import StarRating from '../components/StarRating';
 import FavoriteToggle from '../components/FavoriteToggle';
 import TagBadge from '../components/TagBadge';
+import ConfirmDialog from '../components/ConfirmDialog';
 import type { Album, Song } from '../types';
 
 type DraftSong = { key: string; id: number | null; title: string };
@@ -25,14 +27,17 @@ const bySong = (a: Song, b: Song) =>
 export default function AlbumDetailPage() {
   const { id } = useParams<{ id: string }>();
   const albumId = Number(id);
+  const navigate = useNavigate();
   const { data: album, isLoading, isError } = useAlbum(albumId);
   const setGrade = useSetAlbumGrade();
   const toggleFav = useToggleAlbumFavorite();
   const setTags = useSetAlbumTags();
   const editAlbum = useEditAlbum();
+  const deleteAlbum = useDeleteAlbum();
   const [tagInput, setTagInput] = useState('');
 
   const [draft, setDraft] = useState<Draft | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const newKeyCounter = useRef(0);
 
   // Discard any in-progress edit when navigating to a different album — React Router
@@ -40,7 +45,11 @@ export default function AlbumDetailPage() {
   // otherwise leak onto (and be submitted against) the newly viewed album.
   useEffect(() => {
     setDraft(null);
+    setConfirmDelete(false);
   }, [albumId]);
+
+  const doDeleteAlbum = () =>
+    deleteAlbum.mutate(albumId, { onSuccess: () => navigate('/albums') });
 
   const addTag = () => {
     const t = tagInput.trim();
@@ -153,6 +162,16 @@ export default function AlbumDetailPage() {
                 }`}
               />
               {!yearIsValid(draft.year) && <span className="ml-2 text-xs text-red-500">Enter a valid year</span>}
+            </div>
+            <div className="pt-1">
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(true)}
+                className="inline-flex items-center gap-1 text-sm text-red-600 hover:text-red-700 cursor-pointer"
+              >
+                <Trash2 size={14} />
+                Delete album
+              </button>
             </div>
           </div>
         ) : (
@@ -292,6 +311,22 @@ export default function AlbumDetailPage() {
           )}
         </div>
       </div>
+
+      {confirmDelete && (
+        <ConfirmDialog
+          title="Delete album?"
+          message={
+            <>
+              Delete <span className="font-medium">{album.title}</span> and its {album.songs.length} song
+              {album.songs.length === 1 ? '' : 's'}? This can't be undone.
+            </>
+          }
+          confirmLabel="Delete album"
+          busy={deleteAlbum.isPending}
+          onConfirm={doDeleteAlbum}
+          onCancel={() => setConfirmDelete(false)}
+        />
+      )}
     </div>
   );
 }

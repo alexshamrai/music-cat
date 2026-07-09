@@ -62,6 +62,8 @@ public class ArtistService {
 
     @Transactional
     public ArtistDto create(ArtistCreateDto dto) {
+        requireNameAvailable(dto.getName());
+
         var artist = ArtistEntity.builder()
                 .name(dto.getName())
                 .genre(dto.getGenre())
@@ -77,7 +79,8 @@ public class ArtistService {
     public ArtistDto update(Long id, ArtistUpdateDto dto) {
         var artist = getEntityById(id);
 
-        if (dto.getName() != null) {
+        if (dto.getName() != null && !dto.getName().equals(artist.getName())) {
+            requireNameAvailable(dto.getName());
             artist.setName(dto.getName());
         }
         if (dto.getGenre() != null) {
@@ -133,6 +136,17 @@ public class ArtistService {
     private ArtistEntity getEntityById(Long id) {
         return artistRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Artist not found with id: " + id));
+    }
+
+    /**
+     * Rejects a create/rename that would produce two artists with the same name.
+     * Artists are keyed by name in the Google Sheet, so a duplicate name would be
+     * silently dropped on the next sync/pull.
+     */
+    private void requireNameAvailable(String name) {
+        if (artistRepository.existsByName(name)) {
+            throw new IllegalArgumentException("An artist named '" + name + "' already exists");
+        }
     }
 
     private ArtistDto toDto(ArtistEntity entity) {

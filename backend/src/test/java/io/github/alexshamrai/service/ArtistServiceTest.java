@@ -193,6 +193,46 @@ class ArtistServiceTest {
                 .hasMessageContaining("999");
     }
 
+    // ==================== uniqueness guard tests ====================
+
+    @Test
+    void create_duplicateName_throwsIllegalArgument() {
+        when(artistRepository.existsByName("New Band")).thenReturn(true);
+
+        assertThatThrownBy(() -> artistService.create(createDto("New Band", Genre.PROGRESSIVE_ROCK, null)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("New Band");
+
+        verify(artistRepository, never()).save(any(ArtistEntity.class));
+        verify(eventPublisher, never()).publishEvent(any());
+    }
+
+    @Test
+    void update_renameToExistingName_throwsIllegalArgument() {
+        var artist = artistWithId(1L, "Old Name", Genre.PROGRESSIVE_ROCK);
+        when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
+        when(artistRepository.existsByName("Taken")).thenReturn(true);
+
+        assertThatThrownBy(() -> artistService.update(1L, updateDto("Taken", null, null)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Taken");
+
+        verify(artistRepository, never()).save(any(ArtistEntity.class));
+        verify(eventPublisher, never()).publishEvent(any());
+    }
+
+    @Test
+    void update_nameUnchanged_skipsNameCollisionCheck() {
+        var artist = artistWithId(1L, "Same Name", Genre.PROGRESSIVE_ROCK);
+        when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
+        when(artistRepository.save(any(ArtistEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        ArtistDto result = artistService.update(1L, updateDto("Same Name", Genre.JAZZ_AND_FUNK, null));
+
+        assertThat(result.getGenre()).isEqualTo(Genre.JAZZ_AND_FUNK);
+        verify(artistRepository, never()).existsByName(any());
+    }
+
     // ==================== delete tests ====================
 
     @Test
