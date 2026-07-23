@@ -115,7 +115,7 @@ class AlbumControllerTest {
                 .andExpect(jsonPath("$.title", is("Kind of Blue")))
                 .andExpect(jsonPath("$.year", is(1959)))
                 .andExpect(jsonPath("$.grade", is(5)))
-                .andExpect(jsonPath("$.favorite", is(true)))
+                .andExpect(jsonPath("$.isFavorite", is(true)))
                 .andExpect(jsonPath("$.artist.id", is(1)))
                 .andExpect(jsonPath("$.artist.name", is("Miles Davis")))
                 .andExpect(jsonPath("$.artist.genre", is("Jazz & Funk")))
@@ -406,7 +406,7 @@ class AlbumControllerTest {
 
         mockMvc.perform(patch("/api/albums/1/favorite"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.favorite", is(true)));
+                .andExpect(jsonPath("$.isFavorite", is(true)));
     }
 
     @Test

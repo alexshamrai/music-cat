@@ -1,5 +1,6 @@
 package io.github.alexshamrai.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class AlbumSummaryDto {
     private String title;
     private Integer year;
     private Integer grade;
+    @JsonProperty("isFavorite")
     private boolean favorite;
     private String artistName;
     private Genre genre;

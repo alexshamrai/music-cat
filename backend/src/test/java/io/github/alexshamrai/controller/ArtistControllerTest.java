@@ -112,7 +112,7 @@ class ArtistControllerTest {
                 .andExpect(jsonPath("$.name", is("Genesis")))
                 .andExpect(jsonPath("$.genre", is("Progressive Rock")))
                 .andExpect(jsonPath("$.subgenre", is("Progressive")))
-                .andExpect(jsonPath("$.favorite", is(true)))
+                .andExpect(jsonPath("$.isFavorite", is(true)))
                 .andExpect(jsonPath("$.tags", hasSize(2)))
                 .andExpect(jsonPath("$.albumCount", is(5)));
     }
@@ -270,7 +270,7 @@ class ArtistControllerTest {
 
         mockMvc.perform(patch("/api/artists/1/favorite"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.favorite", is(true)));
+                .andExpect(jsonPath("$.isFavorite", is(true)));
     }
 
     @Test
