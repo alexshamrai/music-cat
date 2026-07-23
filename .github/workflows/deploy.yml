@@ -1,0 +1,84 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-master
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  PROJECT: music-cat-hosting
+  REGION: europe-west1
+  SERVICE: music-cat
+  AR_REPO: music-cat
+  WIF_PROVIDER: projects/1054388126708/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+  DEPLOYER_SA: gh-deployer@music-cat-hosting.iam.gserviceaccount.com
+
+jobs:
+  test:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Run backend tests
+        run: ./gradlew :backend:test --no-daemon
+
+  deploy:
+    name: Build & deploy to Cloud Run
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud (WIF)
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ env.PROJECT }}
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.DEPLOYER_SA }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push image
+        run: |
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT }}/${{ env.AR_REPO }}/app:${GITHUB_SHA::7}"
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy "${{ env.SERVICE }}" \
+            --project="${{ env.PROJECT }}" \
+            --image="$IMAGE" \
+            --region="${{ env.REGION }}" \
+            --allow-unauthenticated \
+            --min-instances=0 --max-instances=1 \
+            --cpu=1 --memory=1Gi --cpu-boost \
+            --set-env-vars="SPRING_PROFILES_ACTIVE=cloud,SHEETS_SPREADSHEET_ID=${{ secrets.SHEETS_SPREADSHEET_ID }},MUSIC_CAT_USER=${{ secrets.MUSIC_CAT_USER }},MUSIC_CAT_PASSWORD=${{ secrets.MUSIC_CAT_PASSWORD }}" \
+            --set-secrets=/secrets/google/credentials.json=sheets-sa-key:latest \
+            --quiet
+
+      - name: Print service URL
+        run: |
+          gcloud run services describe "${{ env.SERVICE }}" \
+            --project="${{ env.PROJECT }}" --region="${{ env.REGION }}" \
+            --format="value(status.url)"
