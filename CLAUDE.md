@@ -75,8 +75,11 @@ cd frontend && npm run dev               # Frontend on :5173 (proxies /api to :8
 ./gradlew bootJar
 java -jar backend/build/libs/music-cat-*.jar   # Serves both API and UI on :8080
 
-# Deploy to Cloud Run
+# Deploy to Cloud Run (manual fallback)
 MUSIC_CAT_USER=... MUSIC_CAT_PASSWORD=... SHEETS_SPREADSHEET_ID=... ./deploy.sh
+
+# Automated deploy: push/merge to master runs .github/workflows/deploy.yml
+# (test -> build -> deploy via keyless WIF). PRs run .github/workflows/ci.yml.
 ```
 
 ## Domain Model

@@ -80,6 +80,15 @@ pushes to Artifact Registry, and deploys to Cloud Run with `--allow-unauthentica
 at the platform level — the app's own HTTP Basic auth is the real access control,
 not Cloud Run IAM.
 
+**Automated deploys (GitHub Actions).** Pushing/merging to `master` triggers
+`.github/workflows/deploy.yml`: it runs the backend tests, builds the image on an
+amd64 runner (no cross-build needed), and deploys a new Cloud Run revision —
+mirroring `deploy.sh`'s flags. Pull requests run `.github/workflows/ci.yml`
+(backend tests + frontend build) as a merge gate. GCP auth is keyless via
+Workload Identity Federation (no service-account key stored in GitHub); the live
+`MUSIC_CAT_USER` / `MUSIC_CAT_PASSWORD` / `SHEETS_SPREADSHEET_ID` values come from
+repository secrets. `deploy.sh` remains available for manual/emergency local deploys.
+
 **Editing data by hand.** The spreadsheet is editable directly in the browser —
 that's the point of using Sheets as the store. After a hand edit, call
 `POST /api/catalog/sync/pull` to load it into the running app. **Mind the
