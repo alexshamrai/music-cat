@@ -1,71 +1,54 @@
 package io.github.alexshamrai.startup;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import io.github.alexshamrai.dto.ImportResult;
 import io.github.alexshamrai.repository.ArtistRepository;
-import io.github.alexshamrai.service.CatalogImportService;
 import io.github.alexshamrai.service.SheetSyncService;
 import io.github.alexshamrai.service.SheetsCatalogReader;
 import io.github.alexshamrai.service.SheetsLoadResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 /**
- * Populates an empty database on boot. Decision tree:
+ * Populates an empty database on boot from Google Sheets. Decision tree (Sheets-only):
  * <ol>
  *   <li>DB not empty → skip (resume event pushes)</li>
- *   <li>DB empty + sheets enabled + sheets have data → restore from Google Sheets</li>
- *   <li>DB empty + sheets enabled + sheets blank → seed from catalog.json, push everything up</li>
- *   <li>DB empty + sheets disabled → import catalog.json</li>
+ *   <li>DB empty + sheets disabled → empty catalog (automated-test context only)</li>
+ *   <li>DB empty + sheets have data → restore from Google Sheets</li>
+ *   <li>DB empty + sheets blank → empty catalog (trivially consistent → resume pushes)</li>
+ *   <li>DB empty + restore throws / produces 0 artists → empty catalog, pushes SUSPENDED</li>
  * </ol>
  *
- * <p>Event-driven pushes start SUSPENDED (see {@link SheetSyncService}) and are resumed
- * here only when the DB provably mirrors the spreadsheet. If the Sheets restore throws,
- * produces zero artists despite non-blank tabs, or skips rows, we fall back / continue
- * with pushes still suspended — a diverged DB must never overwrite the spreadsheet (the
- * persistent store). The failure surfaces via GET /api/catalog/sync/status.
- *
- * <p>Auto-import never publishes {@link io.github.alexshamrai.event.CatalogChangedEvent}
- * (it calls {@code importFromJson(path, false)}) — pushes at boot happen only explicitly
- * in case 3, so the fallback paths provably leave the sheet untouched.
+ * <p>There is no local fallback: a Sheets outage on a cold start leaves the catalog empty until
+ * Sheets recovers (repair connectivity, then POST /api/catalog/sync/pull). Event-driven pushes
+ * start SUSPENDED (see {@link SheetSyncService}) and resume only when the DB provably mirrors the
+ * sheet — a diverged/empty DB must never overwrite the spreadsheet.
  */
 @Component
 @org.springframework.context.annotation.Lazy(false)
 @Slf4j
 public class CatalogAutoImporter {
 
-    private final CatalogImportService catalogImportService;
     private final ArtistRepository artistRepository;
     private final ObjectProvider<SheetsCatalogReader> sheetsCatalogReader;
     private final ObjectProvider<SheetSyncService> sheetSyncService;
     private final ReadinessState readinessState;
-    private final String catalogPath;
 
-    public CatalogAutoImporter(CatalogImportService catalogImportService,
-                               ArtistRepository artistRepository,
+    public CatalogAutoImporter(ArtistRepository artistRepository,
                                ObjectProvider<SheetsCatalogReader> sheetsCatalogReader,
                                ObjectProvider<SheetSyncService> sheetSyncService,
-                               ReadinessState readinessState,
-                               @Value("${music-cat.catalog-path}") String catalogPath) {
-        this.catalogImportService = catalogImportService;
+                               ReadinessState readinessState) {
         this.artistRepository = artistRepository;
         this.sheetsCatalogReader = sheetsCatalogReader;
         this.sheetSyncService = sheetSyncService;
         this.readinessState = readinessState;
-        this.catalogPath = catalogPath;
     }
 
     /**
-     * Wraps the boot decision in try/finally so {@link ReadinessState#markReady()} always
-     * runs on exit — including every early-return branch below — so the
-     * {@link io.github.alexshamrai.config.ReadinessGateFilter} window closes as soon as the
-     * decision is made, not just on the happy path.
+     * Wraps the decision in try/finally so {@link ReadinessState#markReady()} always runs on exit
+     * (including every early return), closing the {@code ReadinessGateFilter} window as soon as
+     * the decision is made.
      */
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
@@ -80,7 +63,7 @@ public class CatalogAutoImporter {
         SheetSyncService sync = sheetSyncService.getIfAvailable();
 
         if (artistRepository.count() > 0) {
-            log.info("Database already contains data, skipping auto-import");
+            log.info("Database already contains data, skipping restore");
             if (sync != null) {
                 sync.resumeEventPushes();
             }
@@ -89,8 +72,7 @@ public class CatalogAutoImporter {
 
         SheetsCatalogReader reader = sheetsCatalogReader.getIfAvailable();
         if (reader == null) {
-            // Sheets disabled — original behavior
-            importCatalogJson();
+            log.info("Google Sheets disabled and DB is empty — starting with an empty catalog");
             return;
         }
 
@@ -100,32 +82,19 @@ public class CatalogAutoImporter {
                 return;
             }
         } catch (Exception e) {
-            log.error("Sheets restore failed — falling back to catalog.json import WITHOUT pushing, "
-                    + "so the spreadsheet stays untouched", e);
-            importCatalogJson();
+            log.error("Sheets restore failed — starting with an empty catalog; pushes suspended so the "
+                    + "spreadsheet stays untouched. Repair connectivity/sheet, then POST /api/catalog/sync/pull", e);
             if (sync != null) {
                 sync.suspendEventPushes("Boot restore from Google Sheets failed: " + e.getMessage()
-                        + " — running on catalog.json seed data; repair connectivity/sheet, then POST /api/catalog/sync/pull");
+                        + " — running on an empty catalog; repair connectivity/sheet, then POST /api/catalog/sync/pull");
             }
             return;
         }
 
-        // Sheets enabled but blank → seed from catalog.json and push the initial state up
-        ImportResult seeded = importCatalogJson();
-        if (sync == null) {
-            return;
-        }
-        if (seeded == null) {
-            // Nothing to seed (no catalog.json): empty DB and blank sheet are trivially consistent
+        // Sheets enabled but blank → empty DB and blank sheet are trivially consistent
+        log.info("Google Sheets is blank and DB is empty — nothing to restore");
+        if (sync != null) {
             sync.resumeEventPushes();
-            return;
-        }
-        try {
-            sync.pushCatalog(true); // success resumes event pushes automatically
-            log.info("Seeded from catalog.json and pushed initial state to Google Sheets");
-        } catch (Exception e) {
-            log.error("Seeded from catalog.json but the initial push to Google Sheets failed "
-                    + "— event pushes stay suspended; check GET /api/catalog/sync/status", e);
         }
     }
 
@@ -133,14 +102,11 @@ public class CatalogAutoImporter {
         SheetsLoadResult result = reader.loadFromSheets();
 
         if (result.artistCount() == 0) {
-            // Tabs had rows but none produced an artist — e.g. a partially-failed prior
-            // overwrite left the Artists tab blank. Treat the sheet as inconsistent.
-            log.error("Sheets restore produced 0 artists although the spreadsheet has data — "
-                    + "seeding from catalog.json WITHOUT pushing; repair the sheet, then POST /api/catalog/sync/pull");
-            importCatalogJson();
+            log.error("Sheets restore produced 0 artists although the spreadsheet has data — starting "
+                    + "with an empty catalog; pushes suspended. Repair the sheet, then POST /api/catalog/sync/pull");
             if (sync != null) {
                 sync.suspendEventPushes("Restore found data in the spreadsheet but produced 0 artists — "
-                        + "running on catalog.json seed data; repair the sheet, then POST /api/catalog/sync/pull");
+                        + "running on an empty catalog; repair the sheet, then POST /api/catalog/sync/pull");
             }
             return;
         }
@@ -156,26 +122,6 @@ public class CatalogAutoImporter {
             sync.suspendEventPushes("Restore skipped " + result.warnings().size()
                     + " sheet row(s) — a push would erase them from the sheet. Repair the sheet, then "
                     + "POST /api/catalog/sync/pull. First warning: " + result.warnings().get(0));
-        }
-    }
-
-    /** Imports catalog.json without publishing a CatalogChangedEvent. Returns null on skip/failure. */
-    private ImportResult importCatalogJson() {
-        Path path = Path.of(catalogPath);
-        if (!Files.exists(path)) {
-            log.warn("Catalog file not found at {}, skipping auto-import", path.toAbsolutePath());
-            return null;
-        }
-
-        try {
-            log.info("Database is empty, starting auto-import from {}", path.toAbsolutePath());
-            ImportResult result = catalogImportService.importFromJson(path, false);
-            log.info("Auto-import completed: {} artists, {} albums, {} songs",
-                result.artistCount(), result.albumCount(), result.songCount());
-            return result;
-        } catch (Exception e) {
-            log.error("Auto-import failed", e);
-            return null;
         }
     }
 }
