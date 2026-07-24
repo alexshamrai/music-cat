@@ -9,7 +9,6 @@ database is a runtime cache rebuilt from Sheets on boot.
 
 - **Java 25** (e.g. via [sdkman](https://sdkman.io): `sdk install java 25-open`)
 - No local Node.js needed for the jar build — Gradle downloads its own Node
-- `catalog.json` at the project root (one-time scanner output, already committed)
 
 ## Development (two terminals)
 
@@ -41,10 +40,10 @@ All app settings live under the `music-cat.*` prefix in
 
 | Property | Default | Purpose |
 |---|---|---|
-| `music-cat.catalog-path` | `../catalog.json` | Scanner output imported on first boot (empty DB) |
 | `music-cat.sheets.enabled` | `false` | Master switch for the Google Sheets sync |
-| `music-cat.sheets.credentials-path` | `../config/google-credentials.json` (env `SHEETS_CREDENTIALS_PATH`) | Service-account JSON key |
-| `music-cat.sheets.spreadsheet-id` | — (env `SHEETS_SPREADSHEET_ID`) | Spreadsheet with tabs `Artists`, `Albums`, `Songs` |
+| `music-cat.sheets.mode` | `google` | `google` (real Sheets API) or `fake` (local file-backed `FakeSheetsClient`, no credentials) — see "Local fake Sheets" below |
+| `music-cat.sheets.credentials-path` | `../config/google-credentials.json` (env `SHEETS_CREDENTIALS_PATH`) | Service-account JSON key (mode `google` only) |
+| `music-cat.sheets.spreadsheet-id` | — (env `SHEETS_SPREADSHEET_ID`) | Spreadsheet with tabs `Artists`, `Albums`, `Songs` (mode `google` only) |
 | `music-cat.auth.username` | `admin` (env `MUSIC_CAT_USER`) | HTTP Basic username protecting every path |
 | `music-cat.auth.password` | `admin` (env `MUSIC_CAT_PASSWORD`) | HTTP Basic password — **must** be overridden for any non-local deployment; the app refuses to start under the `cloud` profile with the default |
 
@@ -61,6 +60,25 @@ State-changing requests (`POST`/`PUT`/`PATCH`/`DELETE`) require an
 form cannot, which is the point (blocks blind cross-site CSRF against a
 Basic-auth-only API, since browsers cache and auto-attach Basic credentials
 per-origin regardless of which page initiated the request).
+
+## Local fake Sheets
+
+The app has no local seed data of its own — Google Sheets is the only inbound data
+path. For offline dev/testing, `music-cat.sheets.mode=fake` swaps in a file-backed
+`FakeSheetsClient` (`./data/fake-sheets.json`) with no network calls and no
+credentials, so it can never touch production:
+
+```bash
+# One-time (or refresh): read-only snapshot of the LIVE spreadsheet into the fake file
+SHEETS_SPREADSHEET_ID=<prod id> ./snapshot-prod-to-fake.sh
+
+# Run entirely offline against the fake file (default profile, admin/admin, in-memory H2)
+./run-fake.sh
+```
+
+`snapshot-prod-to-fake.sh` only ever calls the Sheets API's read method — it cannot
+write back to the live spreadsheet. Both scripts expect
+`backend/build/libs/music-cat-*.jar` to already exist (`./gradlew :backend:bootJar`).
 
 ## Live deployment
 
