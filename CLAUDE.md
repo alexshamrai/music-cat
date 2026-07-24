@@ -11,15 +11,14 @@ Personal music catalog app for browsing, rating, tagging, and randomly picking a
 All tasks (0–18) from `task-list.md` are complete. The app is deployed to Cloud Run.
 
 **Done:**
-- `music_scanner.py` — One-time Python scanner that produced `catalog.json` (prerequisite, already run)
-- `catalog.json` — Scanned library (~176 artists, ~2830 albums, ~31K tracks across 7 genres) at project root
+- `music_scanner.py` — One-time Python scanner that produced the original `catalog.json` seed file (~176 artists, ~2830 albums, ~31K tracks across 7 genres) from an external drive (prerequisite, already run, not part of the running app)
+- `catalog.json` (historical, removed) — the scanner's output; used to seed the DB and the Google Sheet before the Sheets-only refactor deleted the file and its import path — Google Sheets is now the sole source of truth (see Architecture)
 - `plan.md` — Full architecture and design document
 - `task-list.md` — Sequential implementation tasks (Tasks 0-10)
 - **Backend skeleton** — Spring Boot app with Gradle build, Flyway migration, H2 database, application.yml
 - **Domain entities** — ArtistEntity, AlbumEntity, SongEntity, TagEntity with JPA mappings
 - **Repositories** — ArtistRepository, AlbumRepository (with EntityGraph), SongRepository, TagRepository
-- **Catalog import** — CatalogImportService (JSON → DB), CatalogAutoImporter (auto-imports on first startup if DB empty), POST /api/catalog/import endpoint
-- **Catalog DTOs** — Java records in `dto.catalog` package: Catalog, Genre, Artist, Album, Stats, ImportResult
+- **Catalog import (historical, removed)** — the original one-time `catalog.json` → DB import (`CatalogImportService`, `POST /api/catalog/import`, `dto.catalog` records `Catalog`/`Genre`/`Artist`/`Album`/`ImportResult`) was deleted in the Sheets-only refactor; `Stats` moved to `dto/export`. `CatalogAutoImporter` remains, but its boot decision is now driven purely by Sheets state (see Architecture)
 - **Artist CRUD API** — ArtistService, ArtistController (full CRUD + favorite toggle + tag management)
 - **Album CRUD API** — AlbumService, AlbumController (full CRUD + grade + favorite + tags + rich filtering via AlbumFilterParams; batch edit via `PUT /{id}/edit` — atomically renames the album and reconciles its full song set: add/rename/delete songs in one transaction and one structural Sheets push. A sibling-title collision guard rejects renames that would duplicate `(artist, title)`. New songs auto-number on disc 1 as `max(track)+1`; track/disc editing is out of scope)
 - **Tag CRUD API** — TagService, TagController (list, create, delete)
@@ -42,13 +41,13 @@ All tasks (0–18) from `task-list.md` are complete. The app is deployed to Clou
 - **Tags page** — Tag cloud with sort (name/usage), create/delete tags, click tag to show associated artists and albums
 
 **Deployment phase (Tasks 9-18), all done:**
-- **Google Sheets sync** — `GoogleSheetsClient`/`SheetMapper` (chunked writes via `values.append` for rows beyond the first, since `values.update` never grows a sheet's grid past its current row count; 429 retry with backoff); write path pushes Artists+Albums synchronously after every mutating commit (Songs only on structural changes) via `SheetSyncListener`; read path restores the DB from Sheets on an empty boot, or seeds from `catalog.json` and pushes if the sheet is blank; `POST /api/catalog/sync/push`, `POST /api/catalog/sync/pull`, `GET /api/catalog/sync/status`
-- **Sync safety** — event-driven pushes start suspended and only resume once the DB provably mirrors the sheet (clean restore/pull/push); any push failure re-suspends (a non-atomic write can leave a tab partial); malformed/duplicate/orphaned sheet rows are skipped with warnings that keep pushes suspended; artists are keyed by name only — two same-named artists in different genres must be disambiguated (`catalog.json` has 4: Genesis, Roland Dyens, Manfred Mann, Scorpions, each suffixed `(Genre)` on their second occurrence)
+- **Google Sheets sync** — `GoogleSheetsClient`/`SheetMapper` (chunked writes via `values.append` for rows beyond the first, since `values.update` never grows a sheet's grid past its current row count; 429 retry with backoff); write path pushes Artists+Albums synchronously after every mutating commit (Songs only on structural changes) via `SheetSyncListener`; read path restores the DB from Sheets on an empty boot; an empty/blank sheet with an empty DB just starts with an empty catalog — no seed, no fallback (see Architecture boot tree); `POST /api/catalog/sync/push`, `POST /api/catalog/sync/pull`, `GET /api/catalog/sync/status`
+- **Sync safety** — event-driven pushes start suspended and only resume once the DB provably mirrors the sheet (clean restore/pull/push); any push failure re-suspends (a non-atomic write can leave a tab partial); malformed/duplicate/orphaned sheet rows are skipped with warnings that keep pushes suspended; artists are keyed by name only — two same-named artists in different genres must be disambiguated (the Sheet data has 4 such cases: Genesis, Roland Dyens, Manfred Mann, Scorpions, each suffixed `(Genre)` on their second occurrence)
 - **Offline export** — `GET /api/catalog/export/json`, `GET /api/catalog/export/csv` (CSV values starting with `=+-@` are prefixed with `'` against formula injection)
 - **Single-jar build** — Gradle downloads Node and builds the React app into the boot jar; `SpaForwardingController` forwards React Router routes to `index.html`
 - **HTTP Basic auth on every path** — `SecurityConfig`; refuses to start under the `cloud` profile if credentials still equal the checked-in `admin`/`admin` default; `RequireXhrHeaderFilter` requires `X-Requested-With` on state-changing requests (blocks blind cross-site CSRF — Basic auth has no CSRF-token/SameSite-cookie equivalent, browsers auto-attach cached credentials per-origin regardless of the initiating page)
 - **Cloud Run deployment** — `application-cloud.yml` (in-memory H2, `lazy-initialization: true`), `Dockerfile` (non-root user), `deploy.sh`; `ReadinessGateFilter` blocks requests until `CatalogAutoImporter` finishes its boot decision (up to 25s) rather than failing fast — Cloud Run only allocates full CPU during active request processing, so a fail-fast 503 starves the boot-time Sheets restore of CPU (observed live: ~3s locally became ~5 minutes on Cloud Run before this fix; blocking one request dropped it back to ~10-15s)
-- **Live and verified end-to-end**: persistence across a forced new revision, hand-edit-then-pull, and a Sheets-outage failure mode (app degrades to `catalog.json` data and reports the error via `sync/status` instead of breaking; ratings still succeed locally; recovers via `sync/push` once access is restored)
+- **Live and verified end-to-end**: persistence across a forced new revision, hand-edit-then-pull, and a Sheets-outage failure mode (with data already loaded, ratings/edits still succeed locally against H2 while `sync/status` reports the outage instead of the app breaking; a cold start during an outage instead comes up with an empty catalog — no fallback; recovers via `sync/push`/`sync/pull` once Sheets access is restored)
 
 ## Architecture
 
@@ -111,9 +110,9 @@ All endpoints under `/api/`, all requiring HTTP Basic auth (state-changing reque
 - `/api/catalog/export/json`, `/api/catalog/export/csv` — Offline backups
 - `/api/catalog/sync/push`, `/api/catalog/sync/pull`, `/api/catalog/sync/status` — Google Sheets sync (503 when Sheets is disabled)
 
-## Scanner (Prerequisite — Already Complete)
+## Scanner (Prerequisite — Already Complete, Historical)
 
-`music_scanner.py` is a one-time script that was run against an external drive to produce `catalog.json`. It is not part of the running application. The external drive is no longer needed.
+`music_scanner.py` is a one-time script that was run against an external drive to produce the original `catalog.json` seed file. It is not part of the running application, and the external drive is no longer needed. The `catalog.json` artifact itself was later removed in the Sheets-only refactor — Google Sheets is now the sole source of truth (see Architecture).
 
 ## Backend Packages
 
