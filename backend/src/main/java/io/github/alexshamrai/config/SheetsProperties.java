@@ -1,6 +1,7 @@
 package io.github.alexshamrai.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
 /**
  * Configuration properties for Google Sheets integration.
@@ -19,13 +20,19 @@ public record SheetsProperties(
         String fakeFile,
         boolean snapshot
 ) {
-    public SheetsProperties {
-        if (mode == null || mode.isBlank()) {
-            mode = "google";
-        }
-        if (fakeFile == null || fakeFile.isBlank()) {
-            fakeFile = "./data/fake-sheets.json";
-        }
+    /**
+     * Canonical constructor. Explicitly annotated {@code @ConstructorBinding} so Spring
+     * unambiguously binds via this constructor even though a second (3-arg) convenience
+     * constructor exists below for direct/manual construction (e.g. tests).
+     */
+    @ConstructorBinding
+    public SheetsProperties(boolean enabled, String credentialsPath, String spreadsheetId, String mode, String fakeFile, boolean snapshot) {
+        this.enabled = enabled;
+        this.credentialsPath = credentialsPath;
+        this.spreadsheetId = spreadsheetId;
+        this.mode = (mode == null || mode.isBlank()) ? "google" : mode;
+        this.fakeFile = (fakeFile == null || fakeFile.isBlank()) ? "./data/fake-sheets.json" : fakeFile;
+        this.snapshot = snapshot;
     }
 
     /** Back-compat convenience for call sites (tests) that predate the mode/fake fields. */
