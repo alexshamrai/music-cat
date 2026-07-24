@@ -1,6 +1,5 @@
 # Cloud Run profile: the filesystem is ephemeral tmpfs, so H2 lives in memory and the
-# catalog is restored from Google Sheets on every boot (catalog.json baked into the
-# image is the first-boot seed / fallback).
+# catalog is restored from Google Sheets on every boot.
 spring:
   datasource:
     url: jdbc:h2:mem:music-cat;DB_CLOSE_DELAY=-1
@@ -11,7 +10,6 @@ spring:
     lazy-initialization: true
 
 music-cat:
-  catalog-path: /app/catalog.json
   sheets:
     # Override with MUSIC_CAT_SHEETS_ENABLED=false to run the cloud profile locally
     # without credentials (startup-time measurement, smoke tests)

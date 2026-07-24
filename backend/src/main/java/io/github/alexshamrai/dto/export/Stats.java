@@ -1,4 +1,4 @@
-package io.github.alexshamrai.dto.catalog;
+package io.github.alexshamrai.dto.export;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

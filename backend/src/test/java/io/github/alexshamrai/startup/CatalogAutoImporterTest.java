@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Boot decision tree (Sheets-only, no catalog.json):
+ * Boot decision tree (Sheets-only):
  * <ol>
  *   <li>DB not empty → skip, resume event pushes</li>
  *   <li>DB empty + sheets disabled → empty DB, no sync interaction</li>

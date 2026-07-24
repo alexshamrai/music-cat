@@ -1,13 +1,13 @@
 package io.github.alexshamrai.dto.export;
 
-import io.github.alexshamrai.dto.catalog.Stats;
+import io.github.alexshamrai.dto.export.Stats;
 
 import java.time.Instant;
 import java.util.List;
 
 /**
  * Root of the enriched catalog export (GET /api/catalog/export/json) — the original
- * catalog.json structure extended with curation fields (grades, favorites, tags).
+ * catalog structure extended with curation fields (grades, favorites, tags).
  */
 public record ExportCatalog(
         Instant exportedAt,

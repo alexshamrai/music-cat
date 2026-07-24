@@ -30,7 +30,7 @@ public class GoogleSheetsClient implements SheetsClient {
     // CatalogAutoImporter force this bean's dependency chain eager (@Lazy(false), needed for
     // event-listener wiring), so a direct Sheets dependency here would fail Spring context
     // refresh itself on a missing/bad credentials file — crash-looping the whole app instead of
-    // degrading to catalog.json like every other Sheets failure already does.
+    // degrading gracefully like every other Sheets failure already does.
     private final ObjectProvider<Sheets> sheetsProvider;
     private final String spreadsheetId;
 
