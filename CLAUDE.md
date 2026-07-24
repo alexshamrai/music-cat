@@ -56,13 +56,18 @@ Monorepo with two modules that build into a single deployable JAR, deployed as o
 
 - **backend/** — Java 25, Spring Boot 4.0.2, Spring Data JPA, H2 (file-persisted locally, in-memory on Cloud Run), Flyway migrations, SpringDoc OpenAPI 3.0.1, Spring Security (HTTP Basic)
 - **frontend/** — React 19, TypeScript, Vite 7, TanStack Query v5, React Router 7, Tailwind CSS 4, Lucide icons
-- **catalog.json** — Scanner output at project root (initial seed / fallback when Sheets is unreachable)
 - **config/** — Google Sheets service account credentials (gitignored locally; mounted from Secret Manager in the cloud profile)
 - **deploy.sh** — builds (buildx, linux/amd64), pushes to Artifact Registry, deploys to Cloud Run
 
 Data flow: Google Sheets (persistent source of truth) ↔ App (H2 runtime cache, rebuilt from Sheets on every boot) ↔ REST API ↔ React UI
 
-Boot decision (`CatalogAutoImporter`): DB non-empty → skip; DB empty + Sheets has data → restore from Sheets; DB empty + Sheets blank → seed from `catalog.json` and push; DB empty + Sheets disabled → import `catalog.json` (local dev default). A Sheets outage at any of these points falls back to `catalog.json` without pushing, so a diverged DB can never overwrite the sheet.
+Boot decision (`CatalogAutoImporter`), Sheets-only: DB non-empty → skip; DB empty + Sheets has data → restore from Sheets; DB empty + Sheets blank/unreachable/disabled → empty catalog (recover via `POST /api/catalog/sync/pull` once Sheets is available). **Accepted trade-off**: there is no local fallback — a Sheets outage on a cold start yields an empty app until Sheets recovers, rather than serving stale seed data. Event-driven pushes start suspended and only resume once the DB provably mirrors the sheet, so a diverged/empty DB can never overwrite the spreadsheet.
+
+## Local dev / staging (fake Sheets)
+
+`music-cat.sheets.mode=fake` swaps in a `FakeSheetsClient` — a local, file-backed stand-in for Google Sheets (`./data/fake-sheets.json`, same 3-tab shape) with no network calls and no credentials. Seed the file with a read-only snapshot of the live spreadsheet: `SHEETS_SPREADSHEET_ID=<id> ./snapshot-prod-to-fake.sh` (uses real Google credentials to *read* prod, then exits — never writes to Google). Then run entirely offline against the fake: `./run-fake.sh` (in-memory H2, restore-on-boot, push-on-edit, same as prod, just pointed at the local file).
+
+Three-layer test strategy: **Layer 1** — fake-backed integration tests covering app logic, the mutation→push write path, boot-restore round-trip, and suspend/resume; **Layer 2** — `GoogleSheetsClient` unit tests via Google's `MockHttpTransport` (chunking, append-vs-update, 429 backoff, parsing, errors); **Layer 3** — a real dedicated test spreadsheet, documented as an opt-in follow-on, not implemented.
 
 ## Key Commands
 
@@ -103,7 +108,6 @@ All endpoints under `/api/`, all requiring HTTP Basic auth (state-changing reque
 - `/api/browse/genres`, `/api/browse/tags`, `/api/browse/stats`, `/api/browse/favorites` — Navigation/discovery
 - `/api/random/album`, `/api/random/albums` — Random pick with same filters as album list
 - `/api/tags` — Tag CRUD
-- `/api/catalog/import` — Import from `catalog.json`
 - `/api/catalog/export/json`, `/api/catalog/export/csv` — Offline backups
 - `/api/catalog/sync/push`, `/api/catalog/sync/pull`, `/api/catalog/sync/status` — Google Sheets sync (503 when Sheets is disabled)
 
@@ -118,21 +122,21 @@ Base package: `io.github.alexshamrai`
 - `domain/` — JPA entities: ArtistEntity, AlbumEntity, SongEntity, TagEntity
 - `repository/` — Spring Data JPA repos with JpaSpecificationExecutor, @EntityGraph for efficient loading
 - `specification/` — AlbumSpecs (reusable static JPA Specification methods for album filtering)
-- `service/` — CatalogImportService, ArtistService, AlbumService (uses AlbumSpecs), TagService, BrowseService, RandomPickService, CatalogExportService, SheetSyncService, SheetsCatalogReader, SheetsLoadResult, TagNames
+- `service/` — ArtistService, AlbumService (uses AlbumSpecs), TagService, BrowseService, RandomPickService, CatalogExportService, SheetSyncService, SheetsCatalogReader, SheetsLoadResult, TagNames
 - `controller/` — CatalogController, ArtistController, AlbumController, TagController, BrowseController, RandomController
-- `dto/` — Artist DTOs, Album DTOs (AlbumDto, AlbumSummaryDto, AlbumCreateDto, AlbumUpdateDto, AlbumFilterParams, GradeDto), SongDto, TagDto, TagCreateDto, ImportResult, BrowseGenreDto, BrowseTagDto, BrowseStatsDto, BrowseFavoritesDto, SyncResultDto, SyncStatusDto
-- `dto/catalog/` — Java records mapping catalog.json: Catalog, Genre, Artist, Album, Stats
-- `dto/export/` — ExportCatalog, ExportGenre, ExportArtist, ExportAlbum, ExportSong
+- `dto/` — Artist DTOs, Album DTOs (AlbumDto, AlbumSummaryDto, AlbumCreateDto, AlbumUpdateDto, AlbumFilterParams, GradeDto), SongDto, TagDto, TagCreateDto, BrowseGenreDto, BrowseTagDto, BrowseStatsDto, BrowseFavoritesDto, SyncResultDto, SyncStatusDto
+- `dto/export/` — ExportCatalog, ExportGenre, ExportArtist, ExportAlbum, ExportSong, Stats
 - `exception/` — NotFoundException, NoMatchException, GlobalExceptionHandler (@ControllerAdvice)
-- `startup/` — CatalogAutoImporter (boot decision tree), ReadinessState
-- `sheets/` — SheetsClient (interface), GoogleSheetsClient, SheetMapper, SheetSyncListener, SheetsSyncLock, ArtistRow, AlbumRow, SongRow
+- `startup/` — CatalogAutoImporter (boot decision tree, Sheets-only), ReadinessState
+- `sheets/` — SheetsClient (interface), GoogleSheetsClient, FakeSheetsClient, FakeSheetStore, SnapshotRunner, SheetMapper, SheetSyncListener, SheetsSyncLock, ArtistRow, AlbumRow, SongRow
 - `config/` — WebConfig (Genre converter), SpaForwardingController, GoogleSheetsConfig, SheetsProperties, SecurityConfig, RequireXhrHeaderFilter, ReadinessGateFilter, ReadinessGateConfig
 
 ## Important Conventions
 
 - **Google Sheets is the persistent store** — the app reads from and writes to Google Sheets; H2 is a runtime database/cache, fully rebuilt from Sheets on every boot (in-memory and wiped on every scale-to-zero under the cloud profile)
 - Album filtering uses JPA Specifications (composable via `.and()`)
-- Google Sheets integration is `@ConditionalOnProperty` — disabled by default, no errors when credentials missing. `GoogleSheetsClient` resolves its `Sheets` API client via `ObjectProvider`, not direct injection — a missing/bad credentials file must fail at first real API call, not at Spring context refresh (the latter crash-loops the whole app under the cloud profile's `lazy-initialization: true`, since `SheetSyncListener`/`CatalogAutoImporter` are forced eager for event-listener wiring)
+- Google Sheets integration is `@ConditionalOnExpression` — disabled by default, no errors when credentials missing. `GoogleSheetsClient` resolves its `Sheets` API client via `ObjectProvider`, not direct injection — a missing/bad credentials file must fail at first real API call, not at Spring context refresh (the latter crash-loops the whole app under the cloud profile's `lazy-initialization: true`, since `SheetSyncListener`/`CatalogAutoImporter` are forced eager for event-listener wiring)
+- `music-cat.sheets.mode` (`google` | `fake`) selects the `SheetsClient` implementation: `google` wires the real `GoogleSheetsConfig`/`GoogleSheetsClient` (needs credentials); `fake` wires `FakeSheetsClient`, a local JSON-file stand-in (`./data/fake-sheets.json`) that needs no credentials and never touches the network. Both require `music-cat.sheets.enabled=true`; setting `mode` alone does nothing
 - Custom Spring Security filters must use `response.setStatus(...)` + write the body directly — never `response.sendError(...)`. `sendError` triggers a container-level `/error` forward that Spring Security's filter chain also runs on by default, re-entering the same filter and producing a wrong status code on a real server (MockMvc doesn't replicate this, so it only surfaces in a live deployment)
 - IDs are not stable across a `sync/pull` — it fully deletes and reimports, and H2 `IDENTITY` columns regenerate. Never hardcode/cache an artist or album ID across a pull; look up by name instead
 - A tag with zero artist/album associations has no representation in the 3-tab sheet schema (tags only persist as a comma-joined value on Artist/Album rows) and is silently dropped on the next `sync/pull`. Tags attached to at least one artist or album survive correctly. Found live during Task 18's round-trip test; not fixed since a fix needs a 4th sheet tab, contradicting the "exactly three tabs" spreadsheet design
