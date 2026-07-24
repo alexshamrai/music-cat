@@ -32,7 +32,7 @@ import java.util.Set;
  * Rebuilds the H2 database from the Google Sheets tabs — the read half of the sync loop.
  *
  * <p>This is what makes an ephemeral filesystem (Cloud Run) safe: on boot with an empty
- * DB, the catalog is restored from the spreadsheet instead of the original catalog.json.
+ * DB, the catalog is restored from the spreadsheet — the persistent source of truth.
  *
  * <p>Artists are keyed by name, albums by (artist name, title) — matching the natural
  * keys used by the write path in {@link SheetSyncService}. Malformed, blank-keyed,
@@ -86,10 +86,10 @@ public class SheetsCatalogReader {
 
     /**
      * True when ANY of the three tabs has more than just a header row — used at boot to
-     * decide between restoring from Sheets and seeding from catalog.json. Checking all
+     * decide between restoring from Sheets and leaving the DB empty. Checking all
      * tabs (not just Artists) prevents a partially-failed prior overwrite (e.g. Artists
      * cleared, Albums/Songs intact) from being mistaken for a blank spreadsheet and
-     * overwritten with seed data.
+     * overwritten with an empty restore.
      */
     public boolean sheetsHaveData() {
         return hasDataRows("Artists") || hasDataRows("Albums") || hasDataRows("Songs");

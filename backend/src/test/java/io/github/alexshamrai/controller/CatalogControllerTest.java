@@ -1,6 +1,6 @@
 package io.github.alexshamrai.controller;
 
-import io.github.alexshamrai.dto.catalog.Stats;
+import io.github.alexshamrai.dto.export.Stats;
 import io.github.alexshamrai.dto.export.ExportCatalog;
 import io.github.alexshamrai.service.CatalogExportService;
 import io.github.alexshamrai.service.SheetSyncService;

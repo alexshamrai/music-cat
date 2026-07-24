@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Tracks whether {@link CatalogAutoImporter} has finished its boot decision (restore from
- * Sheets / seed from catalog.json / skip). On Cloud Run the embedded server starts accepting
+ * Sheets / start empty / skip). On Cloud Run the embedded server starts accepting
  * connections during Spring context refresh — before {@code ApplicationReadyEvent} runs the
  * importer — so {@link io.github.alexshamrai.config.ReadinessGateFilter} uses this to hold
  * requests until the DB is in a known state.

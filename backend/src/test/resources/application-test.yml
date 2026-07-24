@@ -13,6 +13,3 @@ spring:
       enabled: false
   flyway:
     enabled: true
-
-music-cat:
-  catalog-path: non-existent-catalog.json

@@ -4,7 +4,7 @@ import io.github.alexshamrai.domain.AlbumEntity;
 import io.github.alexshamrai.domain.ArtistEntity;
 import io.github.alexshamrai.domain.SongEntity;
 import io.github.alexshamrai.domain.TagEntity;
-import io.github.alexshamrai.dto.catalog.Stats;
+import io.github.alexshamrai.dto.export.Stats;
 import io.github.alexshamrai.dto.export.ExportAlbum;
 import io.github.alexshamrai.dto.export.ExportArtist;
 import io.github.alexshamrai.dto.export.ExportCatalog;
@@ -33,7 +33,7 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * Offline export of the enriched catalog — an independent backup layer beside Sheets.
- * JSON keeps the catalog.json shape extended with curation fields; CSV produces a ZIP
+ * JSON keeps the original catalog shape extended with curation fields; CSV produces a ZIP
  * of artists.csv + albums.csv that opens directly in a spreadsheet app.
  */
 @Service

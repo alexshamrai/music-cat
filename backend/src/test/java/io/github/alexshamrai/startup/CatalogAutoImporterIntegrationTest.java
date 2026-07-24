@@ -17,8 +17,7 @@ class CatalogAutoImporterIntegrationTest {
 
     @Test
     void onApplicationReady_missingFile_skipsGracefully() {
-        // The test profile has catalog-path=non-existent-catalog.json
-        // Auto-importer should skip without error, DB should be empty
+        // Sheets are disabled in the test profile → boot leaves the DB empty, no error.
         assertThat(artistRepository.count()).isEqualTo(0);
     }
 }
