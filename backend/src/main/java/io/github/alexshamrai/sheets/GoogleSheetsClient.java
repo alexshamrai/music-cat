@@ -8,7 +8,7 @@ import io.github.alexshamrai.config.SheetsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,7 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-@ConditionalOnProperty(name = "music-cat.sheets.enabled", havingValue = "true")
+@ConditionalOnExpression(
+        "${music-cat.sheets.enabled:false} and '${music-cat.sheets.mode:google}' == 'google'")
 public class GoogleSheetsClient implements SheetsClient {
 
     private static final Logger log = LoggerFactory.getLogger(GoogleSheetsClient.class);
@@ -36,6 +37,10 @@ public class GoogleSheetsClient implements SheetsClient {
     public GoogleSheetsClient(ObjectProvider<Sheets> sheetsProvider, SheetsProperties props) {
         this.sheetsProvider = sheetsProvider;
         this.spreadsheetId = props.spreadsheetId();
+        String tail = (spreadsheetId == null || spreadsheetId.length() < 6)
+                ? String.valueOf(spreadsheetId)
+                : "…" + spreadsheetId.substring(spreadsheetId.length() - 6);
+        log.info("Sheets client: GOOGLE (spreadsheet {})", tail);
     }
 
     private Sheets sheets() {
