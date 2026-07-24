@@ -30,7 +30,13 @@ public record SheetsProperties(
         this.enabled = enabled;
         this.credentialsPath = credentialsPath;
         this.spreadsheetId = spreadsheetId;
-        this.mode = (mode == null || mode.isBlank()) ? "google" : mode;
+        String resolvedMode = (mode == null || mode.isBlank()) ? "google" : mode;
+        resolvedMode = resolvedMode.trim().toLowerCase(java.util.Locale.ROOT);
+        if (!resolvedMode.equals("google") && !resolvedMode.equals("fake")) {
+            throw new IllegalArgumentException(
+                    "Invalid music-cat.sheets.mode '" + mode + "': valid values are 'google' or 'fake'");
+        }
+        this.mode = resolvedMode;
         this.fakeFile = (fakeFile == null || fakeFile.isBlank()) ? "./data/fake-sheets.json" : fakeFile;
         this.snapshot = snapshot;
     }

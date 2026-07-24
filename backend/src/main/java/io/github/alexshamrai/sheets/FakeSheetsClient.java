@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Service
 @ConditionalOnExpression(
-        "${music-cat.sheets.enabled:false} and '${music-cat.sheets.mode:google}' == 'fake'")
+        "${music-cat.sheets.enabled:false} and '${music-cat.sheets.mode:google}'.toLowerCase() == 'fake'")
 public class FakeSheetsClient implements SheetsClient {
 
     private static final Logger log = LoggerFactory.getLogger(FakeSheetsClient.class);

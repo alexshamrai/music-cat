@@ -127,6 +127,7 @@ class CatalogAutoImporterTest {
         importer().onApplicationReady();
 
         verify(syncService).resumeEventPushes();
+        verify(syncService, never()).suspendEventPushes(anyString());
     }
 
     @Test
