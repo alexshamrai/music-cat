@@ -1,7 +1,5 @@
 package io.github.alexshamrai.dto.export;
 
-import io.github.alexshamrai.dto.export.Stats;
-
 import java.time.Instant;
 import java.util.List;
 

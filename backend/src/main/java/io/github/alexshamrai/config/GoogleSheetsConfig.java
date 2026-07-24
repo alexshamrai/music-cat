@@ -17,7 +17,7 @@ import java.util.List;
 
 @Configuration
 @ConditionalOnExpression(
-        "${music-cat.sheets.enabled:false} and '${music-cat.sheets.mode:google}' == 'google'")
+        "${music-cat.sheets.enabled:false} and '${music-cat.sheets.mode:google}'.toLowerCase() == 'google'")
 public class GoogleSheetsConfig {
 
     @Bean

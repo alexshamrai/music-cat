@@ -53,6 +53,7 @@ class FakeSheetsIntegrationTest {
     static void props(DynamicPropertyRegistry registry) {
         try {
             fakeFile = Files.createTempFile("fake-sheets-it", ".json");
+            fakeFile.toFile().deleteOnExit();
             Files.deleteIfExists(fakeFile); // absent at boot → blank sheet → pushes resume
         } catch (IOException e) {
             throw new UncheckedIOException(e);

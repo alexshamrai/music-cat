@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @ConditionalOnExpression(
-        "${music-cat.sheets.enabled:false} and '${music-cat.sheets.mode:google}' == 'google'")
+        "${music-cat.sheets.enabled:false} and '${music-cat.sheets.mode:google}'.toLowerCase() == 'google'")
 public class GoogleSheetsClient implements SheetsClient {
 
     private static final Logger log = LoggerFactory.getLogger(GoogleSheetsClient.class);
@@ -37,9 +37,9 @@ public class GoogleSheetsClient implements SheetsClient {
     public GoogleSheetsClient(ObjectProvider<Sheets> sheetsProvider, SheetsProperties props) {
         this.sheetsProvider = sheetsProvider;
         this.spreadsheetId = props.spreadsheetId();
-        String tail = (spreadsheetId == null || spreadsheetId.length() < 6)
-                ? String.valueOf(spreadsheetId)
-                : "…" + spreadsheetId.substring(spreadsheetId.length() - 6);
+        String tail = (spreadsheetId == null || spreadsheetId.isBlank())
+                ? "unset"
+                : (spreadsheetId.length() < 6 ? spreadsheetId : "…" + spreadsheetId.substring(spreadsheetId.length() - 6));
         log.info("Sheets client: GOOGLE (spreadsheet {})", tail);
     }
 

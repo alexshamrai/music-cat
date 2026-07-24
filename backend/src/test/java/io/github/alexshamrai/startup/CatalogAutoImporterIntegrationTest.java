@@ -16,7 +16,7 @@ class CatalogAutoImporterIntegrationTest {
     private ArtistRepository artistRepository;
 
     @Test
-    void onApplicationReady_missingFile_skipsGracefully() {
+    void onApplicationReady_sheetsDisabled_startsEmpty() {
         // Sheets are disabled in the test profile → boot leaves the DB empty, no error.
         assertThat(artistRepository.count()).isEqualTo(0);
     }
